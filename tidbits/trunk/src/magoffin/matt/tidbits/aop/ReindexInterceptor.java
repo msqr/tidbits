@@ -44,7 +44,6 @@ public class ReindexInterceptor implements AfterReturningAdvice {
 	private LuceneBiz luceneBiz;
 	private String indexType = IndexType.TIDBIT.toString();
 
-	@SuppressWarnings("unchecked")
 	public void afterReturning(Object returnValue, Method method,
 			Object[] args, Object target) throws Throwable {
 		Long tidbitId = null;

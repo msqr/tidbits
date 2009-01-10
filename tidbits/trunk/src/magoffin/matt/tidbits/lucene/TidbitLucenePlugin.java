@@ -139,7 +139,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		return null;
 	}
 
-	public void index(Iterable data) {
+	public void index(Iterable<?> data) {
 		// TODO Auto-generated method stub
 		
 	}
