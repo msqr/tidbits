@@ -211,11 +211,11 @@ public class ShadowServerController extends AbstractCommandController implements
 		
 		image = image2;
 		
-		Iterator writers = ImageIO.getImageWritersByMIMEType(OUTPUT_MIME);
+		Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(OUTPUT_MIME);
 		if ( !writers.hasNext() ) {
 			return;
 		}
-		ImageWriter writer = (ImageWriter)writers.next();
+		ImageWriter writer = writers.next();
 		
 		try {
 			ImageOutputStream ios = ImageIO.createImageOutputStream(out);

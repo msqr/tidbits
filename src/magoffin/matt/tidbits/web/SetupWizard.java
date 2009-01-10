@@ -27,7 +27,6 @@
 package magoffin.matt.tidbits.web;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -116,6 +115,7 @@ public class SetupWizard extends AbstractWizardForm {
 		/* (non-Javadoc)
 		 * @see org.springframework.validation.Validator#supports(java.lang.Class)
 		 */
+		@SuppressWarnings("unchecked")
 		public boolean supports(Class clazz) {
 			return Command.class.isAssignableFrom(clazz);
 		}
@@ -175,12 +175,11 @@ public class SetupWizard extends AbstractWizardForm {
 			HttpServletResponse response, Object command, BindException errors) 
 	throws Exception {
 		Command setup = (Command)command;
-		for ( Iterator itr = setup.getSettings().entrySet().iterator(); itr.hasNext(); ) {
-			Map.Entry me = (Map.Entry)itr.next();
+		for ( Map.Entry<String, String> me : setup.getSettings().entrySet() ) {
 			String key = this.settingKeyPrefix +me.getKey();
 			XwebParameter setting = getDomainObjectFactory().newXwebParameterInstance();
 			setting.setKey(key);
-			setting.setValue((String)me.getValue());
+			setting.setValue(me.getValue());
 			this.settingDao.updateParameter(setting);
 		}
 		

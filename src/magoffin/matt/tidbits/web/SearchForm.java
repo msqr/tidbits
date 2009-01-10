@@ -58,6 +58,7 @@ public class SearchForm extends AbstractForm {
 	/* (non-Javadoc)
 	 * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.Errors)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
 		if ( "home".equals(getFormView()) ) {
@@ -113,7 +114,6 @@ public class SearchForm extends AbstractForm {
 		viewModel.put(getModelObjectKey(), model);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected ModelAndView onSubmit(HttpServletRequest request, 
 			HttpServletResponse response, Object command, 
