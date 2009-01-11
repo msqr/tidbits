@@ -30,6 +30,12 @@
 			<xsl:when test="contains($user-agent, 'Windows CE')">
 				<xsl:text>true</xsl:text>
 			</xsl:when>
+			<xsl:when test="contains($user-agent, 'iPhone')">
+				<xsl:text>true</xsl:text>
+			</xsl:when>
+			<xsl:when test="contains(translate($user-agent, 'MOBILE', 'mobile'), 'mobile')">
+				<xsl:text>true</xsl:text>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>false</xsl:text>
 			</xsl:otherwise>
