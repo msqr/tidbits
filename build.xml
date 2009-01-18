@@ -938,4 +938,11 @@
 		<echo>TODO</echo>
 	</target>
 	
+	<target name="help-release">
+		<echo>First time checkout: ant -Dsvn.tag=1.1 svn-checkout</echo>
+		<echo>Subsequent release:  ant -Dsvn.tag=1.2 svn-switch</echo>
+		<echo>Then to build release archives:</echo>
+		<echo>ant -Dsvn.tag=1.1 -Denv.src=example svn-src-release svn-bin-release svn-demo-release</echo>
+	</target>
+	
 </project>
