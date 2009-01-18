@@ -15,6 +15,7 @@
 				document.getElementById('j_username').focus();
 			};
 		</script>
+		<meta name="viewport" content="width=320"/>
 	</head>
 	<body>
 		<c:choose>
