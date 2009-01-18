@@ -100,24 +100,30 @@
 	
 	<xsl:template match="x:x-data" mode="page-head-basecontent">
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/global-tidbits.css" media="screen,print"/>
-		<xsl:if test="$handheld = 'false'">
-			<!--script type="text/javascript" src="{$web-context}/js/debug.js"><xsl:text> </xsl:text></script-->
-			<script type="text/javascript" src="{$web-context}/js/xslt/misc.js"><xsl:text> </xsl:text></script>
-			<script type="text/javascript" src="{$web-context}/js/xslt/dom.js"><xsl:text> </xsl:text></script>
-			<script type="text/javascript" src="{$web-context}/js/xslt/xpath.js"><xsl:text> </xsl:text></script>
-			<script type="text/javascript" src="{$web-context}/js/prototype.js"><xsl:text> </xsl:text></script>
-			<script type="text/javascript" src="{$web-context}/js/behaviour.js"><xsl:text> </xsl:text></script>
-			<script type="text/javascript" src="{$web-context}/js/scriptaculous.js"><xsl:text> </xsl:text></script>
-			<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}">
-				<xsl:text> </xsl:text>
-			</script>
-			<script id="locale-js" type="text/javascript" src="{$web-context}/js/mmagoff-locale.js?lang={$ctx/x:user-locale}">
-				<xsl:text> </xsl:text>
-			</script>
-			<script type="text/javascript" src="{$web-context}/js/tidbits-global.js">
-				<xsl:text> </xsl:text>
-			</script>
-		</xsl:if>
+		<xsl:choose>
+			<xsl:when test="$handheld = 'true'">
+				<link rel="stylesheet" type="text/css" href="{$web-context}/css/global-tidbits-mini.css" media="screen,print"/>
+				<meta name="viewport" content="width=320"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<!--script type="text/javascript" src="{$web-context}/js/debug.js"><xsl:text> </xsl:text></script-->
+				<script type="text/javascript" src="{$web-context}/js/xslt/misc.js"><xsl:text> </xsl:text></script>
+				<script type="text/javascript" src="{$web-context}/js/xslt/dom.js"><xsl:text> </xsl:text></script>
+				<script type="text/javascript" src="{$web-context}/js/xslt/xpath.js"><xsl:text> </xsl:text></script>
+				<script type="text/javascript" src="{$web-context}/js/prototype.js"><xsl:text> </xsl:text></script>
+				<script type="text/javascript" src="{$web-context}/js/behaviour.js"><xsl:text> </xsl:text></script>
+				<script type="text/javascript" src="{$web-context}/js/scriptaculous.js"><xsl:text> </xsl:text></script>
+				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}">
+					<xsl:text> </xsl:text>
+				</script>
+				<script id="locale-js" type="text/javascript" src="{$web-context}/js/mmagoff-locale.js?lang={$ctx/x:user-locale}">
+					<xsl:text> </xsl:text>
+				</script>
+				<script type="text/javascript" src="{$web-context}/js/tidbits-global.js">
+					<xsl:text> </xsl:text>
+				</script>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	<xsl:template match="x:x-errors" mode="error-intro">
@@ -186,15 +192,24 @@
 							</span>
 							<span class="data">
 								<xsl:value-of select="x:x-model[1]/t:model[1]/t:search-results/t:pagination/@page-offset + 1"/>
-								<xsl:text> </xsl:text>
-								<xsl:value-of select="key('i18n','of')"/>
-								<xsl:text> </xsl:text>
+								<xsl:choose>
+									<xsl:when test="$handheld = 'true'">
+										<xsl:text>/</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text> </xsl:text>
+										<xsl:value-of select="key('i18n','of')"/>
+										<xsl:text> </xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
 								<xsl:value-of select="ceiling(x:x-model[1]/t:model[1]/t:search-results/@total-results 
 									div x:x-model[1]/t:model[1]/t:search-results/t:pagination/@page-size)"/>
 							</span>
-							<span class="header">
-								<xsl:value-of select="key('i18n','search.result.pages')"/>
-							</span>
+							<xsl:if test="not($handheld = 'true')">
+								<span class="header">
+									<xsl:value-of select="key('i18n','search.result.pages')"/>
+								</span>
+							</xsl:if>
 							<span class="data-last">
 								<select name="page" id="page-form-page">
 									<xsl:call-template name="render.page.option"/>
