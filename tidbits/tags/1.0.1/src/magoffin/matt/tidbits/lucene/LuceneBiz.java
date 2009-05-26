@@ -1,0 +1,180 @@
+/* ===================================================================
+ * LuceneBiz.java
+ * 
+ * Created May 27, 2006 12:10:08 PM
+ * 
+ * Copyright (c) 2006 Matt Magoffin (spamsqr@msqr.us)
+ * 
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with this program; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
+ * 02111-1307 USA
+ * ===================================================================
+ * $Id$
+ * ===================================================================
+ */
+
+package magoffin.matt.tidbits.lucene;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.List;
+
+import magoffin.matt.lucene.LuceneService;
+import magoffin.matt.lucene.SearchMatch;
+import magoffin.matt.lucene.LuceneService.IndexSearcherOp;
+import magoffin.matt.tidbits.biz.DomainObjectFactory;
+import magoffin.matt.tidbits.biz.SearchQueryException;
+import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
+import magoffin.matt.tidbits.domain.SearchResults;
+import magoffin.matt.tidbits.domain.Tidbit;
+
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.springframework.context.MessageSource;
+
+/**
+ * Lucene search implementation for Tidbits.
+ * 
+ * @author Matt Magoffin (spamsqr@msqr.us)
+ * @version $Revision$ $Date$
+ */
+public class LuceneBiz {
+	
+	private LuceneService lucene;
+	private String tidbitIndexType = IndexType.TIDBIT.toString();
+	private MessageSource messages;
+	private DomainObjectFactory domainObjectFactory;
+
+	/**
+	 * Search for Tidbits.
+	 * 
+	 * @param tidbitCriteria the search criteria
+	 * @return the results
+	 */
+	public SearchResults findTidbits(final TidbitSearchCriteria tidbitCriteria) {
+		final SearchResults results = domainObjectFactory.newSearchResultsInstance();
+		results.setQuery(tidbitCriteria.getQuery());
+		lucene.doIndexSearcherOp(tidbitIndexType, new IndexSearcherOp() {
+			@SuppressWarnings("unchecked")
+			public void doSearcherOp(String type, IndexSearcher searcher) throws IOException {	
+				Query query = null;
+				try {
+					query = lucene.parseQuery(type, tidbitCriteria.getQuery());
+				} catch ( RuntimeException e ) {
+					if ( e.getCause() != null && (e.getCause() instanceof 
+							org.apache.lucene.queryParser.ParseException) ) {
+						throw new SearchQueryException(e.getCause());
+					}
+					throw e;
+				}
+				Hits hits = searcher.search(query);
+				
+				int startIdx = 0;
+				int endIdx = hits.length();
+				if ( tidbitCriteria.getPaginationCriteria() != null ) {
+					results.setPagination(tidbitCriteria.getPaginationCriteria());
+					int pageOffset = tidbitCriteria.getPaginationCriteria().getPageOffset().intValue();
+					int pageSize = tidbitCriteria.getPaginationCriteria().getPageSize().intValue();
+					startIdx = pageOffset * pageSize;
+					if ( startIdx >= hits.length() ) {
+						startIdx = 0;
+					}
+					results.setIsPartialResult(!(startIdx == 0 && endIdx < pageSize));
+					endIdx = startIdx + pageSize;
+				} else {
+					results.setIsPartialResult(false);
+				}
+				
+				results.setTotalResults(BigInteger.valueOf(hits.length()));
+				List<SearchMatch> matches = lucene.build(
+						tidbitIndexType,hits,startIdx,endIdx);
+				results.setReturnedResults(BigInteger.valueOf(matches.size()));
+				for ( SearchMatch match : matches ) {
+					if ( Tidbit.class.isAssignableFrom(match.getClass()) ) {
+						results.getTidbit().add(match);
+					}
+				}
+			}
+		});
+		
+		return results;
+	}
+
+	/**
+	 * Index an individual Tidbit.
+	 * 
+	 * @param tidbitId the ID of the Tidbit to index
+	 */
+	public void indexTidbit(Long tidbitId) {
+		lucene.indexObjectById(tidbitIndexType, tidbitId);
+	}
+
+	/**
+	 * @return the lucene
+	 */
+	public LuceneService getLucene() {
+		return lucene;
+	}
+	
+	/**
+	 * @param lucene the lucene to set
+	 */
+	public void setLucene(LuceneService lucene) {
+		this.lucene = lucene;
+	}
+	
+	/**
+	 * @return the messages
+	 */
+	public MessageSource getMessages() {
+		return messages;
+	}
+	
+	/**
+	 * @param messages the messages to set
+	 */
+	public void setMessages(MessageSource messages) {
+		this.messages = messages;
+	}
+	
+	/**
+	 * @return the tidbitIndexType
+	 */
+	public String getTidbitIndexType() {
+		return tidbitIndexType;
+	}
+	
+	/**
+	 * @param tidbitIndexType the tidbitIndexType to set
+	 */
+	public void setTidbitIndexType(String tidbitIndexType) {
+		this.tidbitIndexType = tidbitIndexType;
+	}
+	
+	/**
+	 * @return the domainObjectFactory
+	 */
+	public DomainObjectFactory getDomainObjectFactory() {
+		return domainObjectFactory;
+	}
+	
+	/**
+	 * @param domainObjectFactory the domainObjectFactory to set
+	 */
+	public void setDomainObjectFactory(DomainObjectFactory domainObjectFactory) {
+		this.domainObjectFactory = domainObjectFactory;
+	}
+
+}
