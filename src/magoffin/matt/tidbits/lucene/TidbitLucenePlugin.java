@@ -225,53 +225,53 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		
 		Document doc = new Document();
 		doc.add(new Field(IndexField.ITEM_ID.getFieldName(), tidbit.getTidbitId().toString(), 
-				Field.Store.YES, Field.Index.UN_TOKENIZED));
+				Field.Store.YES, Field.Index.NOT_ANALYZED));
 
 		if ( tidbit.getName() != null ) {
 			doc.add(new Field(IndexField.ITEM_NAME.getFieldName(), tidbit.getName(), 
-					Field.Store.YES, Field.Index.TOKENIZED));
+					Field.Store.YES, Field.Index.ANALYZED));
 			generalText.append(tidbit.getName()).append(" ");
 		}
 		
 		if ( tidbit.getData() != null ) {
 			doc.add(new Field(IndexField.ITEM_DATA.getFieldName(), tidbit.getData(), 
-					Field.Store.YES, Field.Index.TOKENIZED));
+					Field.Store.YES, Field.Index.ANALYZED));
 			generalText.append(tidbit.getData()).append(" ");
 		}
 		
 		if ( tidbit.getComment() != null ) {
 			doc.add(new Field(IndexField.ITEM_COMMENT.getFieldName(), tidbit.getComment(), 
-					Field.Store.YES, Field.Index.TOKENIZED));
+					Field.Store.YES, Field.Index.ANALYZED));
 			generalText.append(tidbit.getComment()).append(" ");
 		}
 		
 		if ( tidbit.getCreatedBy() != null ) {
 			doc.add(new Field(IndexField.CREATED_BY.getFieldName(), tidbit.getCreatedBy(), 
-					Field.Store.YES, Field.Index.UN_TOKENIZED));
+					Field.Store.YES, Field.Index.ANALYZED));
 			generalText.append(tidbit.getCreatedBy()).append(" ");
 		}
 		
 		if ( tidbit.getCreationDate() != null ) {
 			String dateStr = getLucene().formatDateToDay(tidbit.getCreationDate().getTime());
 			doc.add(new Field(IndexField.CREATED_DATE.getFieldName(), dateStr,
-					Field.Store.YES, Field.Index.UN_TOKENIZED));
+					Field.Store.YES, Field.Index.ANALYZED));
 		}
 		
 		if ( tidbit.getModifyDate() != null ) {
 			String dateStr = getLucene().formatDateToDay(tidbit.getModifyDate().getTime());
 			doc.add(new Field(IndexField.MODIFIED_DATE.getFieldName(), dateStr,
-					Field.Store.YES, Field.Index.UN_TOKENIZED));
+					Field.Store.YES, Field.Index.NOT_ANALYZED));
 		}
 		
 		if ( tidbit.getKind() != null ) {
 			doc.add(new Field(IndexField.KIND_NAME.getFieldName(), tidbit.getKind().getName(), 
-					Field.Store.YES, Field.Index.TOKENIZED));
+					Field.Store.YES, Field.Index.ANALYZED));
 			generalText.append(tidbit.getKind().getName()).append(" ");
 		}
 		
 		if ( generalText.length() > 0 ) {
 			doc.add(new Field(IndexField.GENERAL_TEXT.getFieldName(), generalText.toString(), 
-					Field.Store.NO, Field.Index.TOKENIZED));
+					Field.Store.NO, Field.Index.ANALYZED));
 		}
 		
 		try {

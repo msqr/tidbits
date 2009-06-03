@@ -39,9 +39,9 @@ import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocCollector;
 import org.springframework.context.MessageSource;
 
 /**
@@ -52,10 +52,14 @@ import org.springframework.context.MessageSource;
  */
 public class LuceneBiz {
 	
+	/** Default max number of search results returned. */
+	public static final int DEFAULT_MAX_SEARCH_RESULTS = 100000;
+	
 	private LuceneService lucene;
 	private String tidbitIndexType = IndexType.TIDBIT.toString();
 	private MessageSource messages;
 	private DomainObjectFactory domainObjectFactory;
+	private int maxSearchResults = DEFAULT_MAX_SEARCH_RESULTS;
 
 	/**
 	 * Search for Tidbits.
@@ -79,16 +83,17 @@ public class LuceneBiz {
 					}
 					throw e;
 				}
-				Hits hits = searcher.search(query);
+				TopDocCollector col = new TopDocCollector(maxSearchResults);
+				searcher.search(query, col);
 				
 				int startIdx = 0;
-				int endIdx = hits.length();
+				int endIdx = col.getTotalHits();
 				if ( tidbitCriteria.getPaginationCriteria() != null ) {
 					results.setPagination(tidbitCriteria.getPaginationCriteria());
 					int pageOffset = tidbitCriteria.getPaginationCriteria().getPageOffset().intValue();
 					int pageSize = tidbitCriteria.getPaginationCriteria().getPageSize().intValue();
 					startIdx = pageOffset * pageSize;
-					if ( startIdx >= hits.length() ) {
+					if ( startIdx >= col.getTotalHits() ) {
 						startIdx = 0;
 					}
 					results.setIsPartialResult(!(startIdx == 0 && endIdx < pageSize));
@@ -97,9 +102,9 @@ public class LuceneBiz {
 					results.setIsPartialResult(false);
 				}
 				
-				results.setTotalResults(BigInteger.valueOf(hits.length()));
+				results.setTotalResults(BigInteger.valueOf(col.getTotalHits()));
 				List<SearchMatch> matches = lucene.build(
-						tidbitIndexType,hits,startIdx,endIdx);
+						tidbitIndexType,col,startIdx,endIdx);
 				results.setReturnedResults(BigInteger.valueOf(matches.size()));
 				for ( SearchMatch match : matches ) {
 					if ( Tidbit.class.isAssignableFrom(match.getClass()) ) {
@@ -175,6 +180,20 @@ public class LuceneBiz {
 	 */
 	public void setDomainObjectFactory(DomainObjectFactory domainObjectFactory) {
 		this.domainObjectFactory = domainObjectFactory;
+	}
+
+	/**
+	 * @return the maxSearchResults
+	 */
+	public int getMaxSearchResults() {
+		return maxSearchResults;
+	}
+
+	/**
+	 * @param maxSearchResults the maxSearchResults to set
+	 */
+	public void setMaxSearchResults(int maxSearchResults) {
+		this.maxSearchResults = maxSearchResults;
 	}
 
 }
