@@ -96,91 +96,14 @@
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="ui.elements">
-		<xsl:call-template name="tidbit.form">
+		<xsl:call-template name="tidbitkind.form">
 			<xsl:with-param name="new" select="'true'"/>
 		</xsl:call-template>
-		<form id="new-tidbit-form" action="{$web-context}/newTidbit.do" method="post" 
-			class="simple-form">
-			<h3>
-				<xsl:value-of select="key('i18n','new.tidbit.title')"/>
-			</h3>
-			<div>
-				<label for="new-tidbit-kind">
-					<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
-				</label>
-				<div>
-					<select name="tidbit.kind.kindId" id="new-tidbit-kind">
-						<xsl:text> </xsl:text>
-					</select>
-				</div>
-			</div>
-			<div>
-				<label for="new-tidbit-name">
-					<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
-				</label>
-				<div>
-					<input type="text" name="tidbit.name" id="new-tidbit-name"/>
-				</div>
-			</div>
-			<div>
-				<label for="new-tidbit-data">
-					<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
-				</label>
-				<div>
-					<textarea name="tidbit.data" id="new-tidbit-data">
-						<xsl:text> </xsl:text>
-					</textarea>
-				</div>
-			</div>
-			<div>
-				<label for="new-tidbit-comment">
-					<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
-				</label>
-				<div>
-					<textarea name="tidbit.comment" id="new-tidbit-comment">
-						<xsl:text> </xsl:text>
-					</textarea>
-					<div class="caption"><xsl:value-of 
-						select="key('i18n','optional.caption')"/></div>
-				</div>
-			</div>
-			<div class="submit">
-				<input value="{key('i18n','add.displayName')}" type="submit" />
-			</div>
-			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
-		</form>
-		<form id="new-tidbitkind-form" action="{$web-context}/newTidbitKind.do" method="post" 
-			class="simple-form">
-			<h3>
-				<xsl:value-of select="key('i18n','new.tidbitkind.title')"/>
-			</h3>
-			<div>
-				<label for="new-tidbitkind-name">
-					<xsl:value-of select="key('i18n','tidbitkind.name.displayName')"/>
-				</label>
-				<div>
-					<input type="text" name="kind.name" id="new-tidbitkind-name"/>
-				</div>
-			</div>
-			<div>
-				<label for="new-tidbitkind-comment">
-					<xsl:value-of select="key('i18n','tidbitkind.comment.displayName')"/>
-				</label>
-				<div>
-					<textarea name="kind.comment" id="new-tidbitkind-comment">
-						<xsl:text> </xsl:text>
-					</textarea>
-					<div class="caption"><xsl:value-of 
-						select="key('i18n','optional.caption')"/></div>
-				</div>
-			</div>
-			<div class="submit">
-				<input value="{key('i18n','add.displayName')}" type="submit" />
-			</div>
-			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
-		</form>
 		<xsl:call-template name="tidbitkind.form">
 			<xsl:with-param name="new" select="'false'"/>
+		</xsl:call-template>
+		<xsl:call-template name="tidbit.form">
+			<xsl:with-param name="new" select="'true'"/>
 		</xsl:call-template>
 		<xsl:call-template name="tidbit.form">
 			<xsl:with-param name="new" select="'false'"/>
@@ -190,9 +113,9 @@
 			<h3>
 				<xsl:value-of select="key('i18n','import.csv.title')"/>
 			</h3>
-			<p style="max-width: 300px;">
+			<div style="max-width: 300px;">
 				<xsl:value-of select="key('i18n','import.csv.intro')" disable-output-escaping="yes"/>
-			</p>
+			</div>
 			<div>
 				<label for="import-cvs-file">
 					<xsl:value-of select="key('i18n','import.cvs.file.displayName')"/>

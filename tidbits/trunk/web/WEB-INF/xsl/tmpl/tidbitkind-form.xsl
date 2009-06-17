@@ -91,7 +91,7 @@
 					<xsl:value-of select="key('i18n','tidbitkind.comment.displayName')"/>
 				</label>
 				<div>
-					<textarea name="kind.comment">
+					<textarea name="kind.comment" cols="4" rows="20">
 						<xsl:attribute name="id">
 							<xsl:choose>
 								<xsl:when test="$new = 'true'">

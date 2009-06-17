@@ -7,6 +7,7 @@
 	
 	<!-- imports -->
 	<xsl:import href="tmpl/default-layout.xsl"/>
+	<xsl:import href="tmpl/tidbitkind-form.xsl"/>
 	
 	<xsl:template match="x:x-data" mode="page-title">
 		<xsl:value-of select="key('i18n','edit.kinds.title')"/>
@@ -76,83 +77,12 @@
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="ui.elements">
-		<form id="new-tidbitkind-form" action="{$web-context}/newTidbitKind.do" method="post" 
-			class="simple-form">
-			<h3>
-				<xsl:value-of select="key('i18n','new.tidbitkind.title')"/>
-			</h3>
-			<div>
-				<label for="new-tidbitkind-name">
-					<xsl:value-of select="key('i18n','tidbitkind.name.displayName')"/>
-				</label>
-				<div>
-					<input type="text" name="kind.name" id="new-tidbitkind-name"/>
-				</div>
-			</div>
-			<div>
-				<label for="new-tidbitkind-comment">
-					<xsl:value-of select="key('i18n','tidbitkind.comment.displayName')"/>
-				</label>
-				<div>
-					<textarea name="kind.comment" id="new-tidbitkind-comment">
-						<xsl:text> </xsl:text>
-					</textarea>
-					<div class="caption"><xsl:value-of 
-						select="key('i18n','optional.caption')"/></div>
-				</div>
-			</div>
-			<div class="submit">
-				<input value="{key('i18n','add.displayName')}" type="submit" />
-			</div>
-			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
-		</form>
-		<form id="edit-kind-form" action="{$web-context}/saveTidbitKind.do" method="post" 
-			class="simple-form">
-			<h3>
-				<xsl:value-of select="key('i18n','edit.tidbitkind.title')"/>
-			</h3>
-			<div>
-				<label for="edit-kind-name">
-					<xsl:value-of select="key('i18n','tidbitkind.name.displayName')"/>
-				</label>
-				<div>
-					<input type="text" name="kind.name" id="edit-kind-name" value=""/>
-				</div>
-			</div>
-			<div>
-				<label for="edit-kind-comment">
-					<xsl:value-of select="key('i18n','tidbitkind.comment.displayName')"/>
-				</label>
-				<div>
-					<textarea name="kind.comment" id="edit-kind-comment" class="large">
-						<xsl:text> </xsl:text>
-					</textarea>
-					<div class="caption"><xsl:value-of 
-						select="key('i18n','optional.caption')"/></div>
-				</div>
-			</div>
-			<xsl:if test="x:x-model[1]/t:model[1]/t:kind">
-				<div>
-					<label for="edit-kind-reassign">
-						<xsl:value-of select="key('i18n','tidbitkind.reassign.displayName')"/>
-					</label>
-					<div>
-						<select name="reassign" id="edit-kind-reassign">
-							<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:kind" mode="options"/>
-						</select>
-						<div class="caption"><xsl:value-of 
-							select="key('i18n','reassign.caption')"/></div>
-					</div>
-				</div>
-			</xsl:if>
-			<div class="submit">
-				<input type="hidden" id="edit-kind-id" name="kind.kindId" value="" />
-				<input type="hidden" id="edit-kind-delete" name="delete" value="false" />
-				<input value="{key('i18n','save.displayName')}" id="edit-kind-submit" type="submit" />
-				<input value="{key('i18n','delete.displayName')}" id="edit-kind-submit-delete" type="submit" />
-			</div>
-			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
-		</form>		
+		<xsl:call-template name="tidbitkind.form">
+			<xsl:with-param name="new" select="'true'"/>
+		</xsl:call-template>
+		<xsl:call-template name="tidbitkind.form">
+			<xsl:with-param name="new" select="'false'"/>
+		</xsl:call-template>
 	</xsl:template>
 	
 	<xsl:template match="t:kind">

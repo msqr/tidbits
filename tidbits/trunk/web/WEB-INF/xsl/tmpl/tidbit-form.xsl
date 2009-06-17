@@ -132,7 +132,7 @@
 					<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
 				</label>
 				<div>
-					<textarea name="tidbit.data" class="large">
+					<textarea name="tidbit.data" class="large" cols="4" rows="20">
 						<xsl:attribute name="id">
 							<xsl:choose>
 								<xsl:when test="$new = 'true'">
@@ -169,7 +169,7 @@
 					<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
 				</label>
 				<div>
-					<textarea name="tidbit.comment" class="large">
+					<textarea name="tidbit.comment" class="large" cols="4" rows="20">
 						<xsl:attribute name="id">
 							<xsl:choose>
 								<xsl:when test="$new = 'true'">
