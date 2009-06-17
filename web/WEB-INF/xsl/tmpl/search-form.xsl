@@ -30,10 +30,10 @@
 				</div>
 			</div>
 			<div class="submit">
+				<input type="hidden" name="page" value="0"/>
 				<input value="{key('i18n','search.displayName')}" type="submit" />
 			</div>
 			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
-			<input type="hidden" name="page" value="0"/>
 		</form>
 	</xsl:template>
 
