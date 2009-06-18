@@ -85,7 +85,7 @@ function doStandardMessageDisplay(fullMessage,dismissCallback,msgPane,msgContent
  * the dialog content comes from some element of the ui-elements
  * element, which is assumed to hide the content.
  */
-function doStandardDialogDisplay(dialogContent,dialogPane,dialogContentPane) {
+function doStandardDialogDisplay(dialogContent,dialogPane,dialogContentPane,afterAppear) {
 	dialogContent = $(dialogContent);
 	if ( !dialogContent ) {
 		alert("No dialog content found for [" +dialogContent +"]");
@@ -116,9 +116,18 @@ function doStandardDialogDisplay(dialogContent,dialogPane,dialogContentPane) {
 	
 	if ( !Element.visible(dialogPane) ) {
 		new Effect.Appear(dialogPane, { 
-			duration: 0.8
+			duration: 0.8,
+			afterFinish: function() {
+				if ( afterAppear ) {
+					afterAppear.apply(dialogPane);
+				}
+			}
 			});
 		AppState.dialogVisible = true;
+	} else {
+		if ( afterAppear ) {
+			afterAppear.apply(dialogPane);
+		}
 	}
 
 	var dim = Element.getDimensions(dialogPane);
@@ -146,10 +155,15 @@ function doStandardDialogHide(dialogPane) {
 }
 
 function doShowStandardForm(type, kind, noFocus) {
-	doStandardDialogDisplay(kind+'-'+type+'-form');
-	if ( !noFocus && !IE ) { // do not allow because IE freaks
-		Form.focusFirstElement(kind+'-'+type+'-form');
+	var doFocus = function() {
+		if ( !noFocus && !IE ) { // do not allow because IE freaks
+			var form = $(kind+'-'+type+'-form');
+			if ( form ) {
+				form.focusFirstElement();
+			}
+		}
 	}
+	doStandardDialogDisplay(kind+'-'+type+'-form', null, null, doFocus);
 }
 
 function showStandardForm(link, type, kind, noFocus) {
@@ -349,9 +363,9 @@ function setupEditKindButton(button) {
 }
 
 function setupEditRowMouseover(row) {
-	var editBtn = document.getElementsByClassName('edit-btn',row);
+	var editBtn = $(row).getElementsByClassName('edit-btn');
 	if ( !editBtn || editBtn.length < 1 ) {
-		editBtn = document.getElementsByClassName('edit-kind-btn',row);
+		editBtn = $(row).getElementsByClassName('edit-kind-btn');
 		if ( !editBtn || editBtn.length < 1 ) {
 			return;
 		}
