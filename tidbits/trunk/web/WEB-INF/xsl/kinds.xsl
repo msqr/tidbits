@@ -172,10 +172,4 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template match="t:kind" mode="options">
-		<option value="{@kind-id}">
-			<xsl:value-of select="@name"/>
-		</option>
-	</xsl:template>
-	
 </xsl:stylesheet>

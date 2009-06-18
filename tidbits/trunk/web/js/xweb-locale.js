@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Matt Magoffin
+// Copyright (c) 2009 Matt Magoffin (spamsqr@msqr.us)
 // 
 // ===================================================================
 // This program is free software; you can redistribute it and/or
@@ -16,45 +16,23 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 // 02111-1307 USA
 // ===================================================================
-// $Id: mmagoff-locale.js,v 1.1 2006/07/25 09:31:51 matt Exp $
+// $Id: matte-locale.js,v 1.8 2007/06/25 10:35:32 matt Exp $
 // ===================================================================
-// 
-// Derived from code in Scriptaculous, Copyright (c) 2005 Thomas Fuchs 
-// (http://script.aculo.us, http://mir.aculo.us)
 
 
-var DEFAULT_LANG = 'en';
+var XWEB_LOCALE_DEFAULT_LANG = 'en';
 
-var MmagoffLocale = {
-  SupportedLangs: {'en':true},
+var XwebLocaleClass = function() {};
+XwebLocaleClass.prototype = {
+	bundle: {},
 
-  bundle: {},
-  
-  load_msg: function(messages) {
-    document.write('<script type="text/javascript" src="'+messages+'"></script>');
-  },
-  
-  load: function() {
-    if((typeof Prototype=='undefined') ||
-      parseFloat(Prototype.Version.split(".")[0] + "." +
-                 Prototype.Version.split(".")[1]) < 1.4)
-      throw("MmagoffLocale requires the Prototype JavaScript framework >= 1.4.0");
-    
-    var s = $('locale-js');
-    var path = s.src.replace(/mmagoff-locale\.js(\?.*)?$/,'');
-    var myLang = s.src.match(/\?.*lang=([a-z,]*)/);
-    if ( myLang ) myLang = myLang[1];
-    if ( !MmagoffLocale.SupportedLangs[myLang] ) myLang = DEFAULT_LANG;
-    MmagoffLocale.load_msg(path+'mmagoff-messages_'+myLang+'.js')
-  },
-  
 	init: function(messages) {
 		if ( messages ) this.bundle = messages;
 	},
 	
 	/**
 	 * Initialize from DOM nodes of type <msg key='x'>value</msg>.
-	  */
+	 */
 	initXmsg: function(xMsgNodes) {
 		if ( !(xMsgNodes && xMsgNodes.length) ) return;
 		for ( var i = 0; i < xMsgNodes.length; i++ ) {
@@ -65,19 +43,28 @@ var MmagoffLocale = {
 			this.bundle[key] = value;
 		}
 	},
-  
-  i18n : function(key,params) {
-	var msg = this.bundle[key];
-	if ( !msg ) {
-		msg = '';
-	} else if ( params ) {
-		var i = 0;
-		for ( i = 0; i < params.length; i++ ) {
-			msg = msg.replace(new RegExp('\\{'+(i+1)+'\\}','g'),params[i]);
+	
+	/**
+	 * Initialize from JSON object. The object key/value pairs are turned
+	 * into the message bundle data.
+	 */
+	initJson: function(msgData) {
+		if ( !msgData ) return;
+		for ( var key in msgData ) {
+			this.bundle[key] = msgData[key];
 		}
-	}
-	return msg;
-  }
-}
-
-MmagoffLocale.load();
+	},
+  
+	i18n : function(key,params) {
+		var msg = this.bundle[key];
+		if ( !msg ) {
+			msg = '??'+key+'??';
+		} else if ( params ) {
+			var i = 0;
+			for ( i = 0; i < params.length; i++ ) {
+				msg = msg.replace(new RegExp('\\{'+(i)+'\\}','g'),params[i]);
+			}
+		}
+		return msg;
+	 }
+};

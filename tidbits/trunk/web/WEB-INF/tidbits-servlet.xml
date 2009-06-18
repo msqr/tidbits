@@ -19,7 +19,7 @@
 				<prop key="/importCsv.do">importCsv</prop>
 				<prop key="/kind.do">kind</prop>
 				<prop key="/kinds.do">kinds</prop>
-				<prop key="/login.do">loginForward</prop>
+				<prop key="/login.do">urlFilenameController</prop>
 				<prop key="/logoff.do">logoff</prop>
 				<prop key="/manageKinds.do">manageKinds</prop>
 				<prop key="/newTidbit.do">addTidbit</prop>
@@ -30,6 +30,8 @@
 				<prop key="/search.do">searchForm</prop>
 				<prop key="/shadow.do">shadow</prop>
 				<prop key="/tidbit.do">tidbit</prop>
+
+				<prop key="/messages.json">urlFilenameController</prop>
 			</props>
 		</property>
 	</bean>
@@ -96,6 +98,10 @@
 		</property>
 	</bean>
 
+	<bean id="jsonXsltViewTemplate" parent="defaultXsltViewTemplate" singleton="false">
+		<property name="contentType" value="text/javascript; charset=UTF-8"/>
+	</bean>
+	
 	<!-- webHelper: utility methods for web classes -->
 	<bean id="webHelper" class="magoffin.matt.xweb.util.BasicXwebHelper"/>
 
@@ -185,7 +191,7 @@
 		<property name="successView" value="logged-off"/>
 	</bean>
 	
-	<bean id="loginForward" 
+	<bean id="urlFilenameController" 
 		class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 		
 	<!-- Kind -->

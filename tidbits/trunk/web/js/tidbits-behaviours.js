@@ -8,7 +8,7 @@ var tidbitRules = Object.extend({
 			'alt':'TidBits'});
 		var aNode = Builder.node('a',{
 			'href':AppState.context+'/home.do?query=&page=0',
-			'title':MmagoffLocale.i18n('home')});
+			'title':XwebLocale.i18n('link.home')});
 		aNode.appendChild(imgNode);
 		el.parentNode.replaceChild(aNode, el);
 	}

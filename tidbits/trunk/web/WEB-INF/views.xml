@@ -62,17 +62,12 @@
 	</bean>	
 	
 	<!-- 
-		xml-service-messages: return XML content with message resources
+		messages: return JSON locale message resources
 	-->
-	<!--bean id="xml-service-messages" parent="xml-service">
+	<bean id="messages" parent="jsonXsltViewTemplate"
+		class="magoffin.matt.xweb.util.XwebServiceView">
+		<property name="stylesheetLocation" value="classpath:/magoffin/matt/xweb/support/locale-messages.xsl"/>
 		<property name="includeXwebMessages" value="true"/>
-	</bean-->	
-	
-	<!-- 
-		xml-service-session: return XML content with session resources
-	-->
-	<!--bean id="xml-service-session" parent="xml-service">
-		<property name="includeXwebSession" value="true"/>
-	</bean-->	
+	</bean>
 	
 </beans>
