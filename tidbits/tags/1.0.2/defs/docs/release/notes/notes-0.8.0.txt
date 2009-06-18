@@ -1,0 +1,11 @@
+TidBits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+- Better support for Internet Explorer.
+  
+- Tidbit deletions now get updated in search index.
+
+- Turn TidBits logo into clickable link to display all tidbits.
+
+- Documentation updates.
