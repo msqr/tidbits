@@ -1,0 +1,14 @@
+TidBits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+This update is mainly focused on updating some of the core frameworks
+used internally by TidBits.
+
+- Update to Lucene 2.4.
+  
+- Update to Prototype 1.6 / Scriptaculos 1.8.
+
+- Internal XSLT cleanup and removal of duplicate templates.
+
+- Update to latest Xweb.
