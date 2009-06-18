@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+	<bean id="myWebropertyConfigurer" class="magoffin.matt.xweb.util.XwebParamPropertiesPlaceholderConfigurer">
+		<property name="order" value="1"/>
+		<property name="locations">
+			<list>
+				<value>classpath:/env.properties</value>
+			</list>
+		</property>
+		<property name="settingDao" ref="settingsDao"/>
+	</bean>
+	
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/home.do">home</prop>
+				<prop key="/importCsv.do">importCsv</prop>
+				<prop key="/kind.do">kind</prop>
+				<prop key="/kinds.do">kinds</prop>
+				<prop key="/login.do">urlFilenameController</prop>
+				<prop key="/logoff.do">logoff</prop>
+				<prop key="/manageKinds.do">manageKinds</prop>
+				<prop key="/messages.json">urlFilenameController</prop>
+				<prop key="/newTidbit.do">addTidbit</prop>
+				<prop key="/newTidbitKind.do">addTidbitKind</prop>
+				<prop key="/setupWizard.do">setupWizardForm</prop>
+				<prop key="/saveTidbit.do">saveTidbit</prop>
+				<prop key="/saveTidbitKind.do">saveTidbitKind</prop>
+				<prop key="/search.do">searchForm</prop>
+				<prop key="/shadow.do">shadow</prop>
+				<prop key="/tidbit.do">tidbit</prop>
+				<prop key="/version.do">urlFilenameController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- the maximum file size in bytes -->
+		<property name="maxUploadSize" value="5000000"/>
+	</bean>
+	
+	<!-- Custom XSLT view resolver
+	
+		This view resolver can simplify having to create individual view defintions for 
+		individual XSLT views. Using the view name the resolver will look to see if 
+		a web resource exists named <xsltPathPrefix><viewName><xsltPathSuffix>. If so, 
+		then the AbstractXsltView bean defined by <xsltViewTemplateName> will be obtained, 
+		the <stylesheetLocation> method will be set with the resolved XSLT resource, 
+		and the view returned. Obviously the <xsltViewTemplateName> bean definition 
+		should have the singleton="false" property set so that new instances are created
+		for each view.
+	-->
+	<bean id="viewResolver" class="magoffin.matt.xweb.util.DefaultXsltViewResolver">
+		<property name="order" value="1"/>
+		<property name="xsltViewTemplateName" value="defaultXsltViewTemplate"/>
+		<property name="xsltPathPrefix" value="/WEB-INF/xsl/"/>
+		<property name="xsltPathSuffix" value=".xsl"/>
+	</bean>
+	<bean id="jaxbNamespacePrefixMapper" class="magoffin.matt.xweb.util.JAXBNamespacePrefixMapper">
+		<property name="namespaceMapping">
+			<map>
+				<entry key="http://msqr.us/xsd/jaxb-web"><value>x</value></entry>
+				<entry key="http://msqr.us/xsd/TidBits"><value>t</value></entry>
+			</map>
+		</property>
+		<property name="predeclareUriList">
+			<list>
+				<value>http://msqr.us/xsd/jaxb-web</value>
+				<value>http://msqr.us/xsd/TidBits</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="defaultXsltViewTemplate" class="magoffin.matt.xweb.util.XwebJaxbView" singleton="false">
+		<property name="contentType" value="text/html; charset=UTF-8"/>
+		<property name="requestContextAttribute" value="magoffin.matt.xweb.REQ"/>
+		<property name="cache" value="${xslt.cache}"/>
+		<property name="indent" value="false"/>
+		<property name="jaxbContext" value="magoffin.matt.tidbits.domain"/>
+		<property name="messagesSource" ref="messageSource"/>
+		<property name="webHelper" ref="webHelper"/>
+		<property name="debugMessageResource" value="false"/>
+		<property name="transformerFactory" ref="transformerFactory"/>
+		<property name="marshallerProperties">
+			<map>
+				<entry key="com.sun.xml.bind.namespacePrefixMapper">
+					<ref local="jaxbNamespacePrefixMapper"/>
+				</entry>
+			</map>
+		</property>
+		<property name="appSettingsCache">
+			<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"> 
+				<property name="cacheManager" ref="cacheManager"/> 
+				<property name="cacheName" value="magoffin.matt.xweb.app_settings_cache"/> 
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="jsonXsltViewTemplate" parent="defaultXsltViewTemplate" singleton="false">
+		<property name="contentType" value="text/javascript; charset=UTF-8"/>
+	</bean>
+	
+	<!-- webHelper: utility methods for web classes -->
+	<bean id="webHelper" class="magoffin.matt.xweb.util.BasicXwebHelper"/>
+
+	<!-- As a backup to the default view handler, use the XmlViewResolver to handle 
+		all other views -->
+	<bean id="viewResolver2" class="org.springframework.web.servlet.view.XmlViewResolver">
+		<property name="order" value="3"/>
+	</bean>
+	
+	<!-- Finally, a view resolver for JSTL views. -->
+	<bean id="jspViewResolver" 
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 
+		<!--property name="order"><value>3</value></property-->
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> 
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean> 
+	
+	<!--==============================================================================
+		Controllers
+	    ==============================================================================-->
+	
+	<!-- Abstract base form definition. -->
+	<bean id="baseController" abstract="true">
+		<property name="domainObjectFactory" ref="domainObjectFactory"/>
+		<property name="tidbitsBiz" ref="tidbitsBiz"/>
+	</bean>
+	
+	<!-- Abstract base form definition for XML services. -->
+	<bean id="baseServiceController" parent="baseController" abstract="true">
+		<property name="successView" value="xml-service"/>
+		<property name="errorView" value="xml-service"/>
+	</bean>
+	
+	<!-- Setup wizard form -->
+	<bean name="setupWizardForm" class="magoffin.matt.tidbits.web.SetupWizard">
+		<property name="commandName" value="cmd"/>
+		<property name="pages">
+			<list>
+				<value>setup-welcome</value>
+				<value>setup-db</value>
+				<value>setup-filesystem</value>
+				<value>setup-confirm</value>
+			</list>
+		</property>
+		<property name="validator">
+			<bean class="magoffin.matt.tidbits.web.SetupWizard$SetupCommandValidator">
+				<property name="fileSystemPage" value="2"/>
+			</bean>
+		</property>
+		<property name="successView" value="setup-complete"/>
+		<property name="allowDirtyBack" value="true"/>
+		<property name="settingDao" ref="settingsDao"/>
+		<property name="settingKeyPrefix" value="env:"/>
+		<property name="originalHibernateDialect" 
+			value="${hibernate.dialect}"/>
+		<property name="domainObjectFactory" 
+			ref="domainObjectFactory"/>
+		<property name="defaultSettings">
+			<map>
+				<entry key="hibernate.dialect" 
+					value="${hibernate.dialect}"/>
+				<entry key="lucene.index.base.path" 
+					value="${lucene.index.base.path}"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- Home -->
+	<bean id="home"  parent="searchForm">
+		<property name="formView" value="home"/>
+	</bean>
+	
+	<!-- Search form -->
+	<bean id="searchForm"  parent="baseController" 
+		class="magoffin.matt.tidbits.web.SearchForm">
+		<property name="commandClass" 
+			value="magoffin.matt.tidbits.support.SearchCommand"/>
+		<property name="formView" value="search"/>
+		<property name="successView" value="home"/>
+		<property name="bindOnNewForm" value="true"/>
+		<property name="sessionForm" value="false"/>
+	</bean>
+
+	<bean id="logoff" parent="baseController"
+		class="magoffin.matt.tidbits.web.LogoffController">
+		<property name="successView" value="logged-off"/>
+	</bean>
+	
+	<bean id="urlFilenameController" 
+		class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+		
+	<!-- Kind -->
+	<bean id="kind"  parent="baseServiceController" 
+		class="magoffin.matt.tidbits.web.TidbitKindController"/>
+	
+	<!-- Kinds -->
+	<bean id="kinds"  parent="baseServiceController" 
+		class="magoffin.matt.tidbits.web.TidbitKindsController"/>
+	
+	<!-- Shadow -->
+	<bean id="shadow" parent="baseController" class="magoffin.matt.tidbits.web.ShadowServerController">
+		<property name="commandClass" value="magoffin.matt.tidbits.web.ShadowServerController$Command"/>
+		<property name="cacheSeconds" value="${shadow.cache.seconds}"/>
+		<property name="shadowCache">
+			<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"> 
+				<property name="cacheManager" ref="cacheManager"/> 
+				<property name="cacheName" value="magoffin.matt.tidbits.web.ShadowServer.CACHE"/> 
+			</bean>			
+		</property>
+	</bean>
+	
+	<!-- Add Tidbit -->
+	<bean id="addTidbit"  parent="baseController" 
+		class="magoffin.matt.tidbits.web.AddTidbitForm">
+		<property name="formView" value="edit-tidbit"/>
+		<property name="successView" value="home-redirect"/>
+	</bean>
+	
+	<!-- Add TidbitKind -->
+	<bean id="addTidbitKind"  parent="baseController" 
+		class="magoffin.matt.tidbits.web.AddTidbitKindForm">
+		<property name="formView" value="edit-tidbit-kind"/>
+		<property name="successView" value="kinds-redirect"/>
+	</bean>
+	
+	<!-- importCsv: import CSV Tidbit file -->
+	<bean id="importCsv" parent="baseController" class="magoffin.matt.tidbits.web.ImportCsvForm">
+		<property name="pages">
+			<list>
+				<value>import-tidbits-csv</value>
+				<value>import-tidbits-verify</value>
+			</list>
+		</property>
+		<property name="successView" value="home-redirect"/>
+		<property name="cancelView" value="home-redirect"/>
+		<property name="allowDirtyBack" value="true"/>
+		<property name="allowDirtyForward" value="false"/>
+		<property name="bindOnNewForm" value="true"/>
+	</bean>
+	
+	<!-- Manage kinds -->
+	<bean id="manageKinds"  parent="baseController" 
+		class="magoffin.matt.tidbits.web.TidbitKindsController">
+		<property name="successView" value="kinds"/>
+	</bean>
+	
+	<!-- Save Tidbit -->
+	<bean id="saveTidbit"  parent="baseController" 
+		class="magoffin.matt.tidbits.web.SaveTidbitForm">
+		<property name="commandClass" 
+			value="magoffin.matt.tidbits.web.AddTidbitForm$Command"/>
+		<property name="formView" value="edit-tidbit"/>
+		<property name="successView" value="home-redirect"/>
+	</bean>
+	
+	<!-- Save TidbitKind -->
+	<bean id="saveTidbitKind"  parent="baseController" 
+		class="magoffin.matt.tidbits.web.SaveTidbitKindForm">
+		<property name="commandClass" 
+			value="magoffin.matt.tidbits.web.AddTidbitKindForm$Command"/>
+		<property name="successView" value="kinds-redirect"/>
+	</bean>
+	
+	<!-- tidbit: get a single Tidbit as XML -->
+	<bean id="tidbit" parent="baseServiceController" 
+		class="magoffin.matt.tidbits.web.TidbitController">
+		<!--property name="successView" value="tidbit-service"/-->
+	</bean>
+	
+</beans>
+
