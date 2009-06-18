@@ -209,6 +209,9 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#deleteTidbitKind(java.lang.Long, java.lang.Long)
 	 */
 	public void deleteTidbitKind(Long id, Long reassignId) {
+		if ( id.equals(reassignId) ) {
+			throw new IllegalArgumentException("Reassign ID must not be the same as the ID to delete.");
+		}
 		TidbitKind k = tidbitKindDao.get(id);
 		TidbitKind r = tidbitKindDao.get(reassignId);
 		if ( k != null && r != null ) {
