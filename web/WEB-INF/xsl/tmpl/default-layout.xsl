@@ -113,10 +113,8 @@
 				<script type="text/javascript" src="{$web-context}/js/prototype.js"><xsl:text> </xsl:text></script>
 				<script type="text/javascript" src="{$web-context}/js/behaviour.js"><xsl:text> </xsl:text></script>
 				<script type="text/javascript" src="{$web-context}/js/scriptaculous.js"><xsl:text> </xsl:text></script>
-				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}">
-					<xsl:text> </xsl:text>
-				</script>
-				<script id="locale-js" type="text/javascript" src="{$web-context}/js/mmagoff-locale.js?lang={$ctx/x:user-locale}">
+				<script type="text/javascript" src="{$web-context}/js/xweb-locale.js" xml:space="preserve"> </script>
+				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}">
 					<xsl:text> </xsl:text>
 				</script>
 				<script type="text/javascript" src="{$web-context}/js/tidbits-global.js">
@@ -231,7 +229,7 @@
 						<xsl:value-of select="key('i18n','link.home')"/>
 					</a>
 					<xsl:text> - </xsl:text>
-					<a class="link-add-tidbitkind" href="{$web-context}/newTidbitKind.do" 
+					<a class="link-add-kind" href="{$web-context}/newTidbitKind.do" 
 						title="{key('i18n','link.add.tidbitkind.title')}">
 						<xsl:value-of select="key('i18n','link.add.tidbitkind')"/>
 					</a>

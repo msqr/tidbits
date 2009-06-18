@@ -272,6 +272,16 @@ function updateTidbitKinds() {
 	}
 }
 
+function initXwebLocale() {
+	new Ajax.Request(AppState.context+'/messages.json', {
+		method: 'get',
+		parameters: '', 
+		onSuccess: function(xmlRequest) {
+			var data = eval(xmlRequest.responseText);
+			XwebLocale.initJson(data);
+		}});
+}
+
 function updateTidbitKindsSelect(kindSelect, nodes) {
 	clearChildren(kindSelect);
 	for ( var i = 0; i < nodes.length; i++ ) {
@@ -383,6 +393,7 @@ function setupPageFormPager(select) {
 
 var globalTidbitRules = {
 	'body' : function(el) {
+		initXwebLocale();
 		updateTidbitKinds();
 	},
 	
@@ -411,14 +422,14 @@ var globalTidbitRules = {
 	
 	},
 	
-	'#new-tidbitkind-form': function(el) {
+	'#new-kind-form': function(el) {
 	
 	},
 	
 	'#edit-tidbit-form': function(form) {
 		form.onsubmit = function() {
 			if ( $F('edit-tidbit-delete') == 'true' ) {
-				if ( !confirm(MmagoffLocale.i18n('really.delete')) ) {
+				if ( !confirm(XwebLocale.i18n('really.delete')) ) {
 					return false;
 				}
 			}
@@ -453,7 +464,7 @@ var globalTidbitRules = {
 	'#edit-kind-form': function(form) {
 		form.onsubmit = function() {
 			if ( $F('edit-kind-delete') == 'true' ) {
-				if ( !confirm(MmagoffLocale.i18n('really.delete')) ) {
+				if ( !confirm(XwebLocale.i18n('really.delete')) ) {
 					return false;
 				}
 			}
@@ -506,8 +517,8 @@ var globalTidbitRules = {
 		showStandardForm(el,'tidbit','new',false);
 	},
 	
-	'.link-add-tidbitkind': function(el) {
-		showStandardForm(el,'tidbitkind','new',false);
+	'.link-add-kind': function(el) {
+		showStandardForm(el,'kind','new',false);
 	},
 	
 	'.link-import-csv': function(el) {
@@ -520,4 +531,5 @@ var globalTidbitRules = {
 	
 };
 
+var XwebLocale = new XwebLocaleClass();
 var AppState = new ApplicationState();

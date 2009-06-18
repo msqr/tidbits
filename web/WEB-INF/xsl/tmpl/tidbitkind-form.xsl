@@ -16,10 +16,10 @@
 			<xsl:attribute name="id">
 				<xsl:choose>
 					<xsl:when test="$new = 'true'">
-						<xsl:text>new-tidbitkind-form</xsl:text>
+						<xsl:text>new-kind-form</xsl:text>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:text>edit-tidbitkind-form</xsl:text>
+						<xsl:text>edit-kind-form</xsl:text>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
@@ -52,27 +52,32 @@
 					<xsl:attribute name="for">
 						<xsl:choose>
 							<xsl:when test="$new = 'true'">
-								<xsl:text>new-tidbitkind-name</xsl:text>
+								<xsl:text>new-kind-name</xsl:text>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:text>edit-tidbitkind-name</xsl:text>
+								<xsl:text>edit-kind-name</xsl:text>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>					
 					<xsl:value-of select="key('i18n','tidbitkind.name.displayName')"/>
 				</label>
 				<div>
-					<input type="text" name="kind.name" value="{$edit-tidbit-kind/@name}">
+					<input type="text" name="kind.name">
 						<xsl:attribute name="id">
 							<xsl:choose>
 								<xsl:when test="$new = 'true'">
-									<xsl:text>new-tidbitkind-name</xsl:text>
+									<xsl:text>new-kind-name</xsl:text>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:text>edit-tidbitkind-name</xsl:text>
+									<xsl:text>edit-kind-name</xsl:text>
 								</xsl:otherwise>
 							</xsl:choose>
-						</xsl:attribute>					
+						</xsl:attribute>
+						<xsl:attribute name="value">
+							<xsl:if test="not($new = 'true')">
+								<xsl:value-of select="$edit-tidbit-kind/@name"/>
+							</xsl:if>
+						</xsl:attribute>
 					</input>
 				</div>
 			</div>
@@ -81,10 +86,10 @@
 					<xsl:attribute name="for">
 						<xsl:choose>
 							<xsl:when test="$new = 'true'">
-								<xsl:text>new-tidbitkind-comment</xsl:text>
+								<xsl:text>new-kind-comment</xsl:text>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:text>edit-tidbitkind-comment</xsl:text>
+								<xsl:text>edit-kind-comment</xsl:text>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>					
@@ -95,15 +100,15 @@
 						<xsl:attribute name="id">
 							<xsl:choose>
 								<xsl:when test="$new = 'true'">
-									<xsl:text>new-tidbitkind-comment</xsl:text>
+									<xsl:text>new-kind-comment</xsl:text>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:text>edit-tidbitkind-comment</xsl:text>
+									<xsl:text>edit-kind-comment</xsl:text>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:attribute>					
 						<xsl:choose>
-							<xsl:when test="string($edit-tidbit-kind/t:comment)">
+							<xsl:when test="not($new = 'true') and string($edit-tidbit-kind/t:comment)">
 								<xsl:value-of select="$edit-tidbit-kind/t:comment"/>
 							</xsl:when>
 							<xsl:otherwise>
@@ -115,18 +120,35 @@
 						select="key('i18n','optional.caption')"/></div>
 				</div>
 			</div>
+			<xsl:if test="not($new = 'true')">
+				<div>
+					<label for="edit-kind-reassign">
+						<xsl:value-of select="key('i18n','tidbitkind.reassign.displayName')"/>
+					</label>
+					<div>
+						<select name="reassign" id="edit-kind-reassign">
+							<xsl:for-each select="//t:model/t:kind">
+								<option value="{@kind-id}">
+									<xsl:value-of select="@name"/>
+								</option>
+							</xsl:for-each>
+						</select>
+						<div class="caption"><xsl:value-of select="key('i18n','reassign.caption')"/></div>
+					</div>
+				</div>
+			</xsl:if>
 			<div class="submit">
 				<xsl:choose>
 					<xsl:when test="$new = 'true'">
 						<input value="{key('i18n','add.displayName')}" type="submit" />
 					</xsl:when>
 					<xsl:otherwise>
-						<input type="hidden" id="edit-tidbitkind-id" name="tidbit.tidbitId" 
+						<input type="hidden" id="edit-kind-id" name="kind.kindId" 
 							value="{$edit-tidbit-kind/@kind-id}" />
-						<input type="hidden" id="edit-tidbitkind-delete" name="delete" value="false" />
-						<input value="{key('i18n','save.displayName')}" id="edit-tidbitkind-submit" type="submit" />
+						<input type="hidden" id="edit-kind-delete" name="delete" value="false" />
+						<input value="{key('i18n','save.displayName')}" id="edit-kind-submit" type="submit" />
 						<xsl:if test="$handheld != 'true'">
-							<input value="{key('i18n','delete.displayName')}" id="edit-tidbitkind-submit-delete" type="submit" />
+							<input value="{key('i18n','delete.displayName')}" id="edit-kind-submit-delete" type="submit" />
 						</xsl:if>
 					</xsl:otherwise>
 				</xsl:choose>

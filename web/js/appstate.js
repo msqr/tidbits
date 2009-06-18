@@ -6,35 +6,37 @@ ApplicationState.prototype = {
 	initialize: function() {
 		this.selected = new Array(); // selected items
 		this.context = '/mywebapp'; // default context
+		this.lang = 'en_US'; // default lang
 		
 		if ((typeof Prototype=='undefined') ||
 				parseFloat(Prototype.Version.split(".")[0] + "." +
-		         Prototype.Version.split(".")[1]) < 1.4)
-			throw("MatteState requires the Prototype JavaScript framework >= 1.4.0");
+		         Prototype.Version.split(".")[1]) < 1.4) {
+			throw("ApplicationState requires the Prototype JavaScript framework >= 1.4.0");
+		}
 			
-		var me = this;
-		
-		/* AUGH, Firefox fails on this with Scriptaculous there, too. Safari OK
-		$A(document.getElementsByTagName("script")).findAll( function(s) {
-			return (s.src && s.src.match(/behaviours\.js(\?.*)?$/))
-		}).each( function(s) {
-			var path = s.src.replace(/behaviours\.js(\?.*)?$/,'');
-			var myContext = s.src.match(/\?.*context=([^ &]+)/);
-			if ( myContext ) me.setContext(myContext[1]);
-		});
-		*/
 		var s = $('appstate-js');
-		var myContext = s.src.match(/\?.*context=([^ &]+)/);
-		if ( myContext ) me.setContext(myContext[1]);
+		var myContext = s.src.match(/\?.*context=([^ &]+)&lang=([^ &]+)/);
+		if ( myContext ) {
+			this.setContext(myContext[1]);
+			this.setLang(myContext[2]);
+		}
 
 	},
 	
 	/**
-	 * Set the web context path (eg. '/ma2').
+	 * Set the web context path (eg. '/tidbits').
 	 * @param theContext {String} the web context path to set
 	 */
 	setContext: function(theContext) {
 		this.context = theContext;
+	},
+	
+	/**
+	 * Set the language (eg. 'en_US').
+	 * @param theLang {String} the language to set
+	 */
+	setLang: function(theLang) {
+		this.lang = theLang;
 	}
 	
 }

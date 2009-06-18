@@ -96,12 +96,6 @@
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="ui.elements">
-		<xsl:call-template name="tidbitkind.form">
-			<xsl:with-param name="new" select="'true'"/>
-		</xsl:call-template>
-		<xsl:call-template name="tidbitkind.form">
-			<xsl:with-param name="new" select="'false'"/>
-		</xsl:call-template>
 		<xsl:call-template name="tidbit.form">
 			<xsl:with-param name="new" select="'true'"/>
 		</xsl:call-template>
