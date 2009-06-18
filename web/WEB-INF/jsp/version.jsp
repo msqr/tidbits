@@ -4,18 +4,20 @@
 	<head>
 		<title>@APP_NAME@ Version</title>
 		<style type="text/css">
-			pre			
-			{
+			pre {
 				white-space: pre;
 				font-family: monospace;
 			}
 		</style>
 	</head>
 	<body>
-		<pre>
+<h1>@APP_NAME@ Version</h1>
+<pre>
 App:     @APP_NAME@ 
 Build:   @BUILD_VERSION@
 Date:    @BUILD_DATE@
+Target:  @BUILD_TARGET_ENV@
+Host:    <%= java.net.InetAddress.getLocalHost().getHostName() %>
 </pre>
 	</body>
 </html>

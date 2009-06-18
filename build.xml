@@ -255,13 +255,14 @@
 				<include name="**"/>
 				<exclude name="version.jsp"/>
 				<exclude name="WEB-INF/classes/**"/>
+				<exclude name="WEB-INF/jsp/version.jsp"/>
 			</fileset>
 		</copy>
 		
 		<!-- copy and filter version.jsp file -->
 		<copy todir="${dir.app.dest}">
 			<fileset dir="${dir.web}">
-				<include name="version.jsp"/>
+				<include name="WEB-INF/jsp/version.jsp"/>
 			</fileset>
 			<filterset>
 				<filter token="APP_NAME" value="${build.name}" />

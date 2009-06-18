@@ -22,6 +22,7 @@
 				<prop key="/login.do">urlFilenameController</prop>
 				<prop key="/logoff.do">logoff</prop>
 				<prop key="/manageKinds.do">manageKinds</prop>
+				<prop key="/messages.json">urlFilenameController</prop>
 				<prop key="/newTidbit.do">addTidbit</prop>
 				<prop key="/newTidbitKind.do">addTidbitKind</prop>
 				<prop key="/setupWizard.do">setupWizardForm</prop>
@@ -30,8 +31,7 @@
 				<prop key="/search.do">searchForm</prop>
 				<prop key="/shadow.do">shadow</prop>
 				<prop key="/tidbit.do">tidbit</prop>
-
-				<prop key="/messages.json">urlFilenameController</prop>
+				<prop key="/version.do">urlFilenameController</prop>
 			</props>
 		</property>
 	</bean>
