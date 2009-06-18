@@ -120,7 +120,7 @@
 						select="key('i18n','optional.caption')"/></div>
 				</div>
 			</div>
-			<xsl:if test="not($new = 'true')">
+			<xsl:if test="not($new = 'true') and //t:model/t:kind">
 				<div>
 					<label for="edit-kind-reassign">
 						<xsl:value-of select="key('i18n','tidbitkind.reassign.displayName')"/>
