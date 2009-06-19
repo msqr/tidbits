@@ -24,6 +24,32 @@ function initLocale() {
 		});
 }
 
+/**
+ * Get a Tidbit ID from an "id" attribute of the form "tidbit-XX"
+ * where XX is the ID.
+ */
+function getTidbitId(node) {
+	if ( node.getAttribute('id') == null ) return;
+	var data = node.getAttribute('id').match(/tidbit-(\d+)/);
+	if ( data ) {
+		return data[1];
+	}
+	return null;
+}
+
+/**
+ * Get a TidbitKind ID from an "id" attribute of the form "kind-XX"
+ * where XX is the ID.
+ */
+function getKindId(node) {
+	if ( node.getAttribute('id') == null ) return;
+	var data = node.getAttribute('id').match(/kind-(\d+)/);
+	if ( data ) {
+		return data[1];
+	}
+	return null;
+}
+
 function populateTidbitKinds() {
 	var selects = $j('#new-tidbit-kind,#edit-tidbit-kind');
 	if ( selects.size() > 0 ) {
@@ -202,7 +228,7 @@ function setupEditRowMouseover(row) {
 		if ( AppState.editBtn && btns.get(0) != AppState.editBtn ) {
 			$j(AppState.editBtn).hide();
 		}
-		$(btns).show();
+		$j(btns).show();
 		AppState.editBtn = btns.get(0);
 	});
 }
@@ -329,7 +355,7 @@ $j(document).ready(function() {
 	});
 	
 	$j('#edit-tidbit-submit').click(function() {
-		$('#edit-tidbit-delete').val('false');
+		$j('#edit-tidbit-delete').val('false');
 	});
 	
 	$j('#edit-kind-form').submit(function() {
@@ -377,17 +403,17 @@ $j(document).ready(function() {
 	$j('#top-hide').addClass('top-hide').show();
 	
 	$j('.link-add-tidbit').click(function() {
-		standardShowForm('tidbit','new');
+		standardFormShow('tidbit','new');
 		return false;
 	});
 	
 	$j('.link-add-kind').click(function() {
-		standardShowForm('kind','new');
+		standardFormShow('kind','new');
 		return false;
 	});
 	
 	$j('.link-import-csv').click(function() {
-		standardShowForm('csv','import');
+		standardFormShow('csv','import');
 		return false;
 	});
 
