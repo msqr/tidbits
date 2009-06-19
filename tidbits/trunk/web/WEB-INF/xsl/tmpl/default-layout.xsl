@@ -120,6 +120,9 @@
 				<script type="text/javascript" src="{$web-context}/js/tidbits-global.js">
 					<xsl:text> </xsl:text>
 				</script>
+				<script type="text/javascript" src="{$web-context}/js/jquery-1.3.2.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js/jquery.center.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js/tidbits.js" xml:space="preserve"> </script>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

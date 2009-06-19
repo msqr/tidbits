@@ -70,4 +70,18 @@
 		<property name="includeXwebMessages" value="true"/>
 	</bean>
 	
+	<!--
+		json: return JSON encoded data
+	-->
+	<bean id="json" class="magoffin.matt.xweb.util.JSONView">
+		<property name="contentType" value="text/javascript; charset=UTF-8"/>
+		<property name="indentAmount" value="2"/>
+		<property name="javaBeanIgnoreProperties">
+			<set>
+				<value>class</value>
+				<value>primaryInterface</value>
+			</set>
+		</property>
+	</bean>
+	
 </beans>

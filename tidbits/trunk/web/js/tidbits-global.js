@@ -44,6 +44,7 @@ function doStandardAjaxResult(xmlRequest,dialogForm,dismissCallback,msgPane,msgC
 }
 
 /**
+ * TODO remove me
  * Default method for displaying a message to the user.
  */
 function doStandardMessageDisplay(fullMessage,dismissCallback,msgPane,msgContentPane) {
@@ -267,7 +268,7 @@ var globalAjaxHandlers = {
 
 Ajax.Responders.register(globalAjaxHandlers);
 
-function updateTidbitKinds() {
+/*function updateTidbitKinds() {
 	var addSelect = $('new-tidbit-kind');
 	var editSelect = $('edit-tidbit-kind');
 	if ( addSelect || editSelect ) {
@@ -361,8 +362,9 @@ function setupEditKindButton(button) {
 			}});
 	};
 }
+*/
 
-function setupEditRowMouseover(row) {
+/*function setupEditRowMouseover(row) {
 	var editBtn = $(row).getElementsByClassName('edit-btn');
 	if ( !editBtn || editBtn.length < 1 ) {
 		editBtn = $(row).getElementsByClassName('edit-kind-btn');
@@ -397,16 +399,16 @@ function setupDataClick(cell) {
 					function(){});
 			}});
 	}
-}
+}*/
 
-function setupPageFormPager(select) {
+/*function setupPageFormPager(select) {
 	select.onchange = function() {
 		select.form.submit();
 	}
-}
+}*/
 
 var globalTidbitRules = {
-	'body' : function(el) {
+	/*'body' : function(el) {
 		initXwebLocale();
 		updateTidbitKinds();
 	},
@@ -541,9 +543,48 @@ var globalTidbitRules = {
 	
 	'.link-search-tidbit': function(el) {
 		showStandardForm(el,'tidbit','search',false);
-	}
+	}*/
 	
 };
 
-var XwebLocale = new XwebLocaleClass();
-var AppState = new ApplicationState();
+var WorkingPeriodicalExecutor = Class.create();
+WorkingPeriodicalExecutor.prototype = {
+	initialize: function(frequency, callback) {
+		this.frequency = frequency || 2;
+		this.callback = callback || function () {
+			new Insertion.Bottom('system-working','.');
+		};
+		this.currentlyExecuting = false;
+		this.working = $('system-working');
+		this.originalWorkingValue = this.working.firstChild.nodeValue;
+		this.registerCallback();
+	},
+
+	registerCallback: function() {
+		if ( !this.timer ) {
+			this.timer = setInterval(this.onTimerEvent.bind(this), this.frequency * 1000);
+		}
+	},
+	
+	start: function() {
+		this.registerCallback();
+	},
+	
+	stop: function() {
+		clearTimeout(this.timer);
+		this.timer = null;
+		Element.update(this.working,this.originalWorkingValue);
+	},
+	
+	onTimerEvent: function() {
+		if (!this.currentlyExecuting) {
+			try {
+				this.currentlyExecuting = true;
+				this.callback();
+			} finally {
+				this.currentlyExecuting = false;
+			}
+		}
+	}
+}
+
