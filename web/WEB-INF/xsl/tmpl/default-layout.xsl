@@ -53,11 +53,6 @@
 				<title><xsl:value-of select="$layout.page.title"/></title>
 				<xsl:apply-templates select="." mode="page-head-basecontent"/>
 				<xsl:apply-templates select="." mode="page-head-content"/>
-				<!--xsl:if test="$req[@key='debug'] = 'true'">
-					<script type="text/javascript">
-						showDebug();
-					</script>
-				</xsl:if-->
 			</head>
 			<body>
 				<xsl:if test="string($layout.body.class)">
@@ -106,22 +101,22 @@
 				<meta name="viewport" content="width=320"/>
 			</xsl:when>
 			<xsl:otherwise>
+				<script type="text/javascript" src="{$web-context}/js/jquery-1.3.2.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js/jquery.center.js" xml:space="preserve"> </script>
 				<!--script type="text/javascript" src="{$web-context}/js/debug.js"><xsl:text> </xsl:text></script-->
-				<script type="text/javascript" src="{$web-context}/js/xslt/misc.js"><xsl:text> </xsl:text></script>
+				<!--script type="text/javascript" src="{$web-context}/js/xslt/misc.js"><xsl:text> </xsl:text></script>
 				<script type="text/javascript" src="{$web-context}/js/xslt/dom.js"><xsl:text> </xsl:text></script>
 				<script type="text/javascript" src="{$web-context}/js/xslt/xpath.js"><xsl:text> </xsl:text></script>
 				<script type="text/javascript" src="{$web-context}/js/prototype.js"><xsl:text> </xsl:text></script>
 				<script type="text/javascript" src="{$web-context}/js/behaviour.js"><xsl:text> </xsl:text></script>
-				<script type="text/javascript" src="{$web-context}/js/scriptaculous.js"><xsl:text> </xsl:text></script>
+				<script type="text/javascript" src="{$web-context}/js/scriptaculous.js"><xsl:text> </xsl:text></script-->
 				<script type="text/javascript" src="{$web-context}/js/xweb-locale.js" xml:space="preserve"> </script>
 				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}">
 					<xsl:text> </xsl:text>
 				</script>
-				<script type="text/javascript" src="{$web-context}/js/tidbits-global.js">
+				<!--script type="text/javascript" src="{$web-context}/js/tidbits-global.js">
 					<xsl:text> </xsl:text>
-				</script>
-				<script type="text/javascript" src="{$web-context}/js/jquery-1.3.2.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js/jquery.center.js" xml:space="preserve"> </script>
+				</script-->
 				<script type="text/javascript" src="{$web-context}/js/tidbits.js" xml:space="preserve"> </script>
 			</xsl:otherwise>
 		</xsl:choose>
