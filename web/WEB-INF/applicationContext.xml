@@ -80,9 +80,7 @@
 	<!-- 
 	 cacheManager: the EHCache CacheManager to enable injecting caches into beans
 	 -->
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"> 
-		<property name="configLocation" value="classpath:/ehcache.xml"/>
-	</bean>
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
 	
 	<!--======================================================================
 		Biz definitions
