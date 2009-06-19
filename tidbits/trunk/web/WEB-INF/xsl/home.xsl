@@ -11,26 +11,6 @@
 	<xsl:import href="tmpl/search-form.xsl"/>
 	<xsl:import href="tmpl/default-layout.xsl"/>
 	
-	<xsl:template match="x:x-data" mode="page-head-content">
-		<xsl:if test="$handheld != 'true'">
-			<xsl:if test="contains($user-agent, 'MSIE')">
-				<xsl:comment>
-					Not all features available when using Internet Explorer!
-					<xsl:value-of select="$user-agent"/>
-				</xsl:comment>
-				<script type="text/javascript" src="{$web-context}/js/tidbits-behaviours-ie.js">
-					<xsl:text> </xsl:text>
-				</script>
-			</xsl:if>
-		</xsl:if>
-	</xsl:template>
-	
-	<!--xsl:template match="x:x-data" mode="page-body-class">
-		<xsl:if test="$display.items.count = 0">
-			<xsl:text>no-sub-nav</xsl:text>
-		</xsl:if>
-	</xsl:template-->
-	
 	<xsl:template match="x:x-data" mode="page-main-nav">
 		<xsl:call-template name="main-nav">
 			<xsl:with-param name="page" select="'home'"/>
@@ -170,7 +150,14 @@
 			<xsl:if test="$handheld != 'true'">
 				<td class="data" id="tidbit-{@tidbit-id}-data">
 					<div class="data-container">
-						<xsl:value-of select="t:data" disable-output-escaping="no" xml:space="preserve"/>
+						<xsl:choose>
+							<xsl:when test="string-length(t:data) &gt; 0">
+								<xsl:value-of select="t:data" disable-output-escaping="no" xml:space="preserve"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text> </xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
 					</div>
 				</td>
 			</xsl:if>

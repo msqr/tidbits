@@ -13,18 +13,6 @@
 		<xsl:value-of select="key('i18n','edit.kinds.title')"/>
 	</xsl:template>
 	
-	<xsl:template match="x:x-data" mode="page-head-content">
-		<xsl:if test="contains($user-agent, 'MSIE')">
-			<xsl:comment>
-				Not all features available when using Internet Explorer!
-				<xsl:value-of select="$user-agent"/>
-			</xsl:comment>
-			<script type="text/javascript" src="{$web-context}/js/tidbits-behaviours-ie.js">
-				<xsl:text> </xsl:text>
-			</script>
-		</xsl:if>
-	</xsl:template>
-		
 	<xsl:template match="x:x-data" mode="page-main-nav">
 		<xsl:call-template name="main-nav">
 			<xsl:with-param name="page" select="'kinds'"/>
