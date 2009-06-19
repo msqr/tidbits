@@ -1,10 +1,10 @@
-var tidbitRules = Object.extend({
+/*var tidbitRules = Object.extend({
 	
 	'h1.title': function(el) {
 		// nothing for IE
 	}
 	
-}, globalTidbitRules);
+}, globalTidbitRules);*/
 
-var IE = true;
-Behaviour.register(tidbitRules);
+IE = true;
+//Behaviour.register(tidbitRules);

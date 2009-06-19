@@ -17,8 +17,10 @@
 			<props>
 				<prop key="/home.do">home</prop>
 				<prop key="/importCsv.do">importCsv</prop>
-				<prop key="/kind.do">kind</prop>
-				<prop key="/kinds.do">kinds</prop>
+				<prop key="/kind.do">kind</prop><!-- TODO remove me -->
+				<prop key="/kind.json">kind.json</prop>
+				<prop key="/kinds.do">kinds</prop><!-- TODO remove me -->
+				<prop key="/kinds.json">kinds.json</prop>
 				<prop key="/login.do">urlFilenameController</prop>
 				<prop key="/logoff.do">logoff</prop>
 				<prop key="/manageKinds.do">manageKinds</prop>
@@ -30,7 +32,8 @@
 				<prop key="/saveTidbitKind.do">saveTidbitKind</prop>
 				<prop key="/search.do">searchForm</prop>
 				<prop key="/shadow.do">shadow</prop>
-				<prop key="/tidbit.do">tidbit</prop>
+				<prop key="/tidbit.do">tidbit</prop><!-- TODO remove me -->
+				<prop key="/tidbit.json">tidbit.json</prop>
 				<prop key="/version.do">urlFilenameController</prop>
 			</props>
 		</property>
@@ -136,6 +139,12 @@
 		<property name="errorView" value="xml-service"/>
 	</bean>
 	
+	<!-- Abstract base form definition for JSON services. -->
+	<bean id="baseJsonController" parent="baseController" abstract="true">
+		<property name="successView" value="json"/>
+		<property name="errorView" value="json"/>
+	</bean>
+	
 	<!-- Setup wizard form -->
 	<bean name="setupWizardForm" class="magoffin.matt.tidbits.web.SetupWizard">
 		<property name="commandName" value="cmd"/>
@@ -194,12 +203,20 @@
 	<bean id="urlFilenameController" 
 		class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 		
-	<!-- Kind -->
+	<!-- TODO: remove me -->
 	<bean id="kind"  parent="baseServiceController" 
 		class="magoffin.matt.tidbits.web.TidbitKindController"/>
 	
-	<!-- Kinds -->
+	<!-- Kind JSON -->
+	<bean id="kind.json"  parent="baseJsonController" 
+		class="magoffin.matt.tidbits.web.TidbitKindController"/>
+	
+	<!-- TODO remove me -->
 	<bean id="kinds"  parent="baseServiceController" 
+		class="magoffin.matt.tidbits.web.TidbitKindsController"/>
+	
+	<!-- Kinds JSON -->
+	<bean id="kinds.json"  parent="baseJsonController" 
 		class="magoffin.matt.tidbits.web.TidbitKindsController"/>
 	
 	<!-- Shadow -->
@@ -266,10 +283,14 @@
 		<property name="successView" value="kinds-redirect"/>
 	</bean>
 	
-	<!-- tidbit: get a single Tidbit as XML -->
+	<!-- TODO: remove me -->
 	<bean id="tidbit" parent="baseServiceController" 
 		class="magoffin.matt.tidbits.web.TidbitController">
-		<!--property name="successView" value="tidbit-service"/-->
+	</bean>
+	
+	<!-- tidbit: get a single Tidbit as JSON -->
+	<bean id="tidbit.json" parent="baseJsonController" 
+		class="magoffin.matt.tidbits.web.TidbitController">
 	</bean>
 	
 </beans>

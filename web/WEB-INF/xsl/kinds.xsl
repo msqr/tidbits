@@ -14,22 +14,15 @@
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="page-head-content">
-		<xsl:choose>
-			<xsl:when test="not(contains($user-agent, 'MSIE'))">
-				<script type="text/javascript" src="{$web-context}/js/tidbits-behaviours.js">
-					<xsl:text> </xsl:text>
-				</script>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:comment>
-					Not all features available when using Internet Explorer!
-					<xsl:value-of select="$user-agent"/>
-				</xsl:comment>
-				<script type="text/javascript" src="{$web-context}/js/tidbits-behaviours-ie.js">
-					<xsl:text> </xsl:text>
-				</script>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:if test="contains($user-agent, 'MSIE')">
+			<xsl:comment>
+				Not all features available when using Internet Explorer!
+				<xsl:value-of select="$user-agent"/>
+			</xsl:comment>
+			<script type="text/javascript" src="{$web-context}/js/tidbits-behaviours-ie.js">
+				<xsl:text> </xsl:text>
+			</script>
+		</xsl:if>
 	</xsl:template>
 		
 	<xsl:template match="x:x-data" mode="page-main-nav">

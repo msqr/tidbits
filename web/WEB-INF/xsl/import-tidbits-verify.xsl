@@ -9,9 +9,6 @@
 	<xsl:import href="tmpl/default-layout.xsl"/>
 	
 	<xsl:template match="x:x-data" mode="page-head-content">
-		<script type="text/javascript" src="{$web-context}/js/tidbits-behaviours.js">
-			<xsl:text> </xsl:text>
-		</script>
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="page-main-nav">
