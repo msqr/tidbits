@@ -109,10 +109,10 @@ implements TidbitDao {
 			return results;
 		}
 		
-		Integer count = (Integer)getHibernateTemplate().execute(new HibernateCallback() {
+		Number count = (Number)getHibernateTemplate().execute(new HibernateCallback() {
 			public Object doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.getNamedQuery(FIND_ALL_COUNT);
-				return ((Integer)query.iterate().next() ).intValue();
+				return query.iterate().next();
 			}
 		});
 		
