@@ -1,74 +1,64 @@
-/**
- * @author Alexandre Magno
- * @desc Center a element with jQuery
- * @version 1.0
- * @example
- * $("element").center({
- *
- * 		vertical: true,
- *      horizontal: true
- *
- * });
- * @obs With no arguments, the default is above
- * @license free
- * @param bool vertical, bool horizontal
- * @contribution Paulo Radichi
- *
- */
-jQuery.fn.center = function(params) {
+/***
+@title:
+Center
 
-		var options = {
+@version:
+2.0
 
-			vertical: true,
-			horizontal: true
+@author:
+Andreas Lagerkvist
 
+@date:
+2008-09-17
+
+@url:
+http://andreaslagerkvist.com/jquery/center/
+
+@license:
+http://creativecommons.org/licenses/by/3.0/
+
+@copyright:
+2008 Andreas Lagerkvist (andreaslagerkvist.com)
+
+@requires:
+jquery
+
+@does:
+This little pluggy centers an element on the screen using either fixed or absolute positioning. Can be used to display messages, pop up images etc.
+
+@howto:
+jQuery('#my-element').center(true); would center the element with ID 'my-element' using absolute position (leave empty for fixed).
+
+@exampleHTML:
+<p>I should be fixed centered</p>
+
+<p>The paragraph above and the paragraph beneath this one are centered. They should be in the middle of the viewport.</p>
+
+<p>I should be absolutely centered</p>
+
+@exampleJS:
+jQuery('#jquery-center-example p:first-child').center();
+jQuery('#jquery-center-example p:last-child').center(true);
+***/
+jQuery.fn.center = function (absolute) {
+	return this.each(function () {
+		var t = jQuery(this);
+
+		t.css({
+			position:	absolute ? 'absolute' : 'fixed', 
+			left:		'50%', 
+			top:		'50%', 
+			zIndex:		'99'
+		}).css({
+			marginLeft:	'-' + (t.outerWidth() / 2) + 'px', 
+			marginTop:	'-' + (t.outerHeight() / 2) + 'px'
+		});
+
+		if (absolute) {
+			t.css({
+				marginTop:	parseInt(t.css('marginTop'), 10) + jQuery(window).scrollTop(), 
+				marginLeft:	parseInt(t.css('marginLeft'), 10) + jQuery(window).scrollLeft()
+			});
 		}
-		op = jQuery.extend(options, params);
-
-   return this.each(function(){
-
-		//initializing variables
-		var $self = jQuery(this);
-		//get the dimensions using dimensions plugin
-		var width = $self.width();
-		var height = $self.height();
-		//get the paddings
-		var paddingTop = parseInt($self.css("padding-top"));
-		var paddingBottom = parseInt($self.css("padding-bottom"));
-		//get the borders
-		var borderTop = parseInt($self.css("border-top-width"));
-		var borderBottom = parseInt($self.css("border-bottom-width"));
-		//get the media of padding and borders
-		var mediaBorder = (borderTop+borderBottom)/2;
-		var mediaPadding = (paddingTop+paddingBottom)/2;
-		//get the type of positioning
-		var positionType = $self.parent().css("position");
-		// get the half minus of width and height
-		var halfWidth = (width/2)*(-1);
-		var halfHeight = ((height/2)*(-1))-mediaPadding-mediaBorder;
-		// initializing the css properties
-		var cssProp = {
-			position: 'absolute'
-		};
-
-		if(op.vertical) {
-			cssProp.height = height;
-			cssProp.top = '50%';
-			cssProp.marginTop = halfHeight;
-		}
-		if(op.horizontal) {
-			cssProp.width = width;
-			cssProp.left = '50%';
-			cssProp.marginLeft = halfWidth;
-		}
-		//check the current position
-		if(positionType == 'static') {
-			$self.parent().css("position","relative");
-		}
-		//aplying the css
-		$self.css(cssProp);
-
-
-   });
-
+	});
 };
