@@ -53,8 +53,7 @@ public class SetupWizard extends AbstractWizardForm {
 	public static final String SETTING_KEY_SETUP_COMPLETE = "app.setup.complete";
 	
 	private XwebParamDao settingDao;
-	private String settingKeyPrefix = "env:";
-    private String originalHibernateDialect;
+	private String originalHibernateDialect;
     private Map<String, String> defaultSettings = new LinkedHashMap<String, String>();
     
     /** Command object for SetupWizard. */
@@ -176,7 +175,7 @@ public class SetupWizard extends AbstractWizardForm {
 	throws Exception {
 		Command setup = (Command)command;
 		for ( Map.Entry<String, String> me : setup.getSettings().entrySet() ) {
-			String key = this.settingKeyPrefix +me.getKey();
+			String key = me.getKey();
 			XwebParameter setting = getDomainObjectFactory().newXwebParameterInstance();
 			setting.setKey(key);
 			setting.setValue(me.getValue());
@@ -187,13 +186,13 @@ public class SetupWizard extends AbstractWizardForm {
 		if ( setup.changedHibernateDialect ) {
 			// add "we're NOT setup" into db
 			XwebParameter setting = getDomainObjectFactory().newXwebParameterInstance();
-			setting.setKey(this.settingKeyPrefix+SETTING_KEY_SETUP_COMPLETE);
+			setting.setKey(SETTING_KEY_SETUP_COMPLETE);
 			setting.setValue(Boolean.FALSE.toString());
 			this.settingDao.updateParameter(setting);
 		} else {
 			// add the "we're setup" key into the database
 			XwebParameter setting = getDomainObjectFactory().newXwebParameterInstance();
-			setting.setKey(this.settingKeyPrefix+SETTING_KEY_SETUP_COMPLETE);
+			setting.setKey(SETTING_KEY_SETUP_COMPLETE);
 			setting.setValue(Boolean.TRUE.toString());
 			this.settingDao.updateParameter(setting);
 		}
@@ -243,20 +242,6 @@ public class SetupWizard extends AbstractWizardForm {
 	 */
 	public void setSettingDao(XwebParamDao settingDao) {
 		this.settingDao = settingDao;
-	}
-	
-	/**
-	 * @return the settingKeyPrefix
-	 */
-	public String getSettingKeyPrefix() {
-		return settingKeyPrefix;
-	}
-	
-	/**
-	 * @param settingKeyPrefix the settingKeyPrefix to set
-	 */
-	public void setSettingKeyPrefix(String settingKeyPrefix) {
-		this.settingKeyPrefix = settingKeyPrefix;
 	}
 	
 }

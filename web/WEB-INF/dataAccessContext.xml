@@ -94,6 +94,7 @@
 	<bean id="settingsDao" 
 		class="magoffin.matt.xweb.util.XwebJdbcParamDao">
 		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+		<property name="keyPrefix" value="env:"/>
 	</bean>
 	
 </beans>
