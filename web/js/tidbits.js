@@ -1,4 +1,4 @@
-/* Depends on initialized AppState instance of ApplicationState, from appstate.js */
+/* Depends on appstate.js */
 
 jQuery.fn.log = function (msg) {
 	if ( console && console.log ) {
@@ -102,7 +102,7 @@ function standardDialogDisplay(dialogContent,dialogPane,dialogContentPane,afterA
 
 	if ( dialogContentPane.children().size() > 0 ) {
 		// move current child node back to ui-elements
-		$j('ui-elements').append(dialogContentPane.children());
+		$j('#ui-elements').append(dialogContentPane.children());
 	}
 	dialogContentPane.append(dialogContent);
 	
