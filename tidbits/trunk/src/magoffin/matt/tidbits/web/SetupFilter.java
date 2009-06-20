@@ -55,7 +55,6 @@ public class SetupFilter extends GenericFilterBean {
 	
 	private String setupPath = "/setupWizard.do";
 	private boolean setupComplete = false;
-	private String keyPrefix = "";
 
 	@Override
 	public void destroy() {
@@ -89,24 +88,10 @@ public class SetupFilter extends GenericFilterBean {
 				webApp, XwebParamDao.class, false, false);
 		Assert.notNull(settingDao, "XwebParamDao not available");
 		XwebParameter setupParam = settingDao.getParameter(
-				keyPrefix+SetupWizard.SETTING_KEY_SETUP_COMPLETE);
+				SetupWizard.SETTING_KEY_SETUP_COMPLETE);
 		if ( setupParam != null ) {
 			setupComplete = Boolean.parseBoolean(setupParam.getValue());
 		}
-	}
-	
-	/**
-	 * @return the keyPrefix
-	 */
-	public String getKeyPrefix() {
-		return keyPrefix;
-	}
-	
-	/**
-	 * @param keyPrefix the keyPrefix to set
-	 */
-	public void setKeyPrefix(String keyPrefix) {
-		this.keyPrefix = keyPrefix;
 	}
 	
 	/**

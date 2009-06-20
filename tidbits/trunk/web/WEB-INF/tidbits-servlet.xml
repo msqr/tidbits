@@ -164,7 +164,6 @@
 		<property name="successView" value="setup-complete"/>
 		<property name="allowDirtyBack" value="true"/>
 		<property name="settingDao" ref="settingsDao"/>
-		<property name="settingKeyPrefix" value="env:"/>
 		<property name="originalHibernateDialect" 
 			value="${hibernate.dialect}"/>
 		<property name="domainObjectFactory" 
