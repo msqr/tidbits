@@ -55,9 +55,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class SearchForm extends AbstractForm {
 	
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.Errors)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
@@ -71,12 +68,11 @@ public class SearchForm extends AbstractForm {
 
 	@Override
 	protected Object formBackingObject(HttpServletRequest request) throws Exception {
-		SearchCommand cmd = (SearchCommand)request.getSession().getAttribute(
-				"magoffin.matt.tidbits.SEARCH_FORM");
+		String key = "magoffin.matt.tidbits.SEARCH_FORM:" +getCommandClass().getSimpleName();
+		SearchCommand cmd = (SearchCommand)request.getSession().getAttribute(key);
 		if ( cmd == null ) {
-			cmd = new SearchCommand();
-			request.getSession().setAttribute(
-					"magoffin.matt.tidbits.SEARCH_FORM", cmd);
+			cmd = (SearchCommand)createCommand();
+			request.getSession().setAttribute(key, cmd);
 		}
 		return cmd;
 	}

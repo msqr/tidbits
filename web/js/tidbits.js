@@ -424,4 +424,18 @@ $j(document).ready(function() {
 		return false;
 	});
 
+	$j('#datatable').dataTable( {
+		'bProcessing': true,
+		'bServerSide': true,
+		'sAjaxSource': AppState.context +'/search.json',
+		'fnServerData': function ( sSource, aoData, fnCallback ) {
+			$j.ajax({
+				"dataType": 'json', 
+				"type": "POST", 
+				"url": sSource, 
+				"data": aoData, 
+				"success": fnCallback
+			});
+		}
+	});
 });
