@@ -217,7 +217,6 @@ function standardMessageDisplay(fullMessage,dismissCallback,msgPane,msgContentPa
 	standardShadowDisplay(msgPane);
 }
 
-
 function setupEditRowMouseover(row) {
 	var jRow = $j(row);
 	var btns = jRow.find('.edit-btn,.edit-kind-btn');
@@ -233,22 +232,6 @@ function setupEditRowMouseover(row) {
 	});
 }
 
-function setupDataClick(cell) {
-	var id = getTidbitId(cell);
-	$j(cell).click(function() {
-		$j.getJSON(AppState.context +'/tidbit.json?tidbitId=' +id,
-			function(data) {
-				var tidbit = getJsonModelObject(data).tidbit;
-				if ( !(tidbit && tidbit.length) ) {
-					return;
-				}
-				tidbit = tidbit[0];
-				standardMessageDisplay('<div class="data-display">' +tidbit.data +'</div>', 
-						function(){});
-			});
-	});
-}
-
 /**
  * Select a menu option based on a given value.
  * 
@@ -261,30 +244,38 @@ function setSelectedValue(menu, value) {
 	});
 }
 
+function editButtonAction(id) {
+	$j.getJSON(AppState.context +'/tidbit.json?tidbitId=' +id,
+		function(data) {
+			var tidbit = getJsonModelObject(data).tidbit;
+			if ( !(tidbit && tidbit.length) ) {
+				return;
+			}
+			tidbit = tidbit[0];
+			
+			// update form fields
+			$j('#edit-tidbit-delete').val('false');
+			$j('#edit-tidbit-id').val(id);
+			$j('#edit-tidbit-name').val(tidbit.name);
+			$j('#edit-tidbit-data').val(tidbit.data);
+			$j('#edit-tidbit-comment').val(tidbit.comment);
+			setSelectedValue('#edit-tidbit-kind', tidbit.kind['kind-id']);
+			
+			standardFormShow('tidbit','edit',false);
+		});
+}
 
-function setupEditButton(button) {
-	var id = getTidbitId(button);
-	if ( !id) return;
-	$j(button).click(function() {
-		$j.getJSON(AppState.context +'/tidbit.json?tidbitId=' +id,
+function dataCellAction(id) {
+	$j.getJSON(AppState.context +'/tidbit.json?tidbitId=' +id,
 			function(data) {
 				var tidbit = getJsonModelObject(data).tidbit;
 				if ( !(tidbit && tidbit.length) ) {
 					return;
 				}
 				tidbit = tidbit[0];
-				
-				// update form fields
-				$j('#edit-tidbit-delete').val('false');
-				$j('#edit-tidbit-id').val(id);
-				$j('#edit-tidbit-name').val(tidbit.name);
-				$j('#edit-tidbit-data').val(tidbit.data);
-				$j('#edit-tidbit-comment').val(tidbit.comment);
-				setSelectedValue('#edit-tidbit-kind', tidbit.kind['kind-id']);
-				
-				standardFormShow('tidbit','edit',false);
+				standardMessageDisplay('<div class="data-display">' +tidbit.data +'</div>', 
+						function(){});
 			});
-	});
 }
 
 function setupEditKindButton(button) {
@@ -331,9 +322,32 @@ $j(document).bind("XwebLocaleReady", function() {
 	
 	$j('#top-hide').addClass('top-hide').show();
 	
+	
+	var searchPlaceholder = XwebLocale.i18n('search.placeholder')
+	$j('#nav-search-tidbit-form').submit(function() {
+		var q = $j(this).find('input').val();
+		dataTable.fnFilter(q,null,false);
+		return false;
+	}).find('input.search-otherbrowser').focus(function() {
+		var currVal = $j(this).val();
+		if ( currVal == searchPlaceholder ) {
+			$j(this).val('').removeClass('placeholder');
+		}
+	}).blur(function() {
+		var currVal = $j(this).val();
+		if ( currVal == '' ) {
+			$j(this).val(searchPlaceholder).addClass('placeholder');
+		}
+	}).each(function() {
+		var currVal = $j(this).val();
+		if ( currVal == '' ) {
+			$j(this).val(searchPlaceholder).addClass('placeholder');
+		}
+	});
 });
 
 var XwebLocale = new XwebLocaleClass();
+var dataTable;
 $j(document).ready(function() {
 	initLocale();
 	populateTidbitKinds();
@@ -387,17 +401,40 @@ $j(document).ready(function() {
 	$j('#edit-kind-submit').click(function() {
 		$j('edit-kind-delete').val('false');
 	});
-
+	
 	$j('.tidbit-data-row').each(function() {
 		setupEditRowMouseover(this);
 	});
-	
-	$j('td.data').each(function() {
-		setupDataClick(this);
+
+	$j('#datatable tbody tr').live('mouseover', function() {
+		var jRow = $j(this);
+		var btns = jRow.find('.edit-btn,.edit-kind-btn');
+		if ( btns.size() < 1 ) {
+			return;
+		}
+		if ( AppState.editBtn && btns.get(0) != AppState.editBtn ) {
+			$j(AppState.editBtn).hide();
+		}
+		$j(btns).show();
+		AppState.editBtn = btns.get(0);
 	});
 	
-	$j('.edit-btn').each(function() {
-		setupEditButton(this);
+	$j('td.data').live('click', function() {
+		var btns = $j(this).prevAll('td.edit-button').find('.edit-btn,.edit-kind-btn');
+		if ( btns.size() < 1 ) {
+			return;
+		}
+		var id = getTidbitId(btns.get(0));
+		if ( !id ) {
+			return;
+		}
+		dataCellAction(id);
+	});
+	
+	$j('div.edit-btn').live('click', function() {
+		var id = getTidbitId(this);
+		if ( !id ) return;
+		editButtonAction(id);	
 	});
 	
 	$j('.edit-kind-btn').each(function() {
@@ -424,29 +461,49 @@ $j(document).ready(function() {
 		return false;
 	});
 
-	var dataTable = $j('#datatable').dataTable( {
+	dataTable = $j('#datatable').dataTable( {
 		'bProcessing': false,
 		'bServerSide': true,
 		'bFilter':  false,
-		'bAutoWidth': true,
-		'bInfo' : true,
+		'bAutoWidth': false,
+		'bInfo': true,
+		'bSort': false,
 		'sAjaxSource': AppState.context +'/search.json',
 		'sPaginationType': 'full_numbers',
 		'fnServerData': function ( sSource, aoData, fnCallback ) {
-			$j.ajax({
-				"dataType": 'json', 
-				"type": "POST", 
-				"url": sSource, 
-				"data": aoData, 
-				"success": fnCallback
-			});
-		}
+				$j.ajax({
+					"dataType": 'json', 
+					"type": "POST", 
+					"url": sSource, 
+					"data": aoData, 
+					"success": function(data, textStatus) {
+						if ( data.iTotalRecords ) {
+							if ( data.iTotalRecords > 0 ) {
+								$j('#body-content').show();
+							} else {
+								$j('#body-content').hide();
+							}
+							if ( data.iTotalDisplayRecords <= data.iTotalRecords ) {
+								$j('#datatable_length').show();
+								// TODO $j('#datatable_wrapper').find('div.dataTables_paginate').show();
+							} else {
+								$j('#datatable_length').hide();
+								// TODO $j('#datatable_wrapper').find('div.dataTables_paginate').hide();
+							}
+						}
+						if ( fnCallback ) {
+							fnCallback.call(this, data, textStatus);
+						}
+					}
+				});
+			},
+		'aoColumns': [{ 'sClass': 'right' }, {
+				'fnRender': function(obj) {
+					return '<div class="edit-btn" id="tidbit-' +obj.aData[1] +'-edit" style="display: none;"></div>';
+				},
+				'sClass': 'edit-button'
+			}, null, null, { 'sClass': 'data'}, null, null, null]
 	});
 	
-	// TODO remove this
-	$j('#nav-search-tidbit-form').submit(function() {
-		var q = $j(this).find('input').val();
-		dataTable.fnFilter(q,null,false);
-		return false;
-	});
+	$j('#datatable_wrapper').find('div.dataTables_paginate').hide(); // TODO fix pagination
 });

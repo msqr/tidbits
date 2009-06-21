@@ -27,6 +27,9 @@
 	</xsl:template>
 		
 	<xsl:template match="t:tidbit">
+		<xsl:if test="position() &gt; 1">
+			<xsl:text>,</xsl:text>
+		</xsl:if>
 		<xsl:text>&#xa;[</xsl:text>
 		
 		<!-- result num -->

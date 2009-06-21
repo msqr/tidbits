@@ -255,18 +255,20 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:if>
-					<xsl:text> - </xsl:text>
-					<xsl:choose>
-						<xsl:when test="$page = 'search'">
-							<xsl:value-of select="key('i18n','link.search.tidbit')"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<a class="link-search-tidbit" href="{$web-context}/search.do" 
-								title="{key('i18n','link.search.tidbit.title')}">
+					<xsl:if test="$handheld = 'true'">
+						<xsl:text> - </xsl:text>
+						<xsl:choose>
+							<xsl:when test="$page = 'search'">
 								<xsl:value-of select="key('i18n','link.search.tidbit')"/>
-							</a>
-						</xsl:otherwise>
-					</xsl:choose>
+							</xsl:when>
+							<xsl:otherwise>
+								<a class="link-search-tidbit" href="{$web-context}/search.do" 
+									title="{key('i18n','link.search.tidbit.title')}">
+									<xsl:value-of select="key('i18n','link.search.tidbit')"/>
+								</a>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
 			<xsl:text> - </xsl:text>

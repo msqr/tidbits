@@ -38,5 +38,16 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
+	
+	<xsl:variable name="search-input-support">
+		<xsl:choose>
+			<xsl:when test="contains(translate($user-agent, 'WEBKIT', 'webkit'), 'webkit')">
+				<xsl:text>true</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
         
 </xsl:stylesheet>
