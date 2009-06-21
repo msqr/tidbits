@@ -313,6 +313,25 @@ function setupEditKindButton(button) {
 	});
 }
 
+//must wait for XwebLocale to be loaded for some stuff
+$j(document).bind("XwebLocaleReady", function() {
+	$j('h1.title').each(function() {
+		var newTitle = '<a href="' 
+			+AppState.context +'/home.do?query=&page=0" title="'
+			+XwebLocale.i18n('link.home') +'">'
+				+'<img id="logo" class="title" alt="' +XwebLocale.i18n('title')
+				+'" src="' +AppState.context +'/img/logo.png" />'
+			+'</a>';
+		$j(this).replaceWith(newTitle);
+	});
+	
+	$j('#main-nav').addClass('main-nav');
+	
+	$j('#content-pane').addClass('content-pane');
+	
+	$j('#top-hide').addClass('top-hide').show();
+	
+});
 
 var XwebLocale = new XwebLocaleClass();
 $j(document).ready(function() {
@@ -322,12 +341,6 @@ $j(document).ready(function() {
 	$j('.close-x').click(function() {
 		standardDialogHide(this.parentNode);
 	});
-
-	/* This doesn't seem to be used
-	$j('.dialog-cancel-submit').click(function() {
-			standardDialogHide();
-			return false;
-		});*/
 
 	$j('textarea').each(function() {
 		// remove blank whitespace from textarea elements, because of XSL putting
@@ -395,12 +408,6 @@ $j(document).ready(function() {
 		standardFormShow('tidbit','search');
 		return false;
 	});
-	
-	$j('#main-nav').addClass('main-nav');
-	
-	$j('#content-pane').addClass('content-pane');
-	
-	$j('#top-hide').addClass('top-hide').show();
 	
 	$j('.link-add-tidbit').click(function() {
 		standardFormShow('tidbit','new');
