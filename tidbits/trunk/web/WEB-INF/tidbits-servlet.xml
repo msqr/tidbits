@@ -17,9 +17,9 @@
 			<props>
 				<prop key="/home.do">home</prop>
 				<prop key="/importCsv.do">importCsv</prop>
-				<prop key="/kind.do">kind</prop><!-- TODO remove me -->
+				<prop key="/kind.do">kind</prop>
 				<prop key="/kind.json">kind.json</prop>
-				<prop key="/kinds.do">kinds</prop><!-- TODO remove me -->
+				<prop key="/kinds.do">kinds</prop>
 				<prop key="/kinds.json">kinds.json</prop>
 				<prop key="/login.do">urlFilenameController</prop>
 				<prop key="/logoff.do">logoff</prop>
@@ -31,8 +31,9 @@
 				<prop key="/saveTidbit.do">saveTidbit</prop>
 				<prop key="/saveTidbitKind.do">saveTidbitKind</prop>
 				<prop key="/search.do">searchForm</prop>
+				<prop key="/search.json">searchForm.json</prop>
 				<prop key="/shadow.do">shadow</prop>
-				<prop key="/tidbit.do">tidbit</prop><!-- TODO remove me -->
+				<prop key="/tidbit.do">tidbit</prop>
 				<prop key="/tidbit.json">tidbit.json</prop>
 				<prop key="/version.do">urlFilenameController</prop>
 			</props>
@@ -103,6 +104,12 @@
 
 	<bean id="jsonXsltViewTemplate" parent="defaultXsltViewTemplate" singleton="false">
 		<property name="contentType" value="text/javascript; charset=UTF-8"/>
+	</bean>
+	<bean id="jsonViewResolver" parent="viewResolver">
+		<property name="order" value="3"/>
+		<property name="xsltViewTemplateName" value="jsonXsltViewTemplate"/>
+		<property name="xsltPathPrefix" value="/WEB-INF/xsl/json/"/>
+		<property name="xsltPathSuffix" value=".xsl"/>
 	</bean>
 	
 	<!-- webHelper: utility methods for web classes -->
@@ -194,6 +201,13 @@
 		<property name="sessionForm" value="false"/>
 	</bean>
 
+	<!-- Search JSON -->
+	<bean id="searchForm.json"  parent="searchForm">
+		<property name="commandClass" 
+			value="magoffin.matt.tidbits.support.DatatablesSearchCommand"/>
+		<property name="successView" value="datatables-json"/>
+	</bean>
+	
 	<bean id="logoff" parent="baseController"
 		class="magoffin.matt.tidbits.web.LogoffController">
 		<property name="successView" value="logged-off"/>

@@ -24,36 +24,42 @@
 			</xsl:if>
 			<xsl:choose>
 				<xsl:when test="x:x-model[1]/t:model[1]/t:search-results/t:tidbit">
-					<table class="tidbits">
-						<tr class="header">
-							<th><xsl:text> </xsl:text></th>
-							<xsl:if test="$handheld != 'true'">
+					<table class="tidbits" id="datatable">
+						<thead>
+							<tr>
 								<th><xsl:text> </xsl:text></th>
-							</xsl:if>	
-							<th>
-								<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
-							</th>
-							<th>
-								<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
-							</th>
-							<xsl:if test="$handheld != 'true'">
+								<xsl:if test="$handheld != 'true'">
+									<th><xsl:text> </xsl:text></th>
+								</xsl:if>	
 								<th>
-									<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
+									<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
 								</th>
+								<th>
+									<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
+								</th>
+								<xsl:if test="$handheld != 'true'">
+									<th>
+										<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
+									</th>
+								</xsl:if>
+								<th>
+									<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
+								</th>
+								<xsl:if test="$handheld != 'true'">
+									<th>
+										<xsl:value-of select="key('i18n','tidbit.created.displayName')"/>
+									</th>
+									<th>
+										<xsl:value-of select="key('i18n','tidbit.modified.displayName')"/>
+									</th>
+								</xsl:if>
+							</tr>
+						</thead>
+						<tbody>
+							<xsl:if test="$handheld = 'true'">
+								<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results/t:tidbit"/>
 							</xsl:if>
-							<th>
-								<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
-							</th>
-							<xsl:if test="$handheld != 'true'">
-								<th>
-									<xsl:value-of select="key('i18n','tidbit.created.displayName')"/>
-								</th>
-								<th>
-									<xsl:value-of select="key('i18n','tidbit.modified.displayName')"/>
-								</th>
-							</xsl:if>
-						</tr>
-						<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results/t:tidbit"/>
+						</tbody>
 					</table>
 				</xsl:when>
 				<xsl:otherwise>
