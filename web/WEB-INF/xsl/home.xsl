@@ -17,8 +17,29 @@
 		</xsl:call-template>
 		<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="simple-form">
 			<div>
-				<input type="search" name="query" id="search-tidbit-query" value=""
-					placeholder="{key('i18n','search.placeholder')}"/>
+				<input name="query" id="search-tidbit-query" value="">
+					<xsl:choose>
+						<xsl:when test="$search-input-support = 'true'">
+							<xsl:attribute name="type">
+								<xsl:text>search</xsl:text>
+							</xsl:attribute>
+							<xsl:attribute name="placeholder">
+								<xsl:value-of select="key('i18n','search.placeholder')"/>
+							</xsl:attribute>
+							<xsl:attribute name="autosave">
+								<xsl:text>true</xsl:text>
+							</xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:attribute name="type">
+								<xsl:text>text</xsl:text>
+							</xsl:attribute>
+							<xsl:attribute name="class">
+								<xsl:text>search-otherbrowser</xsl:text>
+							</xsl:attribute>
+						</xsl:otherwise>
+					</xsl:choose>
+				</input>
 				<input type="hidden" name="page" value="0"/>
 			</div>
 		</form>
@@ -31,43 +52,45 @@
 			</xsl:if>
 			<xsl:choose>
 				<xsl:when test="x:x-model[1]/t:model[1]/t:search-results/t:tidbit">
-					<table class="tidbits" id="datatable">
-						<thead>
-							<tr>
-								<th><xsl:text> </xsl:text></th>
-								<xsl:if test="$handheld != 'true'">
+					<div id="body-content">
+						<table class="tidbits" id="datatable">
+							<thead>
+								<tr>
 									<th><xsl:text> </xsl:text></th>
-								</xsl:if>	
-								<th>
-									<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
-								</th>
-								<th>
-									<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
-								</th>
-								<xsl:if test="$handheld != 'true'">
+									<xsl:if test="$handheld != 'true'">
+										<th><xsl:text> </xsl:text></th>
+									</xsl:if>	
 									<th>
-										<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
+										<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
 									</th>
+									<th>
+										<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
+									</th>
+									<xsl:if test="$handheld != 'true'">
+										<th>
+											<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
+										</th>
+									</xsl:if>
+									<th>
+										<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
+									</th>
+									<xsl:if test="$handheld != 'true'">
+										<th>
+											<xsl:value-of select="key('i18n','tidbit.created.displayName')"/>
+										</th>
+										<th>
+											<xsl:value-of select="key('i18n','tidbit.modified.displayName')"/>
+										</th>
+									</xsl:if>
+								</tr>
+							</thead>
+							<tbody>
+								<xsl:if test="$handheld = 'true'">
+									<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results/t:tidbit"/>
 								</xsl:if>
-								<th>
-									<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
-								</th>
-								<xsl:if test="$handheld != 'true'">
-									<th>
-										<xsl:value-of select="key('i18n','tidbit.created.displayName')"/>
-									</th>
-									<th>
-										<xsl:value-of select="key('i18n','tidbit.modified.displayName')"/>
-									</th>
-								</xsl:if>
-							</tr>
-						</thead>
-						<tbody>
-							<xsl:if test="$handheld = 'true'">
-								<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results/t:tidbit"/>
-							</xsl:if>
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</div>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="key('i18n','no.tidbits.available')"/>

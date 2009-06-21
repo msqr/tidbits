@@ -139,6 +139,10 @@ table.tidbits td {
 	vertical-align: top;
 }
 
+table.tidbits td.right {
+	text-align: right;
+}
+
 table.tidbits td.data {
 	cursor: pointer;
 }
@@ -150,7 +154,7 @@ table.tidbits th {
 	vertical-align: top;
 }
 
-table.tidbits tr.even {
+table.tidbits tr.odd {
 	background-color: #EFE7D7;
 	color: inherit;
 }
@@ -379,6 +383,23 @@ span.query {
     width: 25em;
 }
 
+input[type=text].search-otherbrowser {
+	background: #fff url(../img/magnifier.png) no-repeat scroll 5px center;
+	border-color: #BCB9B5 #DEDBD8 #DEDBD8 #BCB9B5;
+	border-style: solid;
+	border-width: 1px;
+	padding: 3px;
+	text-indent: 23px;
+}
+
+input[type=text].placeholder {
+	background-color: #fff;
+	color: #999 !important;
+}
+
+#body-content {
+	display: none;
+}
 
 /* Form label widths ======================================================= */
 
@@ -394,7 +415,7 @@ span.query {
 	width: 7em;
 }
 
-#new-tidbitkind-form label {
+#new-kind-form label {
 	width: 7em;
 }
 
