@@ -367,6 +367,21 @@ span.query {
 	display: inline;
 }
 
+#nav-search-tidbit-form {
+    position: absolute;
+    top: 15px;
+    right: 5px;
+    
+    z-index: 120;
+}
+
+#nav-search-tidbit-form input[type=search] {
+    width: 25em;
+}
+
+
+/* Form label widths ======================================================= */
+
 #new-tidbit-form label {
     width: 7em;
 }

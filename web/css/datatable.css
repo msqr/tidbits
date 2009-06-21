@@ -229,18 +229,18 @@ td.details {
 }
 
 
-.example_alt_pagination div.dataTables_info {
+.alt_pagination div.dataTables_info {
 	width: 40%;
 }
 
-.example_alt_pagination .dataTables_paginate {
+.alt_pagination .dataTables_paginate {
 	width: 400px;
 	height: 22px;
 	line-height: 22px;
 }
 
-.example_alt_pagination div.dataTables_paginate span.paginate_button,
- 	.example_alt_pagination div.dataTables_paginate span.paginate_active {
+.alt_pagination div.dataTables_paginate span.paginate_button,
+ 	.alt_pagination div.dataTables_paginate span.paginate_active {
 	border: 1px solid #aaa;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -250,15 +250,15 @@ td.details {
 	*cursor: hand;
 }
 
-.example_alt_pagination div.dataTables_paginate span.paginate_button {
+.alt_pagination div.dataTables_paginate span.paginate_button {
 	background-color: #ddd;
 }
 
-.example_alt_pagination div.dataTables_paginate span.paginate_button:hover {
+.alt_pagination div.dataTables_paginate span.paginate_button:hover {
 	background-color: #ccc;
 }
 
-.example_alt_pagination div.dataTables_paginate span.paginate_active {
+.alt_pagination div.dataTables_paginate span.paginate_active {
 	background-color: #99B3FF;
 }
 
