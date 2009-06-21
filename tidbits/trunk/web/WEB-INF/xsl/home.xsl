@@ -15,10 +15,17 @@
 		<xsl:call-template name="main-nav">
 			<xsl:with-param name="page" select="'home'"/>
 		</xsl:call-template>
+		<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="simple-form">
+			<div>
+				<input type="search" name="query" id="search-tidbit-query" value=""
+					placeholder="{key('i18n','search.placeholder')}"/>
+				<input type="hidden" name="page" value="0"/>
+			</div>
+		</form>
 	</xsl:template>	
 	
 	<xsl:template match="x:x-data" mode="page-body">
-		<div id="content-pane">
+		<div id="content-pane" class="alt_pagination">
 			<xsl:if test="$err">
 				<xsl:apply-templates select="x:x-errors" mode="error-intro"/>
 			</xsl:if>
@@ -103,7 +110,7 @@
 			</div>
 			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
 		</form>
-		<xsl:call-template name="search.form"/>
+		<!--xsl:call-template name="search.form"/-->
 	</xsl:template>
 	
 	<xsl:template match="t:tidbit">

@@ -424,10 +424,14 @@ $j(document).ready(function() {
 		return false;
 	});
 
-	$j('#datatable').dataTable( {
-		'bProcessing': true,
+	var dataTable = $j('#datatable').dataTable( {
+		'bProcessing': false,
 		'bServerSide': true,
+		'bFilter':  false,
+		'bAutoWidth': true,
+		'bInfo' : true,
 		'sAjaxSource': AppState.context +'/search.json',
+		'sPaginationType': 'full_numbers',
 		'fnServerData': function ( sSource, aoData, fnCallback ) {
 			$j.ajax({
 				"dataType": 'json', 
@@ -437,5 +441,12 @@ $j(document).ready(function() {
 				"success": fnCallback
 			});
 		}
+	});
+	
+	// TODO remove this
+	$j('#nav-search-tidbit-form').submit(function() {
+		var q = $j(this).find('input').val();
+		dataTable.fnFilter(q,null,false);
+		return false;
 	});
 });
