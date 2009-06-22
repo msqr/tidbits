@@ -47,8 +47,8 @@ jQuery.fn.center = function (absolute) {
 		t.css({
 			position:	absolute ? 'absolute' : 'fixed', 
 			left:		'50%', 
-			top:		'50%', 
-			zIndex:		'99'
+			top:		'50%'//, 
+			//zIndex:		'99'
 		}).css({
 			marginLeft:	'-' + (t.outerWidth() / 2) + 'px', 
 			marginTop:	'-' + (t.outerHeight() / 2) + 'px'
