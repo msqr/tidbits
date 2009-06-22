@@ -67,9 +67,9 @@
 				
 				<xsl:apply-templates select="." mode="page-body"/>
                 
-				<div id="system-working" style="display: none;">
+				<!--div id="system-working" style="display: none;">
 					<xsl:value-of select="key('i18n','working.displayName')"/>
-				</div>
+				</div-->
 				<div id="top-hide" style="display: none;">
 					<xsl:text> </xsl:text>
 				</div>
@@ -105,6 +105,7 @@
 				<script type="text/javascript" src="{$web-context}/js/jquery-1.3.2.js" xml:space="preserve"> </script>
 				<script type="text/javascript" src="{$web-context}/js/jquery.center.js" xml:space="preserve"> </script>
 				<script type="text/javascript" src="{$web-context}/js/jquery.dataTables.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js/jquery.form.js" xml:space="preserve"> </script>
 				<script type="text/javascript" src="{$web-context}/js/xweb-locale.js" xml:space="preserve"> </script>
 				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}">
 					<xsl:text> </xsl:text>
