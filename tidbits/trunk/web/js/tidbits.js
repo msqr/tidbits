@@ -9,7 +9,6 @@ jQuery.fn.log = function (msg) {
 
 var AppState = new ApplicationState();
 AppState.initialize();
-// TODO var IE = false;
 var $j = jQuery.noConflict();
 
 function getJsonModelObject(data) {
@@ -364,13 +363,39 @@ $j(document).ready(function() {
 		}
 	});
 	
-	$j('#edit-tidbit-form').submit(function() {
+	$j('#new-tidbit-form').each(function() {
+		var action = $j(this).attr('action');
+		action = action.replace('.do', '.json');
+		$j(this).attr('action', action);
+	}).submit(function() {
+		$j(this).ajaxSubmit(function(responseText, statusText) {
+			if ( 'success' == statusText ) {
+				standardDialogHide();
+				standardMessageDisplay(XwebLocale.i18n('new.tidbit.saved.intro'));
+			}
+			// else ... TODO
+		});
+		return false;
+	});
+	
+	$j('#edit-tidbit-form').each(function() {
+		var action = $j(this).attr('action');
+		action = action.replace('.do', '.json');
+		$j(this).attr('action', action);
+	}).submit(function() {
 		if ( $j('#edit-tidbit-delete').val() == 'true' ) {
 			if ( !confirm(XwebLocale.i18n('really.delete')) ) {
 				return false;
 			}
 		}
-		return true;
+		$j(this).ajaxSubmit(function(responseText, statusText) {
+			if ( 'success' == statusText ) {
+				standardDialogHide();
+				standardMessageDisplay(XwebLocale.i18n('edit.tidbit.saved.intro'));
+			}
+			// else ... TODO
+		});
+		return false;
 	});
 
 	$j('#page-form-page').change(function() {

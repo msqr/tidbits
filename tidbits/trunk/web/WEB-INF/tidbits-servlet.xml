@@ -26,9 +26,11 @@
 				<prop key="/manageKinds.do">manageKinds</prop>
 				<prop key="/messages.json">urlFilenameController</prop>
 				<prop key="/newTidbit.do">addTidbit</prop>
+				<prop key="/newTidbit.json">addTidbit.json</prop>
 				<prop key="/newTidbitKind.do">addTidbitKind</prop>
 				<prop key="/setupWizard.do">setupWizardForm</prop>
 				<prop key="/saveTidbit.do">saveTidbit</prop>
+				<prop key="/saveTidbit.json">saveTidbit.json</prop>
 				<prop key="/saveTidbitKind.do">saveTidbitKind</prop>
 				<prop key="/search.do">searchForm</prop>
 				<prop key="/search.json">searchForm.json</prop>
@@ -250,6 +252,9 @@
 		<property name="formView" value="edit-tidbit"/>
 		<property name="successView" value="home-redirect"/>
 	</bean>
+	<bean id="addTidbit.json"  parent="addTidbit">
+		<property name="successView" value="json"/>
+	</bean>
 	
 	<!-- Add TidbitKind -->
 	<bean id="addTidbitKind"  parent="baseController" 
@@ -286,6 +291,10 @@
 			value="magoffin.matt.tidbits.web.AddTidbitForm$Command"/>
 		<property name="formView" value="edit-tidbit"/>
 		<property name="successView" value="home-redirect"/>
+	</bean>
+	
+	<bean id="saveTidbit.json"  parent="saveTidbit">
+		<property name="successView" value="json"/>
 	</bean>
 	
 	<!-- Save TidbitKind -->
