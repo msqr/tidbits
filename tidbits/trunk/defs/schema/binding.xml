@@ -16,6 +16,10 @@
 			<xjc:serializable uid="200607101"/>
 		</jaxb:globalBindings>
 		
+		<jaxb:schemaBindings>
+			<jaxb:package name="magoffin.matt.tidbits.domain"/>
+		</jaxb:schemaBindings>
+		
 		<jaxb:bindings node="xs:complexType[@name='pagination-index']">
 			<hj:ignored/>
 		</jaxb:bindings>
@@ -58,13 +62,17 @@
 		<jaxb:bindings node="xs:complexType[@name='tidbit']">
 			<hj:class>
 				<hj:table name="tidbit"/>
-				<hj:cache usage="read-write"/> 
+				<hj:cache usage="read-write"/>
+				<hj:discriminator formula="'magoffin.matt.tidbits.domain.Tidbit'"> 
+					<hj:no-column/> 
+				</hj:discriminator>
 			</hj:class>
 			
 			<!-- Primay Key -->
 			
 			<jaxb:bindings node="xs:attribute[@name='tidbit-id']">
 				<hj:id unsaved-value="null">
+					<hj:column name="tidbitid" not-null="true"/>
 					<hj:generator generatorClass="native"/>
 				</hj:id>
 			</jaxb:bindings>
@@ -73,19 +81,23 @@
 			
 			<jaxb:bindings node="xs:sequence/xs:element[@name='comment']">
 				<hj:simpleSingleProperty>
-					<hj:column length="2048"/>
+					<hj:column name="comment" length="2048"/>
 				</hj:simpleSingleProperty>
 			</jaxb:bindings>
 			
 			<jaxb:bindings node="xs:sequence/xs:element[@name='data']">
 				<hj:simpleSingleProperty>
+					<hj:column name="data"/>
 					<hj:type name="text"/>
 				</hj:simpleSingleProperty>
 			</jaxb:bindings>
 			
 			<jaxb:bindings node="xs:sequence/xs:element[@name='kind']">
 				<hj:complexSingleProperty>
-					<hj:many-to-one not-null="true" insert="true" update="true" cascade="none"/>
+					<hj:many-to-one foreign-key="tidbit_kind_fk"
+						not-null="true" insert="true" update="true" cascade="none">
+						<hj:column name="kindid"/>
+					</hj:many-to-one>
 				</hj:complexSingleProperty>	
 			</jaxb:bindings>
 			
@@ -95,12 +107,16 @@
 			<hj:class>
 				<hj:table name="tidbit_kind"/>
 				<hj:cache usage="read-write"/>
+				<hj:discriminator formula="'magoffin.matt.tidbits.domain.TidbitKind'"> 
+					<hj:no-column/> 
+				</hj:discriminator>
 			</hj:class>
 			
 			<!-- Primay Key -->
 			
 			<jaxb:bindings node="xs:attribute[@name='kind-id']">
 				<hj:id unsaved-value="null">
+					<hj:column name="kindid"/>
 					<hj:generator generatorClass="native"/>
 				</hj:id>
 			</jaxb:bindings>
@@ -109,7 +125,7 @@
 			
 			<jaxb:bindings node="xs:sequence/xs:element[@name='comment']">
 				<hj:simpleSingleProperty>
-					<hj:column length="2048"/>
+					<hj:column name="comment" length="2048"/>
 				</hj:simpleSingleProperty>
 			</jaxb:bindings>
 			
@@ -121,19 +137,19 @@
 			
 			<jaxb:bindings node="xs:attribute[@name='created-by']">
 				<hj:simpleSingleProperty>
-					<hj:column not-null="true" length="64"/>
+					<hj:column name="created_by" not-null="true" length="64"/>
 				</hj:simpleSingleProperty>
 			</jaxb:bindings>
 			
 			<jaxb:bindings node="xs:attribute[@name='creation-date']">
 				<hj:simpleSingleProperty>
-					<hj:column not-null="true" sql-type="timestamp with time zone"/>
+					<hj:column name="creation_date" not-null="true" sql-type="timestamp with time zone"/>
 				</hj:simpleSingleProperty>
 			</jaxb:bindings>
 			
 			<jaxb:bindings node="xs:attribute[@name='name']">
 				<hj:simpleSingleProperty>
-					<hj:column not-null="true" length="128"/>
+					<hj:column name="name" not-null="true" length="128"/>
 				</hj:simpleSingleProperty>
 			</jaxb:bindings>
 			
@@ -141,7 +157,7 @@
 			
 			<jaxb:bindings node="xs:attribute[@name='modify-date']">
 				<hj:simpleSingleProperty>
-					<hj:column not-null="false" sql-type="timestamp with time zone"/>
+					<hj:column name="modify_date" not-null="false" sql-type="timestamp with time zone"/>
 				</hj:simpleSingleProperty>
 			</jaxb:bindings>
 			

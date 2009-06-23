@@ -35,11 +35,6 @@
 		<xs:documentation>
 			This is the XML Schema for the Tidbits core objects.
 		</xs:documentation>
-		<xs:appinfo>
-			<jaxb:schemaBindings>
-				<jaxb:package name="magoffin.matt.tidbits.domain"/>
-			</jaxb:schemaBindings>
-		</xs:appinfo>
 	</xs:annotation>
 	
 	<xs:include schemaLocation="domain.xsd"/>

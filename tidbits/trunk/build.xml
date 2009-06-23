@@ -88,18 +88,6 @@
 	<property name="version.properties" value="version.properties" />
 	<property name="version.txt.name" value="version.txt" />
 	
-	<property name="catalina.home" value="/opt/tomcat/tomcat5" />
-	<property name="catalina.manager.url" value="http://localhost:8080/manager" />
-	<property name="catalina.manager.username" value="admin" />
-	<property name="catalina.manager.password" value="admin" />
-	
-	<patternset id="catalina.jars.pat">
-		<include name="common/endorsed/*.jar" />
-		<include name="common/lib/*.jar" />
-		<include name="shared/lib/*.jar" />
-		<include name="server/lib/*.jar" />
-	</patternset>
-	
 	<path id="jaxb.generate.path">
 		<fileset dir="${dir.web.lib}" includes="*.jar"/>
 		<fileset dir="${dir.lib}" includes="**/*.jar"/>
@@ -114,24 +102,12 @@
 		<pathelement location="${dir.build}/${app.name}/WEB-INF/classes"/>
 		<fileset dir="${dir.web.lib}" includes="*.jar"/>
 		<fileset dir="${dir.lib}" includes="**/*.jar"/>
-		<fileset dir="${catalina.home}">
-			<patternset refid="catalina.jars.pat" />
-		</fileset>
 	</path>
 	
 	<path id="compile.path">
 		<pathelement location="${dir.build}/${app.name}/WEB-INF/classes"/>
 		<fileset dir="${dir.web.lib}" includes="*.jar"/>
 		<fileset dir="${dir.lib}" includes="**/*.jar"/>
-		<fileset dir="${catalina.home}">
-			<patternset refid="catalina.jars.pat" />
-		</fileset>
-	</path>
-	
-	<path id="catalina.path">
-		<fileset dir="${catalina.home}">
-			<patternset refid="catalina.jars.pat"/>
-		</fileset>
 	</path>
 	
 	<target name="init">
@@ -298,6 +274,44 @@
 		</zip>
 	</target>
 		
+	<!--
+		Generate database DDL for entity tables. Pass the hjb.db.type parameter
+		to change the exported DDL SQL syntax using one of the sub-directory names
+		within defs/sql, e.g.
+		
+		ant -Dhjb.db.type=mysql export.database.schema
+		
+		Will use the defs/sql/mysql/hibernate.properties environment properties
+		and generate the defs/sql/mysql/create.sql DDL script.
+	-->
+	<target name="export.database.schema" depends="compile" 
+		description="Generate RDBMS creation scripts via Hibernate">
+
+		<taskdef name="schemaexport"
+			classname="org.hibernate.tool.hbm2ddl.SchemaExportTask"
+			classpathref="schemaexport.lib.path"/>
+
+		<mkdir dir="${dir.database}"/>
+		
+		<delete dir="${dir.build}/schema-export" failonerror="no"/>
+		<mkdir dir="${dir.build}/schema-export"/>
+		<unjar src="${dir.web.lib}/${app.name}-xml.jar" 
+			dest="${dir.build}/schema-export"/>
+
+		<schemaexport
+			properties="${dir.database}/${hjb.db.type}/hibernate.properties"
+			quiet="no"
+			text="yes"
+			drop="no"
+			delimiter=";"
+			output="${dir.database}/${hjb.db.type}/create-tables.sql">
+			<fileset dir="${dir.build}/schema-export">
+				<include name="**/*.hbm.xml"/>
+			</fileset>
+		</schemaexport>
+
+	</target>
+
 	<target name="clean" description="Delete build files">
 		<delete dir="${dir.build}" />
 	</target>
@@ -417,7 +431,6 @@
 		<ant dir="${dir.build.cvs}/${cvs.module.name}" target="war" inheritall="true">
 			<property name="build.version" value="${cvs.build.version}"/>
 			<property name="dir.build" value="${dir.build}"/>
-			<property name="catalina.home" value="${catalina.home}"/>
 			<property name="env.src" value="${cvs.env.src}"/>
 			<property name="dir.env" value="${cvs.dir.env}"/>
 			<property name="app.name" value="${app.archive.name}"/>
@@ -707,7 +720,6 @@
 		<ant dir="${svn.dir.build}" target="war" inheritall="no">
 			<property name="build.version" value="${svn.tag}"/>
 			<property name="dir.build" value="${dir.build}"/>
-			<property name="catalina.home" value="${catalina.home}"/>
 			<property name="env.src" value="${env.src}"/>
 			<property name="dir.env" value="${dir.env}"/>
 			<property name="dir.dist" value="${dir.dist}"/>
