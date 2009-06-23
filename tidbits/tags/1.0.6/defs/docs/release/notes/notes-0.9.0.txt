@@ -1,0 +1,9 @@
+TidBits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+- Support for optimized HTML for Palm and Windows CE devices.
+  When the Palm Blazer browser or Windows CE device is detected,
+  Tidbits will return a JavaScript-free and slimmed-down version
+  of the application, allowing for viewing, adding, and searching
+  Tidbits.
