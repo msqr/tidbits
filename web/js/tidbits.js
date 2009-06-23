@@ -303,15 +303,65 @@ function setupEditKindButton(button) {
 	});
 }
 
+// custom pagination for data table
+$j.fn.dataTableExt.oPagination.select = {
+		'fnInit': function (oSettings, fnCallbackDraw) {
+			$j('#page-form-page').change(function() {
+				var desiredPage = $j(this).val();
+				var offset = desiredPage * oSettings._iDisplayLength;
+				oSettings._iDisplayStart = offset;
+				fnCallbackDraw(oSettings);
+			});
+		},
+		
+		'fnUpdate': function (oSettings, fnCallbackDraw) {
+			var numPages = Math.ceil(oSettings._iRecordsTotal / oSettings._iDisplayLength);
+			var selectedPage = oSettings._iDisplayStart / oSettings._iDisplayLength;
+			var mySelect = $j('#page-form-page');
+			if ( numPages == 1 ) {
+				mySelect.parent().hide().prev('span').hide();
+				return;
+			}
+			mySelect.parent().show().prev('span').show();
+			if ( numPages == mySelect.children('option').size() ) {
+				return;
+			}
+			mySelect.empty();
+			for ( var i = 0; i < numPages; i++ ) {
+				mySelect.append('<option value="' +i +'"'
+						+(i == selectedPage ? ' selected="selected"' : '')
+						+'">' +(i+1) +'</option>');
+			}
+		}
+	};
+
+function updateSearchQueryInfo(query, matches) {
+	if ( query == null || query == '' ) {
+		// show all
+		$j('#matches-label').html(XwebLocale.i18n('search.result.total.tidbits'));
+	} else {
+		// query
+		var span = $j('<span class="query"></span>');
+		span.text(query);
+		$j('#matches-label').empty()
+			.append(XwebLocale.i18n('search.result.query.matches')+' ')
+			.append(span);
+	}
+	$j('#matches-data').text(matches);
+}
+
+var XwebLocale = new XwebLocaleClass();
+var dataTable;
+
 //must wait for XwebLocale to be loaded for some stuff
 $j(document).bind("XwebLocaleReady", function() {
 	$j('h1.title').each(function() {
-		var newTitle = '<a href="' 
+		var newTitle = '<div><a href="' 
 			+AppState.context +'/home.do?query=&page=0" title="'
 			+XwebLocale.i18n('link.home') +'">'
 				+'<img id="logo" class="title" alt="' +XwebLocale.i18n('title')
 				+'" src="' +AppState.context +'/img/logo.png" />'
-			+'</a>';
+			+'</a></div>';
 		$j(this).replaceWith(newTitle);
 	});
 	
@@ -343,10 +393,15 @@ $j(document).bind("XwebLocaleReady", function() {
 			$j(this).val(searchPlaceholder).addClass('placeholder');
 		}
 	});
+	
+	$j('#page-form-pagesize').change(function() {
+		var newSize = Number($j(this).val());
+		dataTable.dataTableSettings[0]._iDisplayLength = newSize;
+		dataTable.fnDraw();
+	});
+	
 });
 
-var XwebLocale = new XwebLocaleClass();
-var dataTable;
 $j(document).ready(function() {
 	initLocale();
 	populateTidbitKinds();
@@ -398,10 +453,6 @@ $j(document).ready(function() {
 		return false;
 	});
 
-	$j('#page-form-page').change(function() {
-		this.form.submit();
-	});
-	
 	$j('#edit-tidbit-submit-delete').click(function() {
 		$j('#edit-tidbit-delete').val('true');
 	});
@@ -488,13 +539,15 @@ $j(document).ready(function() {
 
 	dataTable = $j('#datatable').dataTable( {
 		'bProcessing': false,
+		'bPaginate': true,
+		'bLengthChange': false,
 		'bServerSide': true,
 		'bFilter':  false,
 		'bAutoWidth': false,
-		'bInfo': true,
+		'bInfo': false,
 		'bSort': false,
 		'sAjaxSource': AppState.context +'/search.json',
-		'sPaginationType': 'full_numbers',
+		'sPaginationType': 'select',
 		'fnServerData': function ( sSource, aoData, fnCallback ) {
 				$j.ajax({
 					"dataType": 'json', 
@@ -508,14 +561,15 @@ $j(document).ready(function() {
 							} else {
 								$j('#body-content').hide();
 							}
-							if ( data.iTotalDisplayRecords <= data.iTotalRecords ) {
-								$j('#datatable_length').show();
-								// TODO $j('#datatable_wrapper').find('div.dataTables_paginate').show();
-							} else {
-								$j('#datatable_length').hide();
-								// TODO $j('#datatable_wrapper').find('div.dataTables_paginate').hide();
+						}
+						var query = '';
+						for ( var i = 0; i < aoData.length; i++ ) {
+							if ( aoData[i].name == 'sSearch' ) {
+								query = aoData[i].value;
+								break;
 							}
 						}
+						updateSearchQueryInfo(query, data.iTotalRecords);
 						if ( fnCallback ) {
 							fnCallback.call(this, data, textStatus);
 						}
