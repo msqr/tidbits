@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+	Spring context that defines web-based environment resources, i.e. JNDI-bound
+	DataSource and such. Unit tests and command-line tools define different 
+	implementations of these beans.
+-->	
+<beans>
+	<!-- DataSource to the Tidbits application database. -->
+	<bean id="myDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/tidbits"/>
+	</bean>
+</beans>

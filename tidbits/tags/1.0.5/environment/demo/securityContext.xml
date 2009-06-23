@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC 
+	"-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	
+	<bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
+		<property name="filterInvocationDefinitionSource">
+			<value>
+				CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+				PATTERN_TYPE_APACHE_ANT
+				/**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
+			</value>
+		</property>
+	</bean>
+	
+	<!-- ===================== AUTHENTICATION ===================== -->
+	
+	<bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+		<property name="providers">
+			<list>
+				<!--ref local="ldapAuthProvider"/-->
+				<ref local="testDaoAuthenticationProvider"/>
+				<ref local="anonymousAuthenticationProvider"/>
+				<!--ref local="rememberMeAuthenticationProvider"/-->
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="userCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager" ref="cacheManager"/>
+		<property name="cacheName" value="magoffin.matt.tidbits.SECURITY_USER"/>
+	</bean>
+	
+	<bean id="userCache" class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
+		<property name="cache" ref="userCacheBackend"/>
+	</bean>
+	
+	<!--=======================================================================
+		Test DAO authentication 
+		=======================================================================-->
+	
+	<bean id="testDaoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+		<property name="userDetailsService" ref="inMemoryDaoImpl"/>
+		<property name="userCache" ref="userCache"/>
+		<!--property name="passwordEncoder"><ref local="passwordEncoder"/></property-->
+	</bean>
+	
+	<!--bean id="passwordEncoder" class="org.acegisecurity.providers.encoding.Md5PasswordEncoder"/-->
+	
+	<!-- inMemoryDaoImpl: test authentication DAO, not for deployment! -->
+	<bean id="inMemoryDaoImpl" class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl"> 
+		<property name="userMap"> 
+			<value> 
+				demo=demo,ROLE_USER
+			</value> 
+		</property> 
+	</bean>
+	
+	<!--=======================================================================
+		LDAP authorization 
+		=======================================================================-->
+	
+	<!--bean id="ldapUserSearch"
+		class="org.acegisecurity.providers.ldap.search.FilterBasedLdapUserSearch">
+		<constructor-arg index="0" value="ou=People"/>
+		<constructor-arg index="1" value="(uid={0})"/>
+		<constructor-arg index="2" ref="ldapInitialDirContextFactory" />
+		<property name="searchSubtree" value="false"/>
+	</bean>
+	<bean id="ldapAuthProvider"
+		class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
+		<constructor-arg>
+			<bean class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
+				<constructor-arg ref="ldapInitialDirContextFactory"/>
+				<property name="userSearch" ref="ldapUserSearch"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<bean class="org.acegisecurity.providers.ldap.populator.DefaultLdapAuthoritiesPopulator">
+				<constructor-arg ref="ldapInitialDirContextFactory"/>
+				<constructor-arg value="ou=Groups"/>
+				<property name="groupSearchFilter" value="(uniqueMember={0})"/>
+				<property name="groupRoleAttribute" value="businessCategory"/>
+				<property name="defaultRole" value="ROLE_USER"/>
+			</bean>
+		</constructor-arg>
+	</bean-->
+	
+	
+	<!-- Automatically receives AuthenticationEvent messages -->
+	<bean id="loggerListener" class="org.acegisecurity.event.authentication.LoggerListener"/>
+	
+	<bean id="anonymousProcessingFilter" class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
+		<property name="key" value="foobar"/>
+		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS"/>
+	</bean>
+	
+	<bean id="anonymousAuthenticationProvider" class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
+		<property name="key" value="foobar"/>
+	</bean>
+	
+	<!-- ================== HTTP REQUEST SECURITY ================= -->
+	
+	<bean id="httpSessionContextIntegrationFilter" 
+		class="org.acegisecurity.context.HttpSessionContextIntegrationFilter"/>
+	
+	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint"/>
+	</bean>
+	
+	<bean id="authenticationProcessingFilter" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
+		<property name="authenticationManager" ref="authenticationManager"/>
+		<property name="authenticationFailureUrl" value="/login.do?login_error=1"/>
+		<property name="defaultTargetUrl" value="/home.do"/>
+		<property name="filterProcessesUrl" value="/j_acegi_security_check"/>
+		<property name="alwaysUseDefaultTargetUrl" value="true"/>
+		<!--property name="rememberMeServices"><ref local="rememberMeServices"/></property-->
+	</bean>
+	
+	<bean id="authenticationProcessingFilterEntryPoint" 
+		class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+		<property name="loginFormUrl" value="/login.do"/>
+		<property name="forceHttps" value="${web.security.use.https}"/>
+	</bean>
+	
+	<bean id="httpRequestAccessDecisionManager" class="org.acegisecurity.vote.AffirmativeBased">
+		<property name="allowIfAllAbstainDecisions" value="false"/>
+		<property name="decisionVoters">
+			<list>
+				<ref bean="roleVoter"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 
+		Note the order that entries are placed against the objectDefinitionSource is critical.
+		The FilterSecurityInterceptor will work from the top of the list down to the FIRST 
+		pattern that matches the request URL. Accordingly, you should place MOST SPECIFIC 
+		(ie a/b/c/d.*) expressions first, with LEAST SPECIFIC (ie a/.*) expressions last 
+	-->
+	<bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
+		<property name="authenticationManager" ref="authenticationManager"/>
+		<property name="accessDecisionManager" ref="httpRequestAccessDecisionManager"/>
+		<property name="objectDefinitionSource">
+			<value>
+				CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+				PATTERN_TYPE_APACHE_ANT
+				/index.jsp=ROLE_ANONYMOUS,ROLE_USER
+				/logoff.jsp=ROLE_ANONYMOUS,ROLE_USER
+				/login.do*=ROLE_ANONYMOUS,ROLE_USER
+				/css/global-tidbits.css=ROLE_ANONYMOUS,ROLE_USER
+				/setupwizard.do=ROLE_ANONYMOUS,ROLE_USER
+				/**=ROLE_USER
+			</value>
+		</property>
+	</bean>
+	
+	<!-- ============================ AUTHORIZATION =========================== -->
+	
+	<!-- An access decision voter that reads ROLE_* configuration settings -->
+	<bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter"/>
+	
+</beans>
