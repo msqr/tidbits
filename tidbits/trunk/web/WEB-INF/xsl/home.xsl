@@ -11,6 +11,8 @@
 	<xsl:import href="tmpl/search-form.xsl"/>
 	<xsl:import href="tmpl/default-layout.xsl"/>
 	
+	<xsl:variable name="search-results" select="x:x-data/x:x-model[1]/t:model[1]/t:search-results"/>
+	
 	<xsl:template match="x:x-data" mode="page-main-nav">
 		<xsl:call-template name="main-nav">
 			<xsl:with-param name="page" select="'home'"/>
@@ -51,7 +53,101 @@
 				<xsl:apply-templates select="x:x-errors" mode="error-intro"/>
 			</xsl:if>
 			<xsl:choose>
-				<xsl:when test="x:x-model[1]/t:model[1]/t:search-results/t:tidbit">
+				<xsl:when test="$handheld = 'false'">
+					<div id="search-results-info">
+						<!--form id="page-form" action="{$web-context}{$ctx/x:path}" method="post">
+							<div-->
+								<span class="header" id="matches-label">
+									<xsl:value-of select="key('i18n','search.result.query.matches')"/>
+									<xsl:text> </xsl:text>
+									<span class="query">.</span>
+								</span>
+								<span class="data" id="matches-data">0</span>
+								<span class="header" id="pages-label">
+									<xsl:value-of select="key('i18n','search.result.pages')"/>
+								</span>
+								<span class="data" id="pages-data">
+									<select name="page" id="page-form-page">
+										<option value="0">1</option>
+									</select>
+								</span>
+								<span class="header" id="page-size-label">
+									<xsl:value-of select="key('i18n','search.result.page.size')"/>
+								</span>
+								<span class="data-last" id="page-size-data">
+									<select size="1" name="pageSize" id="page-form-pagesize">
+										<option value="10">10</option>
+										<option value="25">25</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+								</span>
+							<!--/div>
+						</form-->
+					</div>
+				</xsl:when>
+				<xsl:when test="string($search-results/@query) 
+					or $search-results/@is-partial-result = 'true'">
+					<div id="search-results-info">
+						<form id="page-form" action="{$web-context}{$ctx/x:path}" method="post">
+							<div>
+								<span class="header">
+									<xsl:choose>
+										<xsl:when test="string($search-results/@query)">							
+											<xsl:value-of select="key('i18n','search.result.query.matches')"/>
+											<xsl:text> </xsl:text>
+											<span class="query">
+												<xsl:value-of select="$search-results/@query"/>
+											</span>
+										</xsl:when>
+										<xsl:otherwise>	
+											<xsl:value-of select="key('i18n','search.result.total.tidbits')"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</span>
+								<span class="data">
+									<xsl:value-of select="$search-results/@total-results"/>
+								</span>
+								<xsl:if test="$search-results/@is-partial-result = 'true'">
+									<span class="header">
+										<xsl:value-of select="key('i18n','search.result.page.display')"/>
+									</span>
+									<span class="data">
+										<xsl:value-of select="$search-results/t:pagination/@page-offset + 1"/>
+										<xsl:choose>
+											<xsl:when test="$handheld = 'true'">
+												<xsl:text>/</xsl:text>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:text> </xsl:text>
+												<xsl:value-of select="key('i18n','of')"/>
+												<xsl:text> </xsl:text>
+											</xsl:otherwise>
+										</xsl:choose>
+										<xsl:value-of select="ceiling($search-results/@total-results 
+											div $search-results/t:pagination/@page-size)"/>
+									</span>
+									<xsl:if test="not($handheld = 'true')">
+										<span class="header">
+											<xsl:value-of select="key('i18n','search.result.pages')"/>
+										</span>
+									</xsl:if>
+									<span class="data-last">
+										<select name="page" id="page-form-page">
+											<xsl:call-template name="render.page.option"/>
+										</select>
+									</span>
+									<xsl:if test="$handheld = 'true'">
+										<input type="submit" value="{key('i18n','go.displayName')}"/>
+									</xsl:if>
+								</xsl:if>
+							</div>
+						</form>
+					</div>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="$search-results/t:tidbit">
 					<div id="body-content">
 						<table class="tidbits" id="datatable">
 							<thead>
