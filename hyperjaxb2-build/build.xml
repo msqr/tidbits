@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <project name="hyperjaxb2-sample-ant" default="install">
-	<property name="artifactId" value="hyperjaxb2-sample-ant"/>
-	<property name="version" value="0.6"/>
+	<property name="artifactId" value="hyperjaxb2-template-basic-ant"/>
+	<property name="version" value="0.6.2"/>
 	<path id="hyperjaxb2.compile.path">
+		<pathelement path="${basedir}/classes"/>
 		<fileset dir="${basedir}/lib">
 			<include name="jaxb-xjc-*.jar"/>
 			<include name="jaxb-impl-*.jar"/>
@@ -16,7 +17,6 @@
 			<include name="jaxbcommons-core-*.jar"/>
 			<include name="jaxbcommons-shared-*.jar"/>
 			<include name="jaxbcommons-testing-*.jar"/>
-			<include name="junit-*.jar"/>
 			<include name="spring-*.jar"/>
 			<include name="hyperjaxb2-core-*.jar"/>
 			<include name="hyperjaxb2-hibernate-configuration-*.jar"/>
@@ -24,12 +24,14 @@
 			<include name="hyperjaxb2-hibernate-mapping-*.jar"/>
 			<include name="hyperjaxb2-shared-*.jar"/>
 			<include name="hyperjaxb2-testing-*.jar"/>
+			<include name="commons-lang-*.jar"/>
 			<include name="commons-logging-*.jar"/>
 			<include name="commons-beanutils-*.jar"/>
 			<include name="log4j-*.jar"/>
 			<include name="saxon-*.jar"/>
 			<include name="saxon-dom-*.jar"/>
 			<include name="hibernate-*.jar"/>
+			<include name="junit-*.jar"/>
 		</fileset>
 	</path>
 	<path id="hyperjaxb2.runtime.path">
@@ -44,6 +46,7 @@
 			<include name="dom4j-*.jar"/>
 			<include name="commons-collections-*.jar"/>
 			<include name="commons-io-*.jar"/>
+			<include name="commons-lang-*.jar"/>
 			<include name="jaxb-api-*.jar"/>
 			<include name="jaxb-impl-*.jar"/>
 			<include name="jaxp-api-*.jar"/>
@@ -59,6 +62,7 @@
 			<include name="commons-logging-*.jar"/>
 			<include name="log4j-*.jar"/>
 			<include name="hsqldb-*.jar"/>
+			<include name="junit-*.jar"/>
 		</fileset>
 	</path>
 	<target name="clean">
