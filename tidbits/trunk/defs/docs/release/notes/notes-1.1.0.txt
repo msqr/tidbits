@@ -2,12 +2,31 @@ TidBits Release Notes
 
 @VERSION@ @BUILD_DATE@
 
-This update is mainly focused on updating some of the core frameworks
-used internally by TidBits.
+This update is contains some UI changes to make the application more
+streamlined, as well as updates to some of the core frameworks used
+internally by TidBits.
+
+*** NOTE **************************************************************
+
+The database schema has changed slightly in this release. You should
+not run this against an installation of TidBits 1.0. First make sure
+you back up your TidBits 1.0 database, shut down the TidBits server,
+and then run the provided upgrade-1.0-1.1.sql SQL script (in the 
+setup/sql/<db> directory) against the 1.0 database. This script will
+update your TidBits 1.0 database to the new schema. Once upgraded, 
+bring the TidBits 1.1 application up.
+
+***********************************************************************
+
+Updates in this release:
+
+- New lightweight Ajax-based main UI.
+
+- Update to HyperJAXB2 0.6.2.
 
 - Update to Lucene 2.4.
   
-- Update to Prototype 1.6 / Scriptaculos 1.8.
+- Replace Prototype / Scriptaculos with jQuery.
 
 - Internal XSLT cleanup and removal of duplicate templates.
 
