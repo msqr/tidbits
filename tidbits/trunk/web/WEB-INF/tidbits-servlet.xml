@@ -302,6 +302,7 @@
 		class="magoffin.matt.tidbits.web.SaveTidbitKindForm">
 		<property name="commandClass" 
 			value="magoffin.matt.tidbits.web.AddTidbitKindForm$Command"/>
+		<property name="formView" value="edit-tidbit-kind"/>
 		<property name="successView" value="kinds-redirect"/>
 	</bean>
 	
