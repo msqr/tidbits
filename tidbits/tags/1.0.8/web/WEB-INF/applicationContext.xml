@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="propertyConfigurer" class="magoffin.matt.xweb.util.XwebParamPropertiesPlaceholderConfigurer">
+		<property name="order" value="1"/>
+		<property name="locations">
+			<list>
+				<value>classpath:/env.properties</value>
+			</list>
+		</property>
+		<property name="settingDao" ref="settingsDao"/>
+	</bean>
+	
+	<bean id="messageSource" class="magoffin.matt.xweb.util.ResourceBundleMessagesSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!--bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+			</list>
+		</property>
+	</bean-->
+	
+	
+	<!-- 
+	 jaxbContext: the JAXBContext instanced used as the entry point 
+	 for XML handling
+	 -->
+	<bean id="jaxbContext" class="javax.xml.bind.JAXBContext" 
+		factory-method="newInstance">
+		<constructor-arg index="0"  type="java.lang.String">
+			<value>magoffin.matt.tidbits.domain:magoffin.matt.xweb</value>
+		</constructor-arg>
+	</bean>
+	
+	<!--  
+	 validatingDocumentBuilderFactory: a validating JAXP DocumentBuilderFactory
+	 -->
+	<bean id="validatingDocumentBuilderFactory" 
+		class="javax.xml.parsers.DocumentBuilderFactory" 
+		factory-method="newInstance">
+		<property name="validating" value="true"/>
+	</bean>
+	
+	<!--  
+	 nonValidatingDocumentBuilderFactory: a validating JAXP DocumentBuilderFactory
+	 -->
+	<bean id="nonValidatingDocumentBuilderFactory" class="javax.xml.parsers.DocumentBuilderFactory" 
+		factory-method="newInstance">
+		<property name="namespaceAware" value="true"/>
+		<property name="validating" value="false"/>
+	</bean>
+	
+	<!--  
+	 xpathFactory: a JAXP XPathFactory
+	 -->
+	<bean id="xpathFactory" class="javax.xml.xpath.XPathFactory" 
+		factory-method="newInstance">
+	</bean>
+	
+	<!-- 
+	 transformerFactory: a default JAXP TranformerFactory
+	 -->
+	<bean id="transformerFactory" class="javax.xml.transform.TransformerFactory"
+		factory-method="newInstance">
+		<!--  set any desired features or attributes here -->
+	</bean>
+	
+	<bean id="domainObjectFactory" 
+		class="magoffin.matt.tidbits.biz.impl.JAXBDomainObjectFactory"/>
+	
+	<!-- 
+	 cacheManager: the EHCache CacheManager to enable injecting caches into beans
+	 -->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+	
+	<!--======================================================================
+		Biz definitions
+		======================================================================-->
+	
+	<bean id="tidbitsBiz" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="target" ref="tidbitsBizTarget"/>
+		<property name="proxyInterfaces">
+			<list>
+				<value>magoffin.matt.tidbits.biz.TidbitsBiz</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>createdByAdvisor</value>
+				<value>luceneSearchAdvisor</value>
+				<value>tidbitIndexAdvisor</value>
+				<value>tidbitIndexDeleteAdvisor</value>
+				<value>tidbitReindexAdvisor</value>
+				<value>myTransactionInterceptor</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tidbitsBizTarget" class="magoffin.matt.tidbits.biz.impl.TidbitsBizImpl">
+		<property name="domainObjectFactory" ref="domainObjectFactory"/>
+		<property name="tidbitDao" ref="tidbitDao"/>
+		<property name="tidbitKindDao" ref="tidbitKindDao"/>
+		<property name="messages" ref="messageSource"/>
+	</bean>
+	
+	<!-- CreatedByInterceptor: inject the logged-in user's login into the 'createdBy' property -->
+	<bean id="createdByAdvisor"
+		class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice">
+			<bean class="magoffin.matt.tidbits.aop.CreatedByInterceptor"/>
+		</property>
+		<property name="mappedNames">
+			<list>
+				<value>saveTidbit</value>
+				<value>saveTidbits</value>
+				<value>saveTidbitKind</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- LuceneBiz: search and index functions. -->
+	<bean id="luceneBiz" class="magoffin.matt.tidbits.lucene.LuceneBiz">
+		<property name="domainObjectFactory" ref="domainObjectFactory"/>
+		<property name="messages" ref="messageSource"/>
+		<property name="lucene" ref="luceneService"/>
+	</bean>
+	<bean id="luceneSearchAdvisor"
+		class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice">
+			<bean class="magoffin.matt.tidbits.aop.LuceneTidbitSearchInterceptor">
+				<property name="luceneBiz" ref="luceneBiz"/>
+			</bean>
+		</property>
+		<property name="mappedNames">
+			<list>
+				<value>findTidbits</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tidbitIndexAdvisor"
+		class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice">
+			<bean class="magoffin.matt.tidbits.aop.TidbitIndexInterceptor">
+				<property name="luceneBiz" ref="luceneBiz"/>
+			</bean>
+		</property>
+		<property name="mappedNames">
+			<list>
+				<value>saveTidbit</value>
+				<value>saveTidbits</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tidbitIndexDeleteAdvisor"
+		class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice">
+			<bean class="magoffin.matt.tidbits.aop.IndexDeleteInterceptor">
+				<property name="luceneBiz" ref="luceneBiz"/>
+			</bean>
+		</property>
+		<property name="mappedNames">
+			<list>
+				<value>deleteTidbit</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tidbitReindexAdvisor"
+		class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice">
+			<bean class="magoffin.matt.tidbits.aop.ReindexInterceptor">
+				<property name="luceneBiz" ref="luceneBiz"/>
+			</bean>
+		</property>
+		<property name="mappedNames">
+			<list>
+				<value>deleteTidbitKind</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="luceneService" class="magoffin.matt.lucene.LuceneSearchService" 
+		init-method="initialize" destroy-method="finish">
+		<property name="baseIndexDirectoryPath" value="${lucene.index.base.path}"/>
+		<property name="optimizeTriggerCount" value="${lucene.index.optimize.trigger}"/>
+		<property name="updateBufferSize" value="${lucene.update.buffer.size}"/>
+		<property name="updateBufferFlushMs" value="${lucene.update.buffer.flush}"/>
+		<property name="discardedIndexReaderMinCloseTime" value="60000"/>
+		<property name="discardedIndexReaderProcessorMs" value="120000"/>
+		<property name="neverOptimize" value="${lucene.index.optimize.never}"/>
+		<property name="indexTimeZone" ref="indexTimeZone"/>
+		<property name="plugins">
+			<list>
+				<ref local="tidbitLucenePlugin"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="tidbitLucenePlugin" class="magoffin.matt.tidbits.lucene.TidbitLucenePlugin">
+		<property name="config">
+			<bean class="magoffin.matt.lucene.BasicIndexConfig"/>
+		</property>
+		<property name="analyzer" ref="standardAnalyzer"/>
+		<property name="domainObjectFactory" ref="domainObjectFactory"/>
+		<property name="messages" ref="messageSource"/>
+		<property name="tidbitDao" ref="tidbitDao"/>
+	</bean>
+	<bean id="standardAnalyzer" class="magoffin.matt.tidbits.lucene.StandardTidbitsAnalyzer">
+		<property name="snowballStemmerName" value="${lucene.snowball.stemmer.name}"/>
+		<property name="indexKeyLength" value="1"/>
+	</bean>
+	<bean id="indexTimeZone" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg index="0" type="java.lang.String" value="${index.timezone.java}"/>
+	</bean>
+
+</beans>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Copyright (c) 2006 Matt Magoffin
+  
+  This program is free software; you can redistribute it and/or 
+  modify it under the terms of the GNU General Public License as 
+  published by the Free Software Foundation; either version 2 of 
+  the License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+  General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License 
+  along with this program; if not, write to the Free Software 
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
+  02111-1307 USA
+
+  $Id: core.xsd,v 1.3 2006/07/10 02:40:13 matt Exp $   
+-->
+<xs:schema
+	xml:lang="EN"
+	targetNamespace="http://msqr.us/xsd/TidBits"
+	jaxb:version="1.0"
+	xmlns:t="http://msqr.us/xsd/TidBits"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	jaxb:extensionBindingPrefixes="xjc"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>
+			This is the XML Schema for the Tidbits core objects.
+		</xs:documentation>
+	</xs:annotation>
+	
+	<xs:include schemaLocation="domain.xsd"/>
+	
+	<xs:complexType name="pagination-index">
+		<xs:sequence>
+			<xs:element name="index-section" minOccurs="0" maxOccurs="unbounded" 
+				type="t:pagination-index-section"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="pagination-index-section">
+		<xs:attribute name="index-key" type="xs:string" use="required"/>
+		<xs:attribute name="count" type="xs:int" use="optional" default="0"/>
+		<xs:attribute name="selected" type="xs:boolean" use="optional" default="false"/>
+	</xs:complexType>
+	
+	<xs:complexType name="pagination-criteria">
+		<xs:attribute name="index-key" type="xs:string" use="optional"/>
+		<xs:attribute name="page-size" type="xs:nonNegativeInteger" use="optional"/>
+		<xs:attribute name="page-offset" type="xs:nonNegativeInteger" default="0"/>
+		<xs:attribute name="max-results" type="xs:nonNegativeInteger" use="optional"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tidbit-search-result">
+		<xs:complexContent>
+			<xs:extension base="t:tidbit"/>			
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="search-results">
+		<xs:annotation><xs:documentation>
+				Search results object.
+		</xs:documentation></xs:annotation>
+		<xs:sequence>
+			<xs:element name="pagination" type="t:pagination-criteria"/>
+			<xs:element name="index" type="t:pagination-index" minOccurs="0"/>
+			<xs:element name="tidbit" type="t:tidbit-search-result" 
+				minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="query" type="xs:string" use="optional"/>
+		<xs:attribute name="total-results" type="xs:nonNegativeInteger"/>
+		<xs:attribute name="returned-results" type="xs:nonNegativeInteger"/>
+		<xs:attribute name="search-time" type="xs:long"/>
+		<xs:attribute name="is-partial-result" type="xs:boolean" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="user">
+		<!-- Required -->
+		<xs:attribute name="login" type="xs:string" use="required"/>
+		
+		<!-- Optional -->
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+	</xs:complexType>
+	
+</xs:schema>
