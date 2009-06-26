@@ -1,6 +1,6 @@
-alter table tidbit drop foreign key FKCBE8BE1E804D9E2A;
+alter table tidbit drop foreign key tidbit_kind_fk;
 drop table if exists tidbit;
 drop table if exists tidbit_kind;
-create table tidbit (TidbitId bigint not null auto_increment, Hjtype varchar(255) not null, Data text, Comment text, Kind bigint, CreatedBy varchar(64) not null, Name varchar(128) not null, ModifyDate timestamp, CreationDate timestamp not null, primary key (TidbitId));
-create table tidbit_kind (KindId bigint not null auto_increment, Hjtype varchar(255) not null, Comment text, CreatedBy varchar(64) not null, Name varchar(128) not null, ModifyDate timestamp, CreationDate timestamp not null, primary key (KindId));
-alter table tidbit add index FKCBE8BE1E804D9E2A (Kind), add constraint FKCBE8BE1E804D9E2A foreign key (Kind) references tidbit_kind (KindId);
+create table tidbit (tidbitid bigint not null auto_increment, data longtext, comment longtext, kindid bigint, created_by varchar(64) not null, name varchar(128) not null, modify_date timestamp, creation_date timestamp not null, primary key (tidbitid));
+create table tidbit_kind (kindid bigint not null auto_increment, comment longtext, created_by varchar(64) not null, name varchar(128) not null, modify_date timestamp, creation_date timestamp not null, primary key (kindid));
+alter table tidbit add index tidbit_kind_fk (kindid), add constraint tidbit_kind_fk foreign key (kindid) references tidbit_kind (kindid);

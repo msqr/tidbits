@@ -23,23 +23,23 @@
  * ===================================================================
  */
 
-insert into tidbit_kind (KindId,hjtype,CreatedBy,Name,CreationDate)
-	values (-1,'magoffin.matt.tidbits.domain.TidbitKind','sa','Account #',CURRENT_TIMESTAMP);
-insert into tidbit_kind (KindId,hjtype,CreatedBy,Name,CreationDate)
-	values (-2,'magoffin.matt.tidbits.domain.TidbitKind','sa','Credit Card #',CURRENT_TIMESTAMP);
-insert into tidbit_kind (KindId,hjtype,CreatedBy,Name,CreationDate)
-	values (-3,'magoffin.matt.tidbits.domain.TidbitKind','sa','Password / PIN',CURRENT_TIMESTAMP);
-insert into tidbit_kind (KindId,hjtype,CreatedBy,Name,CreationDate)
-	values (-4,'magoffin.matt.tidbits.domain.TidbitKind','sa','Serial # / License',CURRENT_TIMESTAMP);
-insert into tidbit_kind (KindId,hjtype,CreatedBy,Name,CreationDate)
-	values (-5,'magoffin.matt.tidbits.domain.TidbitKind','sa','Unique Name / Logon',CURRENT_TIMESTAMP);
-insert into tidbit_kind (KindId,hjtype,CreatedBy,Name,CreationDate)
-	values (-6,'magoffin.matt.tidbits.domain.TidbitKind','sa','URL / IP #',CURRENT_TIMESTAMP);
+insert into tidbit_kind (kindid,created_by,name,creation_date)
+	values (-1,'app','Account #',CURRENT_TIMESTAMP);
+insert into tidbit_kind (kindid,created_by,name,creation_date)
+	values (-2,'app','Credit Card #',CURRENT_TIMESTAMP);
+insert into tidbit_kind (kindid,created_by,name,creation_date)
+	values (-3,'app','Password / PIN',CURRENT_TIMESTAMP);
+insert into tidbit_kind (kindid,created_by,name,creation_date)
+	values (-4,'app','Serial # / License',CURRENT_TIMESTAMP);
+insert into tidbit_kind (kindid,created_by,name,creation_date)
+	values (-5,'app','Unique Name / Logon',CURRENT_TIMESTAMP);
+insert into tidbit_kind (kindid,created_by,name,creation_date)
+	values (-6,'app','URL / IP #',CURRENT_TIMESTAMP);
 
-insert into tidbit (TidbitId,hjtype,CreatedBy,Kind,Name,Data,CreationDate) values
-	(-1,'magoffin.matt.tidbits.domain.Tidbit','sa',-5,'My Bank','mybanklogon',CURRENT_TIMESTAMP);
-insert into tidbit (TidbitId,hjtype,CreatedBy,Kind,Name,Data,CreationDate) values
-	(-2,'magoffin.matt.tidbits.domain.Tidbit','sa',-3,'My Bank','mybankpassword',CURRENT_TIMESTAMP);
-insert into tidbit (TidbitId,hjtype,CreatedBy,Kind,Name,Data,CreationDate) values
-	(-3,'magoffin.matt.tidbits.domain.Tidbit','sa',-6,'My Bank','http://www.mybank.com/login',CURRENT_TIMESTAMP);
+insert into tidbit (tidbitid,created_by,kindid,name,data,creation_date) values
+	(-1,'app',-5,'My Bank','mybanklogon',CURRENT_TIMESTAMP);
+insert into tidbit (tidbitid,created_by,kindid,name,data,creation_date) values
+	(-2,'app',-3,'My Bank','mybankpassword',CURRENT_TIMESTAMP);
+insert into tidbit (tidbitid,created_by,kindid,name,data,creation_date) values
+	(-3,'app',-6,'My Bank','http://www.mybank.com/login',CURRENT_TIMESTAMP);
 	
