@@ -48,6 +48,15 @@ public class AddTidbitKindForm extends AbstractForm {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	protected Map referenceData(HttpServletRequest request) throws Exception {
+		Model model = getDomainObjectFactory().newModelInstance();
+		Map<String,Object> viewModel = new LinkedHashMap<String,Object>();
+		viewModel.put(getModelObjectKey(),model);
+		return viewModel;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	protected ModelAndView onSubmit(HttpServletRequest request, 
 			HttpServletResponse response, Object command, 
 			BindException errors) throws Exception {

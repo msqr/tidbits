@@ -27,12 +27,16 @@
 
 package magoffin.matt.tidbits.web;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.TidbitKind;
 
 import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -55,6 +59,16 @@ public class SaveTidbitKindForm extends AddTidbitKindForm {
 		TidbitKind kind = getTidbitsBiz().getTidbitKind(id);
 		cmd.setKind(kind);
 		return cmd;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
+		Map<String, Object> viewModel = super.referenceData(request);
+		Model model = (Model)viewModel.get(getModelObjectKey());
+		Command cmd = (Command)command;
+		model.getKind().add(cmd.getKind());
+		return viewModel;
 	}
 
 	@Override
