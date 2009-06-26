@@ -29,7 +29,7 @@ function initLocale() {
  */
 function getTidbitId(node) {
 	if ( node.getAttribute('id') == null ) return;
-	var data = node.getAttribute('id').match(/tidbit-(\d+)/);
+	var data = node.getAttribute('id').match(/tidbit-(-?\d+)/);
 	if ( data ) {
 		return data[1];
 	}
@@ -42,7 +42,7 @@ function getTidbitId(node) {
  */
 function getKindId(node) {
 	if ( node.getAttribute('id') == null ) return;
-	var data = node.getAttribute('id').match(/kind-(\d+)/);
+	var data = node.getAttribute('id').match(/kind-(-?\d+)/);
 	if ( data ) {
 		return data[1];
 	}
@@ -446,7 +446,11 @@ $j(document).ready(function() {
 		$j(this).ajaxSubmit(function(responseText, statusText) {
 			if ( 'success' == statusText ) {
 				standardDialogHide();
-				standardMessageDisplay(XwebLocale.i18n('edit.tidbit.saved.intro'));
+				standardMessageDisplay(XwebLocale.i18n(
+						($j('#edit-tidbit-delete').val() == 'true' 
+							? 'edit.tidbit.deleted.intro' 
+							: 'edit.tidbit.saved.intro')
+						));
 			}
 			// else ... TODO
 		});
