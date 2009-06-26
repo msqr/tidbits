@@ -24,3 +24,19 @@ div#search-results-info span.data {
 div#content-pane {
 	overflow: hidden;
 }
+
+#nav-search-tidbit-form {
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: auto;
+    margin-bottom: 1em;
+}
+
+#body-content {
+	display: block;
+}
+
+div#search-results-info {
+	margin-top: 0;
+}
