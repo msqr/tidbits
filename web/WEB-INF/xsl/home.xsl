@@ -19,7 +19,7 @@
 		</xsl:call-template>
 		<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="simple-form">
 			<div>
-				<input name="query" id="search-tidbit-query" value="">
+				<input name="query" id="search-tidbit-query">
 					<xsl:choose>
 						<xsl:when test="$search-input-support = 'true'">
 							<xsl:attribute name="type">
@@ -41,6 +41,11 @@
 							</xsl:attribute>
 						</xsl:otherwise>
 					</xsl:choose>
+					<xsl:attribute name="value">
+						<xsl:if test="$handheld = 'true'">
+							<xsl:value-of select="$search-results/@query"/>
+						</xsl:if>
+					</xsl:attribute>
 				</input>
 				<input type="hidden" name="page" value="0"/>
 			</div>

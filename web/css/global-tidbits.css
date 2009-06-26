@@ -380,11 +380,10 @@ span.query:after { content: '\201D'; }
     position: fixed;
     top: 15px;
     right: 5px;
-    
     z-index: 120;
 }
 
-#nav-search-tidbit-form input[type=search] {
+#nav-search-tidbit-form input {
     width: 25em;
 }
 

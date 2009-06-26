@@ -147,9 +147,7 @@
 							value="{$edit-tidbit-kind/@kind-id}" />
 						<input type="hidden" id="edit-kind-delete" name="delete" value="false" />
 						<input value="{key('i18n','save.displayName')}" id="edit-kind-submit" type="submit" />
-						<xsl:if test="$handheld != 'true'">
-							<input value="{key('i18n','delete.displayName')}" id="edit-kind-submit-delete" type="submit" />
-						</xsl:if>
+						<input value="{key('i18n','delete.displayName')}" id="edit-kind-submit-delete" type="submit" />
 					</xsl:otherwise>
 				</xsl:choose>
 			</div>
