@@ -2,7 +2,7 @@
 	crossContext="false" reloadable="false" 
 	mapperClass="org.apache.catalina.core.StandardContextMapper" 
 	useNaming="true" debug="0" swallowOutput="false" privileged="false" 
-	displayName="Media Album" wrapperClass="org.apache.catalina.core.StandardWrapper" 
+	displayName="Tidbits" wrapperClass="org.apache.catalina.core.StandardWrapper" 
 	docBase="${catalina.home}/webapps/tidbits"  cookies="true"
 	cachingAllowed="true" charsetMapperClass="org.apache.catalina.util.CharsetMapper">
 	<Logger className="org.apache.catalina.logger.SystemOutLogger" verbosity="4" timestamp="true"/>
@@ -10,7 +10,7 @@
 		type="javax.sql.DataSource" scope="Shareable"
 		driverClassName="org.apache.derby.jdbc.EmbeddedDriver" 
 		url="jdbc:derby:tidbits"
-		username="sa" password="manager" maxWait="5000"
+		maxWait="5000"
 		maxActive="4" maxIdle="2" removeAbandoned="true"
 		removeAbandonedTimeout="60" logAbandoned="true"
 	/>
