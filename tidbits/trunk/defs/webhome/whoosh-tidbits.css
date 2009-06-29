@@ -84,21 +84,35 @@ table.thumbs {
 
 table.thumbs td {
 	border: none;
-	margin: none;
-	padding: 0.2em;
-	text-align: center;
+	margin: 0;
+	padding: 10px;
+	width: 330px;
+	text-align: left;
 	padding-bottom: 2em;
 	vertical-align: top;
 }
 
 table.thumbs th {
+	color: inherit;
 	background-color: inherit;
-	margin: none;
+	margin: 0;
 	border: none;
+	width: 330px;
 	border-top: 1px solid #666;
-	padding: 0.2em;
-	padding-top: 1em;
-	text-align: center;
+	padding: 10px;
+	padding-top: 2em;
+	text-align: left;
+}
+
+table.thumbs tr:first-child th {
+	border-top: none !important;
+}
+
+table.thumbs img {
+	background-color: #fff;
+	padding: 10px;
+	color: inherit;
+	border: 1px solid #ccc;
 }
 
 .code {
