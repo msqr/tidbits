@@ -64,7 +64,7 @@ public class CreatedByInterceptor implements MethodBeforeAdvice {
 		for ( Object arg : args ) {
 			if ( arg instanceof Tidbit || arg instanceof TidbitKind ) {
 				applyCreatedBy(arg, currentUser);
-			} else if ( arg instanceof Collection ) {
+			} else if ( arg instanceof Collection<?> ) {
 				Collection<?> collection = (Collection<?>)arg;
 				for ( Object collectionObj : collection ) {
 					if ( collectionObj instanceof Tidbit || arg instanceof TidbitKind ) {
