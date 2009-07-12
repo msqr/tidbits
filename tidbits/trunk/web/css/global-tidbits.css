@@ -165,7 +165,7 @@ table.tidbits tr.odd {
 	line-height: 11pt;
 	white-space: pre;
 	max-width: 20em;
-	height: 11pt;
+	max-height: 28pt;
 	overflow: hidden;
 	margin: 0 0 0 0 !important;
 	padding: 0 0 0 0 !important;
