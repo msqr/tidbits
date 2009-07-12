@@ -585,7 +585,12 @@ $j(document).ready(function() {
 					return '<div class="edit-btn" id="tidbit-' +obj.aData[1] +'-edit" style="display: none;"></div>';
 				},
 				'sClass': 'edit-button'
-			}, null, null, { 'sClass': 'data'}, null, null, null]
+			}, null, null, { 
+				'sClass': 'data',
+				'fnRender': function(obj) {
+					return '<div class="data-container">' +obj.aData[obj.iDataColumn] +'</div>';
+				}
+			}, null, null, null]
 	});
 	
 	$j('#datatable_wrapper').find('div.dataTables_paginate').hide(); // TODO fix pagination
