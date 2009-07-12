@@ -1,0 +1,42 @@
+form.simple-form input[type='text'], 
+form.simple-form input[type='password'],
+form.simple-form textarea {
+	width: 180px !important;
+}
+
+div#search-results-info {
+	position: relative;
+	float: none;
+	text-align: left;
+	margin-bottom: 6pt;
+	padding-bottom: 6pt;
+	border-bottom:2px solid #C9C2B6;
+}
+
+div#search-results-info span.header {
+	margin-right: 0;
+}
+
+div#search-results-info span.data {
+	margin-right: 6px;
+}
+
+div#content-pane {
+	overflow: hidden;
+}
+
+#nav-search-tidbit-form {
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: auto;
+    margin-bottom: 1em;
+}
+
+#body-content {
+	display: block;
+}
+
+div#search-results-info {
+	margin-top: 0;
+}
