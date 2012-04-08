@@ -102,10 +102,10 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<link rel="stylesheet" type="text/css" href="{$web-context}/css/datatable.css" media="screen,print"/>
-				<script type="text/javascript" src="{$web-context}/js/jquery-1.3.2.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js/jquery.center.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js/jquery.dataTables.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js/jquery.form.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.3.2.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js-lib/jquery.center.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js-lib/jquery.dataTables.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js-lib/jquery.form.js" xml:space="preserve"> </script>
 				<script type="text/javascript" src="{$web-context}/js/xweb-locale.js" xml:space="preserve"> </script>
 				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}">
 					<xsl:text> </xsl:text>
