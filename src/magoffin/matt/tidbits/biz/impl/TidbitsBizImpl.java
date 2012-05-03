@@ -29,9 +29,12 @@ package magoffin.matt.tidbits.biz.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
@@ -98,6 +101,12 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	 */
 	public List<Tidbit> parseCsvData(InputStream input) {
 		List<Tidbit> results = new LinkedList<Tidbit>();
+		DatatypeFactory df;
+		try {
+			df = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new RuntimeException(e);
+		}
 		CSVParser parser = new CSVParser(input);
 		// look for data in form:
 		// 0: tidbit kind name
@@ -135,16 +144,20 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				tidbit.setData(line[2]);
 				if ( line.length > 3 && StringUtils.hasText(line[3]) ) {
 					try {
-						tidbit.setCreationDate(CalendarParser.parse(line[3]));
+						GregorianCalendar gc = new GregorianCalendar();
+						gc.setTimeInMillis(CalendarParser.parse(line[3]).getTimeInMillis());
+						tidbit.setCreationDate(df.newXMLGregorianCalendar(gc));
 					} catch (CalendarParserException e) {
 						throw new RuntimeException(e);
 					}
 				} else {
-					tidbit.setCreationDate(Calendar.getInstance());
+					tidbit.setCreationDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 				}
 				if ( line.length > 4 && StringUtils.hasText(line[4]) ) {
 					try {
-						tidbit.setModifyDate(CalendarParser.parse(line[4]));
+						GregorianCalendar gc = new GregorianCalendar();
+						gc.setTimeInMillis(CalendarParser.parse(line[4]).getTimeInMillis());
+						tidbit.setModifyDate(df.newXMLGregorianCalendar(gc));
 					} catch (CalendarParserException e) {
 						throw new RuntimeException(e);
 					}
@@ -233,11 +246,17 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	}
 	
 	private void prepareTidbitForStorage(Tidbit tidbit) {
+		DatatypeFactory df;
+		try {
+			df = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new RuntimeException(e);
+		}
 		if ( tidbit.getCreationDate() == null ) {
-			tidbit.setCreationDate(Calendar.getInstance());
+			tidbit.setCreationDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
 		if ( tidbit.getTidbitId() != null ) {
-			tidbit.setModifyDate(Calendar.getInstance());
+			tidbit.setModifyDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
 		if ( tidbit.getKind() != null ) {
 			// make sure tidbit kind is a persistant instance
@@ -259,11 +278,17 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	}
 
 	private void prepareTidbitKindForStorage(TidbitKind kind) {
+		DatatypeFactory df;
+		try {
+			df = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException e) {
+			throw new RuntimeException(e);
+		}
 		if ( kind.getCreationDate() == null ) {
-			kind.setCreationDate(Calendar.getInstance());
+			kind.setCreationDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
 		if ( kind.getKindId() != null ) {
-			kind.setModifyDate(Calendar.getInstance());
+			kind.setModifyDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
 	}
 

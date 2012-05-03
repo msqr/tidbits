@@ -37,6 +37,7 @@ import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.domain.TidbitSearchResult;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -101,10 +102,10 @@ implements TidbitDao {
 		SearchResults results = domainObjectFactory.newSearchResultsInstance();
 		if ( pagination == null ) {
 			// return all available
-			List<Tidbit> allTidbits = findByNamedQuery(FIND_ALL, (Object[])null);
+			List allTidbits = findByNamedQuery(FIND_ALL, (Object[])null);
 			results.getTidbit().addAll(allTidbits);
 			results.setIsPartialResult(false);
-			results.setReturnedResults(BigInteger.valueOf(allTidbits.size()));
+			results.setReturnedResults(Long.valueOf(allTidbits.size()));
 			results.setTotalResults(results.getReturnedResults());
 			return results;
 		}
@@ -116,13 +117,13 @@ implements TidbitDao {
 			}
 		});
 		
-		List<Tidbit> pagedList = findByNamedQuery(FIND_ALL, (Object[])null, 
-				pagination.getPageOffset().intValue(), 
+		List pagedList = findByNamedQuery(FIND_ALL, (Object[])null, 
+				(int)pagination.getPageOffset(), 
 				pagination.getPageSize().intValue());
 		
 		results.getTidbit().addAll(pagedList);
-		results.setReturnedResults(BigInteger.valueOf(pagedList.size()));
-		results.setTotalResults(BigInteger.valueOf(count.longValue()));
+		results.setReturnedResults(Long.valueOf(pagedList.size()));
+		results.setTotalResults(Long.valueOf(count.longValue()));
 		results.setIsPartialResult(count.longValue()>pagedList.size());
 		results.setPagination(pagination);
 		return results;

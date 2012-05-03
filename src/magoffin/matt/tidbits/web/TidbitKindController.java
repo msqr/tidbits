@@ -32,8 +32,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.domain.UiModel;
 
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -53,7 +53,7 @@ public class TidbitKindController extends AbstractCommandController {
 			throws Exception {
 		Command cmd = (Command)command;
 		
-		Model model = getDomainObjectFactory().newModelInstance();
+		UiModel model = getDomainObjectFactory().newModelInstance();
 		TidbitKind kind = getTidbitsBiz().getTidbitKind(cmd.kindId);
 		model.getKind().add(kind);
 		

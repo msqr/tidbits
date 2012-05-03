@@ -26,7 +26,6 @@
 
 package magoffin.matt.tidbits.web;
 
-import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,9 +34,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import magoffin.matt.tidbits.biz.SearchQueryException;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
+import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.tidbits.support.BasicTidbitSearchCriteria;
 import magoffin.matt.tidbits.support.SearchCommand;
 
@@ -80,7 +79,7 @@ public class SearchForm extends AbstractForm {
 	private void handleSearch(Object command, 
 			Errors errors, Map<String, Object> viewModel) {
 		SearchCommand cmd = (SearchCommand)command;
-		Model model = getDomainObjectFactory().newModelInstance();
+		UiModel model = getDomainObjectFactory().newModelInstance();
 		
 		// get all available tidbits unless query specified
 		BasicTidbitSearchCriteria criteria = new BasicTidbitSearchCriteria();
@@ -91,8 +90,8 @@ public class SearchForm extends AbstractForm {
 			criteria.setSearchType(TidbitSearchType.FOR_TEMPLATE);
 		}
 		PaginationCriteria pagination = getDomainObjectFactory().newPaginationCriteriaInstance();
-		pagination.setPageSize(BigInteger.valueOf(cmd.getPageSize()));
-		pagination.setPageOffset(BigInteger.valueOf(cmd.getPage()));
+		pagination.setPageSize(Long.valueOf(cmd.getPageSize()));
+		pagination.setPageOffset(Long.valueOf(cmd.getPage()));
 		criteria.setPaginationCriteria(pagination);
 		
 		try {

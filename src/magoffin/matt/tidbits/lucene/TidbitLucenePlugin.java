@@ -28,25 +28,30 @@ package magoffin.matt.tidbits.lucene;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import magoffin.matt.lucene.IndexEvent;
+import magoffin.matt.lucene.IndexEvent.EventType;
 import magoffin.matt.lucene.IndexResults;
 import magoffin.matt.lucene.LucenePlugin;
+import magoffin.matt.lucene.LuceneService.IndexWriterOp;
 import magoffin.matt.lucene.LuceneServiceUtils;
 import magoffin.matt.lucene.SearchCriteria;
 import magoffin.matt.lucene.SearchMatch;
-import magoffin.matt.lucene.IndexEvent.EventType;
-import magoffin.matt.lucene.LuceneService.IndexWriterOp;
 import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.domain.TidbitSearchResult;
 import magoffin.matt.util.DelegatingInvocationHandler;
 
 import org.apache.log4j.Logger;
@@ -93,10 +98,9 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		indexTidbit((Tidbit)object, writer);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void doReindexAll(IndexWriter writer, TidbitIndexResults indexResults) {
 		SearchResults results = tidbitDao.getAllTidbits(null);
-		for ( Tidbit tidbit : (List<Tidbit>)results.getTidbit() ) {
+		for ( TidbitSearchResult tidbit : results.getTidbit() ) {
 			List<Object> errors = indexTidbit(tidbit, writer);
 			if ( errors != null && errors.size() > 0 ) {
 				indexResults.errors.put(tidbit.getTidbitId(), errors.get(0).toString());
@@ -178,9 +182,15 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		if ( dateStr != null ) {
 			Date d = getLucene().parseDate(dateStr);
 			if ( d != null ) {
-				Calendar c = Calendar.getInstance(getLucene().getIndexTimeZone());
+				GregorianCalendar c = new GregorianCalendar(getLucene().getIndexTimeZone());
 				c.setTime(d);
-				tidbit.setCreationDate(c);
+				XMLGregorianCalendar cal;
+				try {
+					cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+				} catch (DatatypeConfigurationException e) {
+					throw new RuntimeException(e);
+				}
+				tidbit.setCreationDate(cal);
 			}
 		}
 		
@@ -188,9 +198,15 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		if ( dateStr != null ) {
 			Date d = getLucene().parseDate(dateStr);
 			if ( d != null ) {
-				Calendar c = Calendar.getInstance(getLucene().getIndexTimeZone());
+				GregorianCalendar c = new GregorianCalendar(getLucene().getIndexTimeZone());
 				c.setTime(d);
-				tidbit.setModifyDate(c);
+				XMLGregorianCalendar cal;
+				try {
+					cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+				} catch (DatatypeConfigurationException e) {
+					throw new RuntimeException(e);
+				}
+				tidbit.setModifyDate(cal);
 			}
 		}
 		
@@ -252,13 +268,13 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		}
 		
 		if ( tidbit.getCreationDate() != null ) {
-			String dateStr = getLucene().formatDateToDay(tidbit.getCreationDate().getTime());
+			String dateStr = getLucene().formatDateToDay(tidbit.getCreationDate().toGregorianCalendar().getTime());
 			doc.add(new Field(IndexField.CREATED_DATE.getFieldName(), dateStr,
 					Field.Store.YES, Field.Index.ANALYZED));
 		}
 		
 		if ( tidbit.getModifyDate() != null ) {
-			String dateStr = getLucene().formatDateToDay(tidbit.getModifyDate().getTime());
+			String dateStr = getLucene().formatDateToDay(tidbit.getModifyDate().toGregorianCalendar().getTime());
 			doc.add(new Field(IndexField.MODIFIED_DATE.getFieldName(), dateStr,
 					Field.Store.YES, Field.Index.NOT_ANALYZED));
 		}

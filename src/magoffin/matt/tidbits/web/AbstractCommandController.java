@@ -30,7 +30,6 @@ import org.springframework.util.StringUtils;
 
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.xweb.util.MessagesSource;
 import magoffin.matt.xweb.util.XwebConstants;
 
@@ -54,7 +53,7 @@ import magoffin.matt.xweb.util.XwebConstants;
  *   <dd>An implementation of {@link magoffin.matt.tidbits.biz.TidbitsBiz} to use.</dd>
  *   
  *   <dt>modelObjectKey</dt>
- *   <dd>The view model key for the {@link Model} object.</dd>
+ *   <dd>The view model key for the model object.</dd>
  *   
  * </dl>
  * 

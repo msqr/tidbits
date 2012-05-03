@@ -29,15 +29,15 @@ package magoffin.matt.tidbits.biz.impl;
 import javax.xml.bind.JAXBException;
 
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.ObjectFactory;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.PaginationIndex;
 import magoffin.matt.tidbits.domain.PaginationIndexSection;
 import magoffin.matt.tidbits.domain.SearchResults;
-import magoffin.matt.tidbits.domain.Session;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.domain.UiModel;
+import magoffin.matt.tidbits.domain.UiSession;
 import magoffin.matt.tidbits.domain.User;
 import magoffin.matt.xweb.XAppContext;
 import magoffin.matt.xweb.XwebParameter;
@@ -55,27 +55,15 @@ public class JAXBDomainObjectFactory implements DomainObjectFactory {
 		new magoffin.matt.xweb.ObjectFactory();
 	
 	public User newUserInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createUser();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return TIDBITS_OBJECT_FACTORY.createUser();
 	}
 	
 	public Tidbit newTidbitInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createTidbit();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return TIDBITS_OBJECT_FACTORY.createTidbit();
 	}
 
 	public TidbitKind newTidbitKindInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createTidbitKind();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return TIDBITS_OBJECT_FACTORY.createTidbitKind();
 	}
 
 	public XAppContext newXAppContextInstance() {
@@ -86,52 +74,28 @@ public class JAXBDomainObjectFactory implements DomainObjectFactory {
 		}
 	}
 
-	public Model newModelInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createModel();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+	public UiModel newModelInstance() {
+		return TIDBITS_OBJECT_FACTORY.createUiModel();
 	}
 
-	public Session newSessionInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createSession();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+	public UiSession newSessionInstance() {
+		return TIDBITS_OBJECT_FACTORY.createUiSession();
 	}
 
 	public PaginationCriteria newPaginationCriteriaInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createPaginationCriteria();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return TIDBITS_OBJECT_FACTORY.createPaginationCriteria();
 	}
 
 	public PaginationIndex newPaginationIndexInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createPaginationIndex();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return TIDBITS_OBJECT_FACTORY.createPaginationIndex();
 	}
 
 	public PaginationIndexSection newPaginationIndexSectionInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createPaginationIndexSection();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return TIDBITS_OBJECT_FACTORY.createPaginationIndexSection();
 	}
 
 	public SearchResults newSearchResultsInstance() {
-		try {
-			return TIDBITS_OBJECT_FACTORY.createSearchResults();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return TIDBITS_OBJECT_FACTORY.createSearchResults();
 	}
 
 	public XwebParameter newXwebParameterInstance() {
