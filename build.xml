@@ -19,7 +19,8 @@
 
   $Id: build.xml,v 1.10 2006/10/27 00:43:50 matt Exp $   
 -->
-<project name="Tidbits" default="help">
+<project name="Tidbits" default="help"
+	 xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<property file="build.properties" />
 	
@@ -45,6 +46,7 @@
 	<property name="app.home.backup" value="${app.home}.bak"/>
 	
 	<property name="dir.app.dest" value="${dir.build}/${app.name}"/>
+	<property name="dir.compile.src" value="${dir.build}/src"/>
 	<property name="dir.compile.dest" value="${dir.app.dest}/WEB-INF/classes"/>
 	<property name="dir.compile.dest.domain" value="${dir.build}/generated/classes"/>
 	<property name="compile.debug" value="true" />
@@ -119,6 +121,24 @@
 		<mkdir dir="${dir.generated}" />
 		<mkdir dir="${dir.dist}"/>
 	</target>
+
+	<!-- Ivy integration -->
+
+	<target name="ivy-init">
+		<taskdef resource="org/apache/ivy/ant/antlib.xml"
+			uri="antlib:org.apache.ivy.ant"
+			classpath="${dir.lib}/ivy-2.2.0.jar"/>
+	</target>
+	
+	<target name="lib-init" depends="ivy-init">
+		<ivy:settings file="${dir.lib}/ivysettings.xml"/>
+	</target>
+	
+	<target name="lib-resolve" depends="lib-init">
+		<echo message="[====&gt; Resolving dependencies (compile) &lt;====]"/>
+		<ivy:resolve file="${basedir}/ivy.xml" conf="compile"/>
+		<!--ivy:retrieve pattern="${dir.lib}/[artifact].[ext]"/-->
+	</target>
 	
 	<!-- HyperJAXB3 support -->
 	
@@ -158,88 +178,20 @@
 		</jar>
 	</target>
 	
-	<target name="generate.domain" depends="init" description="Generate JAXB domain objects from XML schemas">
-		<delete>
-			<fileset dir="${hjb.dir}/src/main">
-				<include name="resources/**"/>
-				<include name="java/**"/>
-			</fileset>
-		</delete>
-		<copy todir="${hjb.dir}/src/main/resources">
-			<fileset dir="defs/schema">
-				<include name="binding.xml"/>
-			</fileset>
-			<mapper type="glob" from="*.xml" to="*.xjb"/>
-		</copy>
-		<copy todir="${hjb.dir}/src/main/resources">
-			<fileset dir="defs/schema">
-				<include name="core.xsd"/>
-				<include name="domain.xsd"/>
-				<include name="ui.xsd"/>
-			</fileset>
-		</copy>
-		<javac srcdir="${hjb.dir}/src/main/java"
-				destdir="${hjb.dir}/src/main/java"
-				debug="${compile.debug}" 
-				deprecation="${compile.deprecation}" 
-				optimize="${compile.optimize}" 
-				nowarn="${compile.nowarn}"
-				target="1.5"
-				source="1.5">
-			<!--classpath refid="unit-test.path" /-->
-		</javac>				
-		<ant antfile="build.xml" inheritall="false" target="generate-sources" dir="${hjb.dir}">
-			<property name="hyperjaxb2.export.schema.properties.file" 
-				value="${basedir}/${dir.database}/${hjb.db.type}/hibernate.properties"/>
-		</ant>
-
-		<delete>
-			<fileset dir="${dir.generated}">
-				<include name="magoffin/matt/tidbits/domain/*.*"/>
-				<include name="magoffin/matt/tidbits/domain/impl/**"/>
-			</fileset>
-		</delete>
-		<copy todir="${dir.generated}">
-			<fileset dir="${hjb.dir}/target/generated-sources/xjc">
-				<include name="magoffin/matt/tidbits/domain/**"/>
-			</fileset>
-		</copy>
-	
-	</target>
-	
-	<target name="compile.domain" description="Compile the JAXB classes">
-		<delete dir="${dir.compile.dest.domain}" failonerror="no"/>
-		<mkdir dir="${dir.compile.dest.domain}"/>
-		<javac srcdir="${dir.generated}"
-				destdir="${dir.compile.dest.domain}"
-				debug="${compile.debug}" 
-				deprecation="${compile.deprecation}" 
-				optimize="${compile.optimize}" 
-				nowarn="${compile.nowarn}"
-				target="1.5"
-				source="1.5"
-				fork="true"
-				memoryinitialsize="256m"
-				memorymaximumsize="400m"
-				>
-			<classpath refid="compile.path" />
-		</javac>
-	</target>
-			
-	<target name="jar.domain" description="Create source and binary JAR out of the JAXB classes">
-		<!-- Generate the binary JAR with source attached -->
-		<jar destfile="${dir.web.lib}/${app.name}-xml.jar">
-			<fileset dir="${dir.compile.dest.domain}">
-				<include name="**"/>
-			</fileset>
-			<fileset dir="${dir.generated}">
-				<include name="magoffin/matt/tidbits/domain/**"/>
-			</fileset>
-		</jar>
-	</target>
-
 	<target name="generate-xml" description="Generate new JAXB jar from scratch"
-		depends="generate.domain,compile.domain,jar.domain"/>
+		depends="hyperjaxb"/>
+
+	<target name="ddl-gen" depends="compile" description="Generate database schema DDL from JPA">
+		<!-- Copy Ivy JAR files, so we don't include .txt files in classpath -->
+		<ivy:retrieve pattern="${dir.build}/lib/[artifact]-[revision].[ext]" conf="test" />
+		<path id="ddl.path">
+			<pathelement location="${dir.compile.dest}"/>
+			<pathelement location="${dir.env}"/>
+			<fileset dir="${dir.build}/lib" includes="*.jar"/>
+			<fileset dir="${dir.web.lib}" includes="*.jar"/>
+		</path>
+		<java classname="magoffin.matt.dao.jpa.JPASchemaGenerator" classpathref="ddl.path"/>
+	</target>
 
 	<target name="check-has-env">
 		<echo>Checking for enivornment ${dir.env}</echo>
@@ -291,7 +243,7 @@
 
 	</target>
 
-	<target name="compile" description="Compile source files">
+	<target name="compile-old" description="Compile source files">
 		<mkdir dir="${dir.compile.dest}"/>
 		<javac srcdir="${dir.source}"
 			destdir="${dir.compile.dest}"
@@ -304,7 +256,45 @@
 			<classpath refid="compile.path" />
 		</javac>
 	</target>
+
+	<target name="prepare.compile">
+		<mkdir dir="${dir.compile.dest}"/>
+		<mkdir dir="${dir.compile.src}"/>
+		<copy todir="${dir.compile.src}">
+			<fileset dir="${dir.source}">
+				<include name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
 	
+	<target name="compile.core" depends="prepare.compile">
+		<ivy:cachepath pathid="lib.path" conf="compile"/>
+		<path id="compile.core.path">
+			<path refid="lib.path"/>
+			<fileset dir="${dir.web.lib}" includes="*.jar"/>
+		</path>
+		<javac srcdir="${dir.compile.src}"
+				destdir="${dir.compile.dest}"
+				debug="${compile.debug}" 
+				deprecation="${compile.deprecation}" 
+				optimize="${compile.optimize}" 
+				nowarn="${compile.nowarn}"
+				target="1.5"
+				source="1.5"
+				includeantruntime="no">
+			<classpath refid="compile.core.path" />
+		</javac>
+	</target>
+
+	<target name="compile" description="Compile source Java files"
+		depends="lib-resolve,compile.core">
+		
+		<!-- Copy properties, META-INF, etc -->
+		<copy todir="${dir.compile.dest}">
+			<fileset dir="${dir.source}" includes="**" excludes="**/*.java"/>
+		</copy>
+	</target>
+
 	<!-- Create the Tidbits WAR file -->
 	<target name="war" description="Create application WAR"
 		depends="prepare,compile">
