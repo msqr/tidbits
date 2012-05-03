@@ -22,10 +22,6 @@
 <project name="Tidbits" default="help">
 
 	<property file="build.properties" />
-
-	<!-- HyperJAXB 2 properties -->
-	<property name="hjb.dir" value="hyperjaxb2-build"/>
-	<property name="hjb.db.type" value="postgres"/>
 	
 	<property name="dir.base" value="."/>
 	<property name="dir.source" value="src"/>
@@ -54,7 +50,14 @@
 	<property name="compile.debug" value="true" />
 	<property name="compile.deprecation" value="false" />
 	<property name="compile.optimize" value="true" />
-	<property name="compile.nowarn" value="true" />
+	<property name="compile.nowarn" value="true" />	
+
+	<!-- HyperJAXB3 properties -->
+	<property name="dir.hyperjaxb3.schemas" value="${dir.schema}"/>
+	<property name="dir.hyperjaxb3.home" value="${dir.lib}/hyperjaxb3"/>
+	<property name="dir.hyperjaxb3.java" value="${dir.hyperjaxb3.home}/src/main/java"/>
+	<property name="dir.hyperjaxb3.resources" value="${dir.hyperjaxb3.home}/src/main/resources"/>
+	<property name="dir.hyperjaxb3.generated.src" value="${dir.hyperjaxb3.home}/target"/>
 	
 	<property name="jaxb.version" value="1.4"/>
 	
@@ -115,6 +118,44 @@
 		<mkdir dir="${dir.build.cvs}" />
 		<mkdir dir="${dir.generated}" />
 		<mkdir dir="${dir.dist}"/>
+	</target>
+	
+	<!-- HyperJAXB3 support -->
+	
+	<target name="hyperjaxb.clean">
+		<delete dir="${dir.hyperjaxb3.home}/target" failonerror="no"/>
+		<delete dir="${dir.hyperjaxb3.java}" failonerror="no"/>
+		<delete dir="${dir.hyperjaxb3.resources}" failonerror="no"/>
+	</target>
+
+	<target name="hyperjaxb.prepare">
+		<mkdir dir="${dir.hyperjaxb3.java}"/>
+		<mkdir dir="${dir.hyperjaxb3.resources}"/>
+		<mkdir dir="${dir.hyperjaxb3.home}/src/test/java"/>
+		<copy todir="${dir.hyperjaxb3.resources}">
+			<fileset dir="${dir.hyperjaxb3.schemas}" includes="**"/>
+		</copy>
+	</target>
+
+	<target name="hyperjaxb.generate" depends="hyperjaxb.prepare">
+		<ant antfile="${dir.hyperjaxb3.home}/build.xml" inheritall="false" target="compile">
+			<property name="artifactId" value="${app.name}-xml"/>
+			<property name="version" value="${jaxb.version}"/>
+		</ant>
+	</target>
+	
+	<target name="hyperjaxb" depends="hyperjaxb.clean,hyperjaxb.generate">
+		<jar destfile="${dir.web}/WEB-INF/lib/${app.name}-xml.jar">
+			<fileset dir="${dir.hyperjaxb3.home}/target/classes">
+				<include name="**"/>
+				<exclude name="*.*"/>
+			</fileset>
+			<fileset dir="${dir.hyperjaxb3.home}/target/generated-sources/xjc">
+				<include name="**"/>
+				<exclude name="META-INF/**"/>
+				<exclude name="*.*"/>
+			</fileset>
+		</jar>
 	</target>
 	
 	<target name="generate.domain" depends="init" description="Generate JAXB domain objects from XML schemas">

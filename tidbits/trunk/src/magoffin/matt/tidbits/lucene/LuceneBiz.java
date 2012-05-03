@@ -27,17 +27,16 @@
 package magoffin.matt.tidbits.lucene;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.List;
 
 import magoffin.matt.lucene.LuceneService;
-import magoffin.matt.lucene.SearchMatch;
 import magoffin.matt.lucene.LuceneService.IndexSearcherOp;
+import magoffin.matt.lucene.SearchMatch;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.SearchQueryException;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
-import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.TidbitSearchResult;
 
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -71,7 +70,6 @@ public class LuceneBiz {
 		final SearchResults results = domainObjectFactory.newSearchResultsInstance();
 		results.setQuery(tidbitCriteria.getQuery());
 		lucene.doIndexSearcherOp(tidbitIndexType, new IndexSearcherOp() {
-			@SuppressWarnings("unchecked")
 			public void doSearcherOp(String type, IndexSearcher searcher) throws IOException {	
 				Query query = null;
 				try {
@@ -90,7 +88,7 @@ public class LuceneBiz {
 				int endIdx = col.getTotalHits();
 				if ( tidbitCriteria.getPaginationCriteria() != null ) {
 					results.setPagination(tidbitCriteria.getPaginationCriteria());
-					int pageOffset = tidbitCriteria.getPaginationCriteria().getPageOffset().intValue();
+					int pageOffset = (int)tidbitCriteria.getPaginationCriteria().getPageOffset();
 					int pageSize = tidbitCriteria.getPaginationCriteria().getPageSize().intValue();
 					startIdx = pageOffset * pageSize;
 					if ( startIdx >= col.getTotalHits() ) {
@@ -102,13 +100,13 @@ public class LuceneBiz {
 					results.setIsPartialResult(false);
 				}
 				
-				results.setTotalResults(BigInteger.valueOf(col.getTotalHits()));
+				results.setTotalResults(Long.valueOf(col.getTotalHits()));
 				List<SearchMatch> matches = lucene.build(
 						tidbitIndexType,col,startIdx,endIdx);
-				results.setReturnedResults(BigInteger.valueOf(matches.size()));
+				results.setReturnedResults(Long.valueOf(matches.size()));
 				for ( SearchMatch match : matches ) {
-					if ( Tidbit.class.isAssignableFrom(match.getClass()) ) {
-						results.getTidbit().add(match);
+					if ( TidbitSearchResult.class.isAssignableFrom(match.getClass()) ) {
+						results.getTidbit().add((TidbitSearchResult)match);
 					}
 				}
 			}

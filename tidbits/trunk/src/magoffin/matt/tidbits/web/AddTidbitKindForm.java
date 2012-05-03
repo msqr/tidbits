@@ -32,8 +32,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.domain.UiModel;
 
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,7 +49,7 @@ public class AddTidbitKindForm extends AbstractForm {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception {
-		Model model = getDomainObjectFactory().newModelInstance();
+		UiModel model = getDomainObjectFactory().newModelInstance();
 		Map<String,Object> viewModel = new LinkedHashMap<String,Object>();
 		viewModel.put(getModelObjectKey(),model);
 		return viewModel;
@@ -62,7 +62,7 @@ public class AddTidbitKindForm extends AbstractForm {
 			BindException errors) throws Exception {
 		Command cmd = (Command)command;
 		TidbitKind saved = getTidbitsBiz().saveTidbitKind(cmd.kind);
-		Model model = getDomainObjectFactory().newModelInstance();
+		UiModel model = getDomainObjectFactory().newModelInstance();
 		model.getKind().add(saved);
 		Map<String,Object> viewModel = new LinkedHashMap<String,Object>();
 		viewModel.put(getModelObjectKey(),model);

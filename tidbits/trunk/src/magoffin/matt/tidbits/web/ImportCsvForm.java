@@ -34,8 +34,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.util.TemporaryFile;
 import magoffin.matt.util.TemporaryFileMultipartFileEditor;
 
@@ -93,7 +93,7 @@ public class ImportCsvForm extends AbstractWizardForm {
 	@Override
 	protected Map referenceData(HttpServletRequest request, Object command, Errors errors, int page) throws Exception {
 		Command cmd = (Command)command;
-		Model model = getDomainObjectFactory().newModelInstance();
+		UiModel model = getDomainObjectFactory().newModelInstance();
 		if ( cmd.getTidbits() != null ) {
 			model.getTidbit().addAll(cmd.getTidbits());
 		}

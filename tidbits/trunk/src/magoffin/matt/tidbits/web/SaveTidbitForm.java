@@ -31,8 +31,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.UiModel;
 
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -64,7 +64,7 @@ public class SaveTidbitForm extends AddTidbitForm {
 	@Override
 	protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
 		Map<String, Object> viewModel = super.referenceData(request);
-		Model model = (Model)viewModel.get(getModelObjectKey());
+		UiModel model = (UiModel)viewModel.get(getModelObjectKey());
 		Command cmd = (Command)command;
 		model.getTidbit().add(cmd.getTidbit());
 		return viewModel;

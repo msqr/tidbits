@@ -26,14 +26,14 @@
 
 package magoffin.matt.tidbits.biz;
 
-import magoffin.matt.tidbits.domain.Model;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.PaginationIndex;
 import magoffin.matt.tidbits.domain.PaginationIndexSection;
 import magoffin.matt.tidbits.domain.SearchResults;
-import magoffin.matt.tidbits.domain.Session;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.domain.UiModel;
+import magoffin.matt.tidbits.domain.UiSession;
 import magoffin.matt.tidbits.domain.User;
 import magoffin.matt.xweb.XAppContext;
 import magoffin.matt.xweb.XwebParameter;
@@ -50,7 +50,7 @@ public interface DomainObjectFactory {
 	 * Get a new Model instance.
 	 * @return new Model instance
 	 */
-	Model newModelInstance();
+	UiModel newModelInstance();
 	
 	/**
 	 * Get a new PaginationCriteria instance.
@@ -82,7 +82,7 @@ public interface DomainObjectFactory {
 	 * Get a new Session instance.
 	 * @return new Session instance
 	 */
-	Session newSessionInstance();
+	UiSession newSessionInstance();
 	
 	/**
 	 * Get a new Tidbit instance.

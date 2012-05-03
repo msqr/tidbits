@@ -26,8 +26,7 @@
 	xmlns:t="http://msqr.us/xsd/TidBits"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
-	xmlns:hj="http://hyperjaxb2.jvnet.org/customizations"
-	jaxb:extensionBindingPrefixes="xjc hj"
+	jaxb:extensionBindingPrefixes="xjc"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
