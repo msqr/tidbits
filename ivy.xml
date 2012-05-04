@@ -13,6 +13,12 @@
 		<dependency org="org.apache.lucene" name="lucene-core" rev="2.4.1">
     		<artifact name="lucene-core" type="jar" />
 		</dependency>
+		<dependency org="org.apache.lucene" name="lucene-snowball" rev="2.4.1" >
+			<artifact name="lucene-snowball" type="jar" />
+		</dependency>
+		<dependency org="org.ostermiller" name="utils" rev="1.07.00" >
+    		<artifact name="utils" type="jar" />
+		</dependency>
 		
 		<!-- JPA/JDBC stuff -->
 		<dependency org="org.eclipse.persistence" name="javax.persistence" rev="2.0.0">
