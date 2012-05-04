@@ -48,9 +48,6 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 		dao.setEm(getEm());
 	}
 
-	/**
-	 * Test able to persist a new group.
-	 */
 	@Test
 	public void storeEntity() {
 		TidbitKind obj = new TidbitKind();
