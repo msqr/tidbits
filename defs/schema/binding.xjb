@@ -149,7 +149,7 @@
 			
 			<jaxb:bindings node="xs:attribute[@name='creation-date']">
 				<hj:basic>
-					<orm:column name="creation_date" nullable="false" column-definition="timestamp with time zone"/>
+					<orm:column name="creation_date" nullable="false"/>
 					<orm:temporal>TIMESTAMP</orm:temporal>
 				</hj:basic>
 			</jaxb:bindings>
@@ -164,7 +164,7 @@
 			
 			<jaxb:bindings node="xs:attribute[@name='modify-date']">
 				<hj:basic>
-					<orm:column name="modify_date" nullable="true" column-definition="timestamp with time zone"/>
+					<orm:column name="modify_date" nullable="true"/>
 					<orm:temporal>TIMESTAMP</orm:temporal>
 				</hj:basic>
 			</jaxb:bindings>
