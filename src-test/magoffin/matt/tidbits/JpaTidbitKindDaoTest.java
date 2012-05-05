@@ -29,6 +29,7 @@ package magoffin.matt.tidbits;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import java.util.List;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitKindDao;
 import magoffin.matt.tidbits.domain.TidbitKind;
 import org.junit.Before;
@@ -57,7 +58,9 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 		TidbitKind obj = new TidbitKind();
 		obj.setComment("comment");
 		obj.setName("name");
+		obj.setCreatedBy("foo");
 		Long pk = dao.store(obj);
+		flushEntityManager();
 		assertNotNull("Primary key must not be null", pk);
 		this.id = pk;
 	}
@@ -75,6 +78,13 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 	}
 
 	@Test
+	public void getMissingEntity() {
+		storeEntity();
+		TidbitKind entity = dao.get(-123L);
+		assertNull(entity);
+	}
+
+	@Test
 	public void updateEntity() {
 		storeEntity();
 		TidbitKind entity = dao.get(this.id);
@@ -89,4 +99,38 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 		assertNotNull("Modify date should be set", entity.getModifyDate());
 	}
 
+	@Test
+	public void findAll() {
+		storeEntity();
+		List<TidbitKind> list = dao.getAllTidbitKinds();
+		assertNotNull(list);
+		assertEquals(1, list.size());
+		assertEquals(this.id, list.get(0).getKindId());
+	}
+
+	@Test
+	public void findByName() {
+		storeEntity();
+		List<TidbitKind> list = dao.findTidbitKindsByName("name");
+		assertNotNull(list);
+		assertEquals(1, list.size());
+		assertEquals(this.id, list.get(0).getKindId());
+	}
+
+	@Test
+	public void findByNameNoMatch() {
+		storeEntity();
+		List<TidbitKind> list = dao.findTidbitKindsByName("no match");
+		assertNotNull(list);
+		assertEquals(0, list.size());
+	}
+
+	@Test
+	public void findByNameMultiMatch() {
+		storeEntity();
+		storeEntity();
+		List<TidbitKind> list = dao.findTidbitKindsByName("name");
+		assertNotNull(list);
+		assertEquals(2, list.size());
+	}
 }

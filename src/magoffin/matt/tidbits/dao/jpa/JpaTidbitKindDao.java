@@ -30,8 +30,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import magoffin.matt.dao.BasicSortDescriptor;
@@ -48,7 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author matt
  * @version $Revision$ $Date$
  */
-@NamedQueries({ @NamedQuery(name = "KindForName", query = "SELECT k FROM TidbitKind k WHERE k.name = :name") })
 public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements TidbitKindDao {
 
 	/**
@@ -91,7 +88,10 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public TidbitKind getTidbitKindByName(String name) {
-		List<TidbitKind> results = findTidbitKindsByName(name);
+		TypedQuery<TidbitKind> q = getEm().createNamedQuery("KindForName", TidbitKind.class);
+		q.setParameter("name", name);
+		q.setMaxResults(1);
+		List<TidbitKind> results = q.getResultList();
 		if ( results.size() > 0 ) {
 			return results.get(0);
 		}
@@ -103,7 +103,6 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 	public List<TidbitKind> findTidbitKindsByName(String name) {
 		TypedQuery<TidbitKind> q = getEm().createNamedQuery("KindForName", TidbitKind.class);
 		q.setParameter("name", name);
-		q.setMaxResults(1);
 		return q.getResultList();
 	}
 

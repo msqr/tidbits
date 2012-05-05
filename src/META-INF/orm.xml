@@ -12,4 +12,9 @@
 			</entity-listeners-->
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
+	<entity class="magoffin.matt.tidbits.domain.TidbitKind">
+		<named-query name="KindForName">
+			<query>SELECT k FROM TidbitKind k WHERE k.name = :name</query>
+		</named-query>
+	</entity>
 </entity-mappings>
