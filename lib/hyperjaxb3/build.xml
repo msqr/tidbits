@@ -112,15 +112,21 @@
 		</taskdef>
 		<mkdir dir="${basedir}/target/generated-sources/xjc"/>
 		<xjc destdir="${basedir}/target/generated-sources/xjc" extension="true">
-			<arg line="
+			<!-- MSM: don't want equals, hashCode, or toString
+			arg line="
 				-Xhyperjaxb3-ejb
 				-Xhyperjaxb3-ejb-roundtripTestClassName=RoundtripTest
 				-Xequals
 				-Xinheritance
 				-XhashCode
-				-XtoString"/>
+				-XtoString"/-->
+			<arg line="
+				-Xhyperjaxb3-ejb
+				-Xhyperjaxb3-ejb-roundtripTestClassName=RoundtripTest
+				-Xinheritance"/>
 			<binding dir="${basedir}/src/main/resources">
-			 	<include name="**/*.xjb"/>
+
+				<include name="**/*.xjb"/>
 			</binding>
 			<schema dir="${basedir}/src/main/resources">
 			 	<include name="**/*.xsd"/>
