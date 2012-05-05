@@ -27,6 +27,7 @@
 package magoffin.matt.tidbits.dao.jpa;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NamedQueries;
@@ -55,6 +56,18 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 	 */
 	public JpaTidbitKindDao() {
 		super(TidbitKind.class);
+	}
+
+	@Override
+	protected final void prePersist(TidbitKind domainObject) {
+		if ( domainObject.getCreationDate() == null ) {
+			domainObject.setCreationDateItem(new Date());
+		}
+	}
+
+	@Override
+	protected final void preUpdate(TidbitKind domainObject) {
+		domainObject.setModifyDateItem(new Date());
 	}
 
 	@Override
