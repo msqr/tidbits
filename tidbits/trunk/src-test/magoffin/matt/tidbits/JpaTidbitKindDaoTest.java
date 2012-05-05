@@ -70,7 +70,7 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 		storeEntity();
 		TidbitKind entity = dao.get(this.id);
 		assertNotNull(entity);
-		assertEquals(this.id, entity.getKindId());
+		assertEquals(this.id, entity.getId());
 		assertEquals("comment", entity.getComment());
 		assertEquals("name", entity.getName());
 		assertNotNull(entity.getCreationDate());
@@ -105,7 +105,7 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 		List<TidbitKind> list = dao.getAllTidbitKinds();
 		assertNotNull(list);
 		assertEquals(1, list.size());
-		assertEquals(this.id, list.get(0).getKindId());
+		assertEquals(this.id, list.get(0).getId());
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 		List<TidbitKind> list = dao.findTidbitKindsByName("name");
 		assertNotNull(list);
 		assertEquals(1, list.size());
-		assertEquals(this.id, list.get(0).getKindId());
+		assertEquals(this.id, list.get(0).getId());
 	}
 
 	@Test

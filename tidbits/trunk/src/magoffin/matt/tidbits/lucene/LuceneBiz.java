@@ -28,7 +28,6 @@ package magoffin.matt.tidbits.lucene;
 
 import java.io.IOException;
 import java.util.List;
-
 import magoffin.matt.lucene.LuceneService;
 import magoffin.matt.lucene.LuceneService.IndexSearcherOp;
 import magoffin.matt.lucene.SearchMatch;
@@ -37,7 +36,6 @@ import magoffin.matt.tidbits.biz.SearchQueryException;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.TidbitSearchResult;
-
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocCollector;
@@ -70,6 +68,8 @@ public class LuceneBiz {
 		final SearchResults results = domainObjectFactory.newSearchResultsInstance();
 		results.setQuery(tidbitCriteria.getQuery());
 		lucene.doIndexSearcherOp(tidbitIndexType, new IndexSearcherOp() {
+
+			@Override
 			public void doSearcherOp(String type, IndexSearcher searcher) throws IOException {	
 				Query query = null;
 				try {

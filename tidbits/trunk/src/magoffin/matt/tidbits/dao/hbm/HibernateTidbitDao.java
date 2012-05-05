@@ -26,10 +26,8 @@
 
 package magoffin.matt.tidbits.dao.hbm;
 
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.List;
-
 import magoffin.matt.dao.hbm.GenericHibernateDao;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.dao.TidbitDao;
@@ -37,8 +35,6 @@ import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import magoffin.matt.tidbits.domain.TidbitSearchResult;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -74,18 +70,20 @@ implements TidbitDao {
 	@Override
 	protected Long getPrimaryKey(Tidbit domainObject) {
 		if ( domainObject == null ) return null;
-		return domainObject.getTidbitId();
+		return domainObject.getId();
 	}
 
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.dao.TidbitDao#reassignTidbitKinds(magoffin.matt.tidbits.domain.TidbitKind, magoffin.matt.tidbits.domain.TidbitKind)
 	 */
+	@Override
 	public int reassignTidbitKinds(final TidbitKind original, final TidbitKind reassign) {
 		return (Integer)getHibernateTemplate().execute(new HibernateCallback() {
+			@Override
 			public Object doInHibernate(Session session) throws SQLException {
 				Query query = session.getNamedQuery(UPDATE_KIND_REASSIGN);
-				query.setLong("originalKindId", original.getKindId());
-				query.setLong("reassignKindId", reassign.getKindId());
+				query.setLong("originalKindId", original.getId());
+				query.setLong("reassignKindId", reassign.getId());
 				int result = query.executeUpdate();
 				session.flush();
 				session.clear();
@@ -97,6 +95,7 @@ implements TidbitDao {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.dao.TidbitDao#getAllTidbitKinds(magoffin.matt.tidbits.domain.PaginationCriteria)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public SearchResults getAllTidbits(final PaginationCriteria pagination) {
 		SearchResults results = domainObjectFactory.newSearchResultsInstance();
@@ -111,6 +110,7 @@ implements TidbitDao {
 		}
 		
 		Number count = (Number)getHibernateTemplate().execute(new HibernateCallback() {
+			@Override
 			public Object doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.getNamedQuery(FIND_ALL_COUNT);
 				return query.iterate().next();

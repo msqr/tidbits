@@ -32,10 +32,8 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
@@ -44,14 +42,12 @@ import magoffin.matt.tidbits.dao.TidbitKindDao;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glowacki.CalendarParser;
 import org.glowacki.CalendarParserException;
 import org.springframework.context.MessageSource;
 import org.springframework.util.StringUtils;
-
 import com.Ostermiller.util.CSVParser;
 
 /**
@@ -72,6 +68,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#findTidbits(magoffin.matt.tidbits.biz.TidbitSearchCriteria)
 	 */
+	@Override
 	public SearchResults findTidbits(TidbitSearchCriteria searchCriteria) {
 		switch ( searchCriteria.getSearchType() ) {
 			case FOR_TEMPLATE:
@@ -99,6 +96,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#parseCsvData(java.io.InputStream)
 	 */
+	@Override
 	public List<Tidbit> parseCsvData(InputStream input) {
 		List<Tidbit> results = new LinkedList<Tidbit>();
 		DatatypeFactory df;
@@ -176,10 +174,11 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#saveTidbits(java.util.List)
 	 */
+	@Override
 	public List<Long> saveTidbits(List<Tidbit> tidbits) {
 		List<Long> resultIds = new ArrayList<Long>(tidbits.size());
 		for ( Tidbit tidbit : tidbits ) {
-			if ( tidbit.getKind().getKindId() == null ) {
+			if ( tidbit.getKind().getId() == null ) {
 				// try to find by name, if that fails create new
 				TidbitKind kind = tidbitKindDao.getTidbitKindByName(tidbit.getKind().getName());
 				if ( kind == null ) {
@@ -187,7 +186,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				}
 				tidbit.setKind(kind);
 			} else {
-				tidbit.setKind(tidbitKindDao.get(tidbit.getKind().getKindId()));
+				tidbit.setKind(tidbitKindDao.get(tidbit.getKind().getId()));
 			}
 			resultIds.add(tidbitDao.store(tidbit));
 		}
@@ -197,6 +196,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#getTidbit(java.lang.Long)
 	 */
+	@Override
 	public Tidbit getTidbit(Long id) {
 		return tidbitDao.get(id);
 	}
@@ -204,6 +204,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#getTidbitKind(java.lang.Long)
 	 */
+	@Override
 	public TidbitKind getTidbitKind(Long id) {
 		return tidbitKindDao.get(id);
 	}
@@ -211,6 +212,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#deleteTidbit(java.lang.Long)
 	 */
+	@Override
 	public void deleteTidbit(Long id) {
 		Tidbit t = tidbitDao.get(id);
 		if ( t != null ) {
@@ -221,6 +223,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#deleteTidbitKind(java.lang.Long, java.lang.Long)
 	 */
+	@Override
 	public void deleteTidbitKind(Long id, Long reassignId) {
 		if ( id.equals(reassignId) ) {
 			throw new IllegalArgumentException("Reassign ID must not be the same as the ID to delete.");
@@ -239,6 +242,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#saveTidbit(magoffin.matt.tidbits.domain.Tidbit)
 	 */
+	@Override
 	public Tidbit saveTidbit(Tidbit tidbit) {
 		prepareTidbitForStorage(tidbit);
 		Long id = tidbitDao.store(tidbit);
@@ -255,15 +259,15 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		if ( tidbit.getCreationDate() == null ) {
 			tidbit.setCreationDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
-		if ( tidbit.getTidbitId() != null ) {
+		if ( tidbit.getId() != null ) {
 			tidbit.setModifyDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
 		if ( tidbit.getKind() != null ) {
 			// make sure tidbit kind is a persistant instance
-			if ( tidbit.getKind().getKindId() == null ) {
+			if ( tidbit.getKind().getId() == null ) {
 				tidbit.setKind(null);
 			} else {
-				tidbit.setKind(tidbitKindDao.get(tidbit.getKind().getKindId()));
+				tidbit.setKind(tidbitKindDao.get(tidbit.getKind().getId()));
 			}
 		}
 	}
@@ -271,6 +275,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#saveTidbitKind(magoffin.matt.tidbits.domain.TidbitKind)
 	 */
+	@Override
 	public TidbitKind saveTidbitKind(TidbitKind kind) {
 		prepareTidbitKindForStorage(kind);
 		Long id = tidbitKindDao.store(kind);
@@ -287,7 +292,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		if ( kind.getCreationDate() == null ) {
 			kind.setCreationDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
-		if ( kind.getKindId() != null ) {
+		if ( kind.getId() != null ) {
 			kind.setModifyDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 		}
 	}
@@ -295,6 +300,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	/* (non-Javadoc)
 	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#getAvailableTidbitKinds()
 	 */
+	@Override
 	public List<TidbitKind> getAvailableTidbitKinds() {
 		return tidbitKindDao.getAllTidbitKinds();
 	}
