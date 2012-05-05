@@ -57,6 +57,7 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 
 	private final Class<T> type;
 	private EntityManager em;
+	private boolean refreshOnPersist = false;
 	
 	/** A class logger. */
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -92,13 +93,40 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 				: getPrimaryKey(domainObject));
 	}
 
+	/**
+	 * Callback for extending classes to perform some action on an entity before
+	 * it is persisted.
+	 * 
+	 * @param domainObject
+	 *        the entity being persisted
+	 */
+	protected void prePersist(T domainObject) {
+		// extending classes can override
+	}
+
+	/**
+	 * Callback for extending classes to perform some action on an entity before
+	 * it is updated.
+	 * 
+	 * @param domainObject
+	 *        the entity being persisted
+	 */
+	protected void preUpdate(T domainObject) {
+		// extending classes can override
+	}
+
 	@Override
 	public PK store(T domainObject) {
 		PK pk = getPK(domainObject);
 		if ( pk != null ) {
+			preUpdate(domainObject);
 			domainObject = getEm().merge(domainObject);
 		} else {
+			prePersist(domainObject);
 			getEm().persist(domainObject);
+			if ( refreshOnPersist ) {
+				getEm().refresh(domainObject);
+			}
 			pk = getPK(domainObject);
 		}
 		return pk;
@@ -155,6 +183,14 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 
 	public Class<T> getType() {
 		return type;
+	}
+
+	public boolean isRefreshOnPersist() {
+		return refreshOnPersist;
+	}
+
+	public void setRefreshOnPersist(boolean refreshOnPersist) {
+		this.refreshOnPersist = refreshOnPersist;
 	}
 
 }

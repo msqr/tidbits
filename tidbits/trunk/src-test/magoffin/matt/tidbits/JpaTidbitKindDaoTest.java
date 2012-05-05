@@ -26,7 +26,9 @@
 
 package magoffin.matt.tidbits;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitKindDao;
 import magoffin.matt.tidbits.domain.TidbitKind;
 import org.junit.Before;
@@ -42,6 +44,8 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 
 	private JpaTidbitKindDao dao;
 
+	private Long id;
+
 	@Before
 	public void setup() {
 		dao = new JpaTidbitKindDao();
@@ -55,5 +59,34 @@ public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 		obj.setName("name");
 		Long pk = dao.store(obj);
 		assertNotNull("Primary key must not be null", pk);
+		this.id = pk;
 	}
+
+	@Test
+	public void getEntity() {
+		storeEntity();
+		TidbitKind entity = dao.get(this.id);
+		assertNotNull(entity);
+		assertEquals(this.id, entity.getKindId());
+		assertEquals("comment", entity.getComment());
+		assertEquals("name", entity.getName());
+		assertNotNull(entity.getCreationDate());
+		assertNull(entity.getModifyDate());
+	}
+
+	@Test
+	public void updateEntity() {
+		storeEntity();
+		TidbitKind entity = dao.get(this.id);
+		entity.setComment("comment updated");
+		entity.setName("name updated");
+		Long pk = dao.store(entity);
+		assertNotNull("Primary key must not be null", pk);
+		assertEquals("Primary key should not have changed (update)", this.id, pk);
+		TidbitKind updated = dao.get(this.id);
+		assertEquals(entity.getComment(), updated.getComment());
+		assertEquals(entity.getName(), updated.getName());
+		assertNotNull("Modify date should be set", entity.getModifyDate());
+	}
+
 }
