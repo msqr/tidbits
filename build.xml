@@ -155,6 +155,14 @@
 		<copy todir="${dir.hyperjaxb3.resources}">
 			<fileset dir="${dir.hyperjaxb3.schemas}" includes="**"/>
 		</copy>
+		<mkdir dir="${dir.build}/tmp"/>
+		<unjar src="${dir.web.lib}/mutil.jar" dest="${dir.hyperjaxb3.java}">
+			<patternset>
+				<include name="magoffin/matt/dao/Identity.java"/>
+				<include name="magoffin/matt/dao/Entity.java"/>
+				<include name="magoffin/matt/dao/jpa/BaseEntityLong.java"/>
+			</patternset>
+		</unjar>
 	</target>
 
 	<target name="hyperjaxb.generate" depends="hyperjaxb.prepare">
@@ -169,6 +177,8 @@
 			<fileset dir="${dir.hyperjaxb3.home}/target/classes">
 				<include name="**"/>
 				<exclude name="*.*"/>
+				<exclude name="magoffin/matt/dao/**"/>
+				<exclude name="magoffin/matt/dao/jpa/**"/>
 			</fileset>
 			<fileset dir="${dir.hyperjaxb3.home}/target/generated-sources/xjc">
 				<include name="**"/>

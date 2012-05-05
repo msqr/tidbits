@@ -27,7 +27,6 @@
 package magoffin.matt.tidbits.dao.hbm;
 
 import java.util.List;
-
 import magoffin.matt.dao.hbm.GenericHibernateDao;
 import magoffin.matt.tidbits.dao.TidbitKindDao;
 import magoffin.matt.tidbits.domain.TidbitKind;
@@ -60,17 +59,20 @@ implements TidbitKindDao {
 	@Override
 	protected Long getPrimaryKey(TidbitKind domainObject) {
 		if ( domainObject == null ) return null;
-		return domainObject.getKindId();
+		return domainObject.getId();
 	}
 
+	@Override
 	public List<TidbitKind> getAllTidbitKinds() {
 		return findByNamedQuery(FIND_ALL, (Object[])null);
 	}
 
+	@Override
 	public List<TidbitKind> findTidbitKindsByName(String name) {
 		return findByNamedQuery(FIND_FOR_NAME, new Object[]{name});
 	}
 
+	@Override
 	public TidbitKind getTidbitKindByName(String name) {
 		List<TidbitKind> results = findByNamedQuery(FIND_FOR_NAME_EXACT, 
 				new Object[]{name});

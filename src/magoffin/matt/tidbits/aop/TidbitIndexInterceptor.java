@@ -28,10 +28,8 @@ package magoffin.matt.tidbits.aop;
 
 import java.lang.reflect.Method;
 import java.util.List;
-
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.lucene.LuceneBiz;
-
 import org.springframework.aop.AfterReturningAdvice;
 
 /**
@@ -44,11 +42,12 @@ public class TidbitIndexInterceptor implements AfterReturningAdvice {
 	
 	private LuceneBiz luceneBiz;
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void afterReturning(Object returnValue, Method method,
 			Object[] args, Object target) throws Throwable {
 		if ( returnValue instanceof Tidbit ) {
-			Long tidbitId = ((Tidbit)returnValue).getTidbitId();
+			Long tidbitId = ((Tidbit) returnValue).getId();
 			if ( tidbitId != null ) {
 				luceneBiz.indexTidbit(tidbitId);
 			}

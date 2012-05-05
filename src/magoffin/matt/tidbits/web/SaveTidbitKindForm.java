@@ -28,13 +28,10 @@
 package magoffin.matt.tidbits.web;
 
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import magoffin.matt.tidbits.domain.TidbitKind;
 import magoffin.matt.tidbits.domain.UiModel;
-
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -55,7 +52,7 @@ public class SaveTidbitKindForm extends AddTidbitKindForm {
 		ServletRequestDataBinder binder = createBinder(request, cmd);
 		binder.bind(request);
 		
-		Long id = cmd.getKind().getKindId();
+		Long id = cmd.getKind().getId();
 		TidbitKind kind = getTidbitsBiz().getTidbitKind(id);
 		cmd.setKind(kind);
 		return cmd;
@@ -76,7 +73,7 @@ public class SaveTidbitKindForm extends AddTidbitKindForm {
 			HttpServletResponse response, Object command, BindException errors) throws Exception {
 		Command cmd = (Command)command;
 		if ( cmd.delete ) {
-			getTidbitsBiz().deleteTidbitKind(cmd.getKind().getKindId(), cmd.getReassign());
+			getTidbitsBiz().deleteTidbitKind(cmd.getKind().getId(), cmd.getReassign());
 			return new ModelAndView(getSuccessView());
 		}
 		return super.onSubmit(request, response, command, errors);

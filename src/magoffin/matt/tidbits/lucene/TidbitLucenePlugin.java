@@ -34,11 +34,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 import magoffin.matt.lucene.IndexEvent;
 import magoffin.matt.lucene.IndexEvent.EventType;
 import magoffin.matt.lucene.IndexResults;
@@ -53,7 +51,6 @@ import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
 import magoffin.matt.tidbits.domain.TidbitSearchResult;
 import magoffin.matt.util.DelegatingInvocationHandler;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -79,21 +76,21 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		setIndexType(IndexType.TIDBIT.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.lucene.LucenePlugin#getIdForObject(java.lang.Object)
-	 */
+	@Override
 	public Object getIdForObject(Object object) {
 		if ( object instanceof Tidbit ) {
-			return ((Tidbit)object).getTidbitId();
+			return ((Tidbit) object).getId();
 		}
 		return null;
 	}
 
+	@Override
 	public void index(Object objectId, IndexWriter writer) {
 		Tidbit tidbit = tidbitDao.get((Long)objectId);
 		indexTidbit(tidbit, writer);
 	}
 
+	@Override
 	public void indexObject(Object object, IndexWriter writer) {
 		indexTidbit((Tidbit)object, writer);
 	}
@@ -103,16 +100,18 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		for ( TidbitSearchResult tidbit : results.getTidbit() ) {
 			List<Object> errors = indexTidbit(tidbit, writer);
 			if ( errors != null && errors.size() > 0 ) {
-				indexResults.errors.put(tidbit.getTidbitId(), errors.get(0).toString());
+				indexResults.errors.put(tidbit.getId(), errors.get(0).toString());
 			}
 		}
 	}
 	
+	@Override
 	public IndexResults reindex() {
 		final TidbitIndexResults results = new TidbitIndexResults();
 		if ( this.singleThreaded ) {
 			try {
 				getLucene().doIndexWriterOp(getIndexType(), true, false, true, new IndexWriterOp() {
+					@Override
 					public void doWriterOp(String type, IndexWriter writer) {
 						doReindexAll(writer, results);
 					}
@@ -122,9 +121,11 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 			}
 		} else {
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						getLucene().doIndexWriterOp(getIndexType(), true, false, true, new IndexWriterOp() {
+							@Override
 							public void doWriterOp(String type, IndexWriter writer) {
 								doReindexAll(writer, results);
 							}
@@ -138,37 +139,40 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		return results;
 	}
 
+	@Override
 	public IndexResults reindex(SearchCriteria criteria) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void index(Iterable<?> data) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public magoffin.matt.lucene.SearchResults find(SearchCriteria criteria) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public List<SearchMatch> search(SearchCriteria criteria) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public Object getNativeQuery(SearchCriteria criteria) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see magoffin.matt.lucene.LucenePlugin#build(org.apache.lucene.document.Document)
-	 */
+	@Override
 	public SearchMatch build(Document doc) {
 		Tidbit tidbit = getDomainObjectFactory().newTidbitInstance();
-		tidbit.setTidbitId(Long.valueOf(doc.get(IndexField.ITEM_ID.getFieldName())));
+		tidbit.setId(Long.valueOf(doc.get(IndexField.ITEM_ID.getFieldName())));
 		tidbit.setComment(doc.get(IndexField.ITEM_COMMENT.getFieldName()));
 		tidbit.setData(doc.get(IndexField.ITEM_DATA.getFieldName()));
 		tidbit.setName(doc.get(IndexField.ITEM_NAME.getFieldName()));
@@ -221,7 +225,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 	private List<Object> indexTidbit(Tidbit tidbit, IndexWriter writer) {
 		List<Object> errors = new LinkedList<Object>();
 		
-		if ( tidbit == null || tidbit.getTidbitId() == null ) {
+		if ( tidbit == null || tidbit.getId() == null ) {
 			// don't bother trying to index null or empty user
 			String msg = "Null Tidbit passed to indexUser()... perhaps not available in transaction?";
 			log.debug(msg);
@@ -230,7 +234,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		}
 		
 		if ( log.isDebugEnabled() ) {
-			log.debug("Indexing Tidbit " +tidbit.getTidbitId()
+			log.debug("Indexing Tidbit " + tidbit.getId()
 					+" (" +tidbit.getName() +", " 
 					+(tidbit.getKind() != null ? tidbit.getKind().getName() : "?") 
 					+")");
@@ -240,7 +244,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 		StringBuilder generalText = new StringBuilder();
 		
 		Document doc = new Document();
-		doc.add(new Field(IndexField.ITEM_ID.getFieldName(), tidbit.getTidbitId().toString(), 
+		doc.add(new Field(IndexField.ITEM_ID.getFieldName(), tidbit.getId().toString(),
 				Field.Store.YES, Field.Index.NOT_ANALYZED));
 
 		if ( tidbit.getName() != null ) {
@@ -303,22 +307,26 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 	
 	private final class TidbitIndexResults implements IndexResults {
 
-		private int count = 0;
-		private Map<Long, String> errors = new LinkedHashMap<Long, String>();
+		private final int count = 0;
+		private final Map<Long, String> errors = new LinkedHashMap<Long, String>();
 		private boolean finished = false;
 
+		@Override
 		public Map<? extends Serializable, String> getErrors() {
 			return errors;
 		}
 
+		@Override
 		public int getNumIndexed() {
 			return count - errors.size();
 		}
 
+		@Override
 		public int getNumProcessed() {
 			return count;
 		}
 
+		@Override
 		public boolean isFinished() {
 			return finished;
 		}

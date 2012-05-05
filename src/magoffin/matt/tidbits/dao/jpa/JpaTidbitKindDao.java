@@ -69,7 +69,7 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 
 	@Override
 	protected Long getPrimaryKey(TidbitKind domainObject) {
-		return domainObject.getKindId();
+		return domainObject.getId();
 	}
 
 	@Override
