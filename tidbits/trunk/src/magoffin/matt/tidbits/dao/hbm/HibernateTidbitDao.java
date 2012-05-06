@@ -73,14 +73,11 @@ implements TidbitDao {
 		return domainObject.getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.dao.TidbitDao#reassignTidbitKinds(magoffin.matt.tidbits.domain.TidbitKind, magoffin.matt.tidbits.domain.TidbitKind)
-	 */
 	@Override
 	public int reassignTidbitKinds(final TidbitKind original, final TidbitKind reassign) {
-		return (Integer)getHibernateTemplate().execute(new HibernateCallback() {
+		return getHibernateTemplate().execute(new HibernateCallback<Integer>() {
 			@Override
-			public Object doInHibernate(Session session) throws SQLException {
+			public Integer doInHibernate(Session session) throws SQLException {
 				Query query = session.getNamedQuery(UPDATE_KIND_REASSIGN);
 				query.setLong("originalKindId", original.getId());
 				query.setLong("reassignKindId", reassign.getId());
@@ -92,9 +89,6 @@ implements TidbitDao {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.dao.TidbitDao#getAllTidbitKinds(magoffin.matt.tidbits.domain.PaginationCriteria)
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public SearchResults getAllTidbits(final PaginationCriteria pagination) {
@@ -109,11 +103,11 @@ implements TidbitDao {
 			return results;
 		}
 		
-		Number count = (Number)getHibernateTemplate().execute(new HibernateCallback() {
+		Number count = getHibernateTemplate().execute(new HibernateCallback<Number>() {
 			@Override
-			public Object doInHibernate(Session session) throws HibernateException, SQLException {
+			public Number doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.getNamedQuery(FIND_ALL_COUNT);
-				return query.iterate().next();
+				return (Number) query.iterate().next();
 			}
 		});
 		
