@@ -1,7 +1,7 @@
 /* ===================================================================
- * JpaTidbitKindDao.java
+ * JpaTidbitDao.java
  * 
- * Created May 4, 2012 4:54:03 PM
+ * Created May 6, 2012 4:33:47 PM
  * 
  * Copyright (c) 2012 Matt Magoffin.
  * 
@@ -35,40 +35,43 @@ import javax.persistence.TypedQuery;
 import magoffin.matt.dao.BasicSortDescriptor;
 import magoffin.matt.dao.SortDescriptor;
 import magoffin.matt.dao.jpa.GenericJpaDao;
-import magoffin.matt.tidbits.dao.TidbitKindDao;
+import magoffin.matt.tidbits.dao.TidbitDao;
+import magoffin.matt.tidbits.domain.PaginationCriteria;
+import magoffin.matt.tidbits.domain.SearchResults;
+import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * JPA implementation of {@link TidbitKindDao}.
+ * JPA implementation of {@link TidbitDao}.
  * 
  * @author matt
  * @version $Revision$ $Date$
  */
-public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements TidbitKindDao {
+public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitDao {
 
 	/**
 	 * Default constructor.
 	 */
-	public JpaTidbitKindDao() {
-		super(TidbitKind.class);
+	public JpaTidbitDao() {
+		super(Tidbit.class);
 	}
 
 	@Override
-	protected final void prePersist(TidbitKind domainObject) {
+	protected final void prePersist(Tidbit domainObject) {
 		if ( domainObject.getCreationDate() == null ) {
 			domainObject.setCreationDateItem(new Date());
 		}
 	}
 
 	@Override
-	protected final void preUpdate(TidbitKind domainObject) {
+	protected final void preUpdate(Tidbit domainObject) {
 		domainObject.setModifyDateItem(new Date());
 	}
 
 	@Override
-	protected Long getPrimaryKey(TidbitKind domainObject) {
+	protected Long getPrimaryKey(Tidbit domainObject) {
 		return domainObject.getId();
 	}
 
@@ -80,31 +83,34 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public List<TidbitKind> getAllTidbitKinds() {
-		List<SortDescriptor> sort = Collections.singletonList((SortDescriptor)new BasicSortDescriptor("name", true));
-		return getAll(sort);
-	}
-
-	@Override
-	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public TidbitKind getTidbitKindByName(String name) {
-		TypedQuery<TidbitKind> q = getEm().createNamedQuery("TidbitKindForName", TidbitKind.class);
-		q.setParameter("name", name);
-		q.setMaxResults(1);
-		List<TidbitKind> results = q.getResultList();
-		if ( results.size() > 0 ) {
-			return results.get(0);
+	public SearchResults getAllTidbits(PaginationCriteria pagination) {
+		SearchResults results = new SearchResults();
+		if ( pagination == null ) {
+			// return all available
+			SortDescriptor order = new BasicSortDescriptor("creationDateItem", false);
+			List<Tidbit> allTidbits = super.getAll(Collections.singletonList(order));
+			results.setIsPartialResult(false);
+			results.setReturnedResults(Long.valueOf(allTidbits.size()));
+			results.setTotalResults(results.getReturnedResults());
+			return results;
 		}
-		return null;
+		// TODO: implement paginated search
+		return results;
 	}
 
 	@Override
-	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public List<TidbitKind> findTidbitKindsByName(String name) {
-		assert name != null;
-		TypedQuery<TidbitKind> q = getEm().createNamedQuery("TidbitKindsForName", TidbitKind.class);
-		q.setParameter("name", '%' + name.toLowerCase() + '%');
-		return q.getResultList();
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	public int reassignTidbitKinds(TidbitKind original, TidbitKind reassign) {
+		// make sure changes from native query are immediately picked up
+		getEm().flush();
+		getEm().clear();
+
+		TypedQuery<TidbitKind> q = getEm()
+				.createNamedQuery("TidbitUpdateKindReassign", TidbitKind.class);
+		q.setParameter(1, reassign.getId());
+		q.setParameter(2, original.getId());
+		int result = q.executeUpdate();
+		return result;
 	}
 
 }

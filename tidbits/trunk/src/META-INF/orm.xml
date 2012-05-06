@@ -13,8 +13,15 @@
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
 	<entity class="magoffin.matt.tidbits.domain.TidbitKind">
-		<named-query name="KindForName">
-			<query>SELECT k FROM TidbitKind k WHERE k.name = :name</query>
+		<named-query name="TidbitKindForName">
+			<query>SELECT k FROM TidbitKind k WHERE LOWER(k.name) = LOWER(:name)</query>
 		</named-query>
+		<named-query name="TidbitKindsForName">
+			<query>SELECT k FROM TidbitKind k WHERE LOWER(k.name) LIKE :name</query>
+		</named-query>
+
+		<named-native-query name="TidbitUpdateKindReassign">
+			<query>UPDATE tidbit SET kindid = ? WHERE kindid = ?</query>
+		</named-native-query>
 	</entity>
 </entity-mappings>

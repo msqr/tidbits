@@ -116,6 +116,7 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 	}
 
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public PK store(T domainObject) {
 		PK pk = getPK(domainObject);
 		if ( pk != null ) {
@@ -133,6 +134,7 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 	}
 
 	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public T get(PK id) {
 		if ( id == null ) {
 			return null;
@@ -141,6 +143,7 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 	}
 
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public void delete(T domainObject) {
 		getEm().remove(domainObject);
 	}
