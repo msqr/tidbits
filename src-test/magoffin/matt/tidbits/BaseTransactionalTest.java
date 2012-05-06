@@ -66,10 +66,25 @@ public abstract class BaseTransactionalTest extends AbstractTransactionalJUnit4S
 	}
 
 	/**
-	 * Flush the {@link EntityManager} so pushed to database.
+	 * Flush the {@link EntityManager} so cached changes pushed to database.
 	 */
 	protected void flushEntityManager() {
 		em.flush();
+	}
+
+	/**
+	 * Clear the {@link EntityManager} to clear the session cache.
+	 */
+	protected void clearEntityManager() {
+		em.clear();
+	}
+
+	/**
+	 * Flush, then clear the {@link EntityManager}.
+	 */
+	protected void flushAndClearEntityManager() {
+		flushEntityManager();
+		clearEntityManager();
 	}
 
 	/**

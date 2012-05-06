@@ -156,7 +156,7 @@
 			
 			<jaxb:bindings node="xs:attribute[@name='creation-date']">
 				<hj:basic>
-					<orm:column name="creation_date" nullable="false"/>
+					<orm:column name="creation_date" nullable="false"  insertable="true" updatable="false"/>
 					<orm:temporal>TIMESTAMP</orm:temporal>
 				</hj:basic>
 			</jaxb:bindings>
@@ -171,7 +171,7 @@
 			
 			<jaxb:bindings node="xs:attribute[@name='modify-date']">
 				<hj:basic>
-					<orm:column name="modify_date" nullable="true"/>
+					<orm:column name="modify_date" nullable="true" insertable="false" updatable="true"/>
 					<orm:temporal>TIMESTAMP</orm:temporal>
 				</hj:basic>
 			</jaxb:bindings>
