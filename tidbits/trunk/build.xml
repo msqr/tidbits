@@ -160,6 +160,7 @@
 			<patternset>
 				<include name="magoffin/matt/dao/Identity.java"/>
 				<include name="magoffin/matt/dao/Entity.java"/>
+				<include name="magoffin/matt/dao/SearchResult.java"/>
 				<include name="magoffin/matt/dao/jpa/BaseEntityLong.java"/>
 			</patternset>
 		</unjar>

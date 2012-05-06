@@ -49,7 +49,6 @@ import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import magoffin.matt.tidbits.domain.TidbitSearchResult;
 import magoffin.matt.util.DelegatingInvocationHandler;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -97,7 +96,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 	
 	private void doReindexAll(IndexWriter writer, TidbitIndexResults indexResults) {
 		SearchResults results = tidbitDao.getAllTidbits(null);
-		for ( TidbitSearchResult tidbit : results.getTidbit() ) {
+		for ( Tidbit tidbit : results.getTidbit() ) {
 			List<Object> errors = indexTidbit(tidbit, writer);
 			if ( errors != null && errors.size() > 0 ) {
 				indexResults.errors.put(tidbit.getId(), errors.get(0).toString());

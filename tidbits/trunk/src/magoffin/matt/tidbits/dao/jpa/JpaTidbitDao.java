@@ -89,12 +89,29 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 			// return all available
 			SortDescriptor order = new BasicSortDescriptor("creationDateItem", false);
 			List<Tidbit> allTidbits = super.getAll(Collections.singletonList(order));
+			results.setTidbit(allTidbits);
 			results.setIsPartialResult(false);
 			results.setReturnedResults(Long.valueOf(allTidbits.size()));
 			results.setTotalResults(results.getReturnedResults());
 			return results;
 		}
-		// TODO: implement paginated search
+
+		TypedQuery<Long> countQuery = getEm().createNamedQuery("TidbitCount", Long.class);
+		final Long count = countQuery.getSingleResult();
+
+		TypedQuery<Tidbit> allQuery = getEm().createNamedQuery("TidbitsAll", Tidbit.class);
+		allQuery.setFirstResult(((int) pagination.getPageOffset())
+				* (pagination.getPageSize() == null ? 0 : pagination.getPageSize().intValue()));
+		if ( pagination.getPageSize() != null ) {
+			allQuery.setMaxResults(pagination.getPageSize().intValue());
+		}
+		List<Tidbit> all = allQuery.getResultList();
+
+		results.setTidbit(all);
+		results.setReturnedResults(Long.valueOf(all.size()));
+		results.setTotalResults(count);
+		results.setIsPartialResult(count.longValue() > all.size());
+		results.setPagination(pagination);
 		return results;
 	}
 

@@ -148,6 +148,7 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 		getEm().remove(domainObject);
 	}
 
+
 	/**
 	 * Find all of the supported entity.
 	 * 
@@ -162,6 +163,26 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 		Root<T> root = q.from(type);
 		q.select(root);
 
+		applySortDescriptors(sortDescriptors, cb, q, root);
+
+		TypedQuery<T> query = getEm().createQuery(q);
+		return query.getResultList();
+	}
+
+	/**
+	 * Apply a list of sort descriptors to a criteria query.
+	 * 
+	 * @param sortDescriptors
+	 *        the sort descriptors (<em>null</em> allowed)
+	 * @param cb
+	 *        the criteria builder
+	 * @param criteria
+	 *        the criteria query
+	 * @param root
+	 *        the query root the sort is applied against
+	 */
+	protected void applySortDescriptors(List<SortDescriptor> sortDescriptors, CriteriaBuilder cb,
+			CriteriaQuery<T> criteria, Root<T> root) {
 		if ( sortDescriptors != null && sortDescriptors.size() > 0 ) {
 			List<Order> ordering = new ArrayList<Order>(sortDescriptors.size());
 			for ( SortDescriptor sort : sortDescriptors ) {
@@ -169,11 +190,8 @@ public abstract class GenericJpaDao<T, PK extends Serializable> implements
 				Order order = (sort.isAscending() ? cb.asc(path) : cb.desc(path));
 				ordering.add(order);
 			}
-			q.orderBy(ordering);
+			criteria.orderBy(ordering);
 		}
-
-		TypedQuery<T> query = getEm().createQuery(q);
-		return query.getResultList();
 	}
 
 	protected void setEm(EntityManager em) {
