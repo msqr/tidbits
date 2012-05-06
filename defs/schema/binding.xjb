@@ -44,9 +44,6 @@
 		<jaxb:bindings node="xs:complexType[@name='search-results']">
 			<hj:ignored/>
 		</jaxb:bindings>
-		<jaxb:bindings node="xs:complexType[@name='tidbit-search-result']">
-			<hj:ignored/>
-		</jaxb:bindings>
 		<jaxb:bindings node="xs:complexType[@name='user']">
 			<hj:ignored/>
 		</jaxb:bindings>	

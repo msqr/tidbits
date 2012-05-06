@@ -90,12 +90,11 @@ implements TidbitDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public SearchResults getAllTidbits(final PaginationCriteria pagination) {
 		SearchResults results = domainObjectFactory.newSearchResultsInstance();
 		if ( pagination == null ) {
 			// return all available
-			List allTidbits = findByNamedQuery(FIND_ALL, (Object[])null);
+			List<Tidbit> allTidbits = findByNamedQuery(FIND_ALL, (Object[]) null);
 			results.getTidbit().addAll(allTidbits);
 			results.setIsPartialResult(false);
 			results.setReturnedResults(Long.valueOf(allTidbits.size()));
@@ -111,7 +110,7 @@ implements TidbitDao {
 			}
 		});
 		
-		List pagedList = findByNamedQuery(FIND_ALL, (Object[])null, 
+		List<Tidbit> pagedList = findByNamedQuery(FIND_ALL, (Object[]) null,
 				(int)pagination.getPageOffset(), 
 				pagination.getPageSize().intValue());
 		

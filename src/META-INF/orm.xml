@@ -19,6 +19,13 @@
 		<named-query name="TidbitKindsForName">
 			<query>SELECT k FROM TidbitKind k WHERE LOWER(k.name) LIKE :name</query>
 		</named-query>
+		<named-query name="TidbitCount">
+			<query>SELECT COUNT(t) FROM Tidbit t</query>
+		</named-query>
+		<named-query name="TidbitsAll">
+			<query>SELECT t FROM Tidbit t ORDER BY t.creationDateItem DESC, t.id DESC</query>
+			<hint name="eclipselink.join-fetch" value="t.kind"/>
+		</named-query>
 
 		<named-native-query name="TidbitUpdateKindReassign">
 			<query>UPDATE tidbit SET kindid = ? WHERE kindid = ?</query>

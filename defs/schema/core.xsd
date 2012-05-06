@@ -59,12 +59,6 @@
 		<xs:attribute name="max-results" type="xs:nonNegativeInteger" use="optional"/>
 	</xs:complexType>
 	
-	<xs:complexType name="tidbit-search-result">
-		<xs:complexContent>
-			<xs:extension base="t:tidbit"/>			
-		</xs:complexContent>
-	</xs:complexType>
-	
 	<xs:complexType name="search-results">
 		<xs:annotation><xs:documentation>
 				Search results object.
@@ -72,8 +66,7 @@
 		<xs:sequence>
 			<xs:element name="pagination" type="t:pagination-criteria"/>
 			<xs:element name="index" type="t:pagination-index" minOccurs="0"/>
-			<xs:element name="tidbit" type="t:tidbit-search-result" 
-				minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="tidbit" type="t:tidbit" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="query" type="xs:string" use="optional"/>
 		<xs:attribute name="total-results" type="xs:nonNegativeInteger"/>

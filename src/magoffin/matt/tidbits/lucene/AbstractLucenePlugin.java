@@ -28,14 +28,12 @@ package magoffin.matt.tidbits.lucene;
 
 import java.util.List;
 import java.util.Set;
-
-import org.apache.lucene.analysis.Analyzer;
-import org.springframework.context.MessageSource;
-
 import magoffin.matt.lucene.IndexListener;
 import magoffin.matt.lucene.LucenePlugin;
 import magoffin.matt.lucene.LuceneService;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
+import org.apache.lucene.analysis.Analyzer;
+import org.springframework.context.MessageSource;
 
 /**
  * Base implementation for LucenePlugin implementations.
@@ -61,9 +59,7 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	private String indexType = null;
 
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.lucene.LucenePlugin#init(magoffin.matt.lucene.LuceneService, java.util.Set)
-	 */
+	@Override
 	public final LuceneIndexConfig init(LuceneService luceneService, Set<IndexListener> indexEventListenersSet) {
 		this.lucene = luceneService;
 		this.indexEventListeners = indexEventListenersSet;
@@ -154,6 +150,7 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 		this.infoReindexCount = infoReindexCount;
 	}
 
+	@Override
 	public Analyzer getAnalyzer() {
 		return this.analyzer;
 	}
@@ -207,6 +204,7 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 		this.domainObjectFactory = domainObjectFactory;
 	}
 
+	@Override
 	public String getIndexType() {
 		return this.indexType;
 	}

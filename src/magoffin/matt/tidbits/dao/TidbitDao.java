@@ -38,7 +38,7 @@ import magoffin.matt.tidbits.domain.TidbitKind;
  * @author matt.magoffin
  * @version $Revision$ $Date$
  */
-public interface TidbitDao extends GenericDao<Tidbit,Long> {
+public interface TidbitDao extends GenericDao<Tidbit, Long> {
 
 	/**
 	 * Return a SearchResults of all Tidbit objects.

@@ -30,8 +30,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitDao;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitKindDao;
+import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
@@ -133,13 +135,90 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 	}
 
 	@Test
-	public void findAll() {
+	public void findAllNoResults() {
+		SearchResults results = dao.getAllTidbits(null);
+		assertNotNull(results);
+		assertEquals(Long.valueOf(0L), results.getTotalResults());
+		assertEquals(Long.valueOf(0L), results.getReturnedResults());
+		assertNotNull(results.getTidbit());
+		assertEquals(0, results.getTidbit().size());
+		assertFalse(results.isIsPartialResult());
+	}
+
+	@Test
+	public void findAllOneResult() {
 		storeEntity();
 		SearchResults results = dao.getAllTidbits(null);
 		assertNotNull(results);
+		assertEquals(Long.valueOf(1L), results.getTotalResults());
 		assertEquals(Long.valueOf(1L), results.getReturnedResults());
+		assertNotNull(results.getTidbit());
+		assertEquals(1, results.getTidbit().size());
 		assertFalse(results.isIsPartialResult());
-		// TODO: finish
+
+		assertEquals(this.id, results.getTidbit().get(0).getId());
+	}
+
+	@Test
+	public void findAllMultipleResults() {
+		storeEntity();
+		storeEntity();
+		storeEntity();
+		SearchResults results = dao.getAllTidbits(null);
+		assertNotNull(results);
+		assertEquals(Long.valueOf(3L), results.getTotalResults());
+		assertEquals(Long.valueOf(3L), results.getReturnedResults());
+		assertNotNull(results.getTidbit());
+		assertEquals(3, results.getTidbit().size());
+		assertFalse(results.isIsPartialResult());
+
+		assertEquals(this.id, results.getTidbit().get(0).getId());
+	}
+
+	@Test
+	public void findAllPaginatedResults() {
+		storeEntity();
+		final Long id1 = this.id;
+		storeEntity();
+		final Long id2 = this.id;
+		storeEntity();
+		final Long id3 = this.id;
+
+		PaginationCriteria pagination = new PaginationCriteria();
+		pagination.setPageOffset(0L);
+		pagination.setPageSize(2L);
+
+		SearchResults results = dao.getAllTidbits(pagination);
+		assertNotNull(results);
+		assertEquals(Long.valueOf(3L), results.getTotalResults());
+		assertEquals(Long.valueOf(2L), results.getReturnedResults());
+		assertTrue(results.isIsPartialResult());
+
+		assertNotNull(results.getPagination());
+		assertEquals(pagination.getPageOffset(), results.getPagination().getPageOffset());
+		assertEquals(pagination.getPageSize(), results.getPagination().getPageSize());
+
+		assertNotNull(results.getTidbit());
+		assertEquals(2, results.getTidbit().size());
+
+		assertEquals(id3, results.getTidbit().get(0).getId());
+		assertEquals(id2, results.getTidbit().get(1).getId());
+
+		pagination.setPageOffset(1L);
+		results = dao.getAllTidbits(pagination);
+		assertNotNull(results);
+		assertEquals(Long.valueOf(3L), results.getTotalResults());
+		assertEquals(Long.valueOf(1L), results.getReturnedResults());
+		assertTrue(results.isIsPartialResult());
+
+		assertNotNull(results.getPagination());
+		assertEquals(pagination.getPageOffset(), results.getPagination().getPageOffset());
+		assertEquals(pagination.getPageSize(), results.getPagination().getPageSize());
+
+		assertNotNull(results.getTidbit());
+		assertEquals(1, results.getTidbit().size());
+
+		assertEquals(id1, results.getTidbit().get(0).getId());
 	}
 
 }

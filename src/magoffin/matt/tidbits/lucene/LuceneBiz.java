@@ -35,7 +35,7 @@ import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.SearchQueryException;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
-import magoffin.matt.tidbits.domain.TidbitSearchResult;
+import magoffin.matt.tidbits.domain.Tidbit;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocCollector;
@@ -105,8 +105,8 @@ public class LuceneBiz {
 						tidbitIndexType,col,startIdx,endIdx);
 				results.setReturnedResults(Long.valueOf(matches.size()));
 				for ( SearchMatch match : matches ) {
-					if ( TidbitSearchResult.class.isAssignableFrom(match.getClass()) ) {
-						results.getTidbit().add((TidbitSearchResult)match);
+					if ( Tidbit.class.isAssignableFrom(match.getClass()) ) {
+						results.getTidbit().add((Tidbit) match);
 					}
 				}
 			}
