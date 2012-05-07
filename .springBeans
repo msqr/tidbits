@@ -11,7 +11,6 @@
 		<config>src-test/magoffin/matt/tidbits/BaseTransactionalTest-context.xml</config>
 		<config>web/WEB-INF/env-context.xml</config>
 		<config>environment/local/security-context.xml</config>
-		<config>web/WEB-INF/data-access-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -22,7 +21,6 @@
 				<config>environment/local/security-context.xml</config>
 				<config>web/WEB-INF/app-context.xml</config>
 				<config>web/WEB-INF/env-context.xml</config>
-				<config>web/WEB-INF/data-access-context.xml</config>
 			</configs>
 			<profiles>
 			</profiles>

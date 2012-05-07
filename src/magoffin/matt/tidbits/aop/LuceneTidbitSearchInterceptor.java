@@ -26,14 +26,14 @@
 
 package magoffin.matt.tidbits.aop;
 
+import magoffin.matt.tidbits.biz.LuceneBiz;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
-import magoffin.matt.tidbits.lucene.LuceneBiz;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 /**
@@ -45,11 +45,10 @@ import org.springframework.util.StringUtils;
  */
 public class LuceneTidbitSearchInterceptor implements MethodInterceptor {
 	
+	@Autowired
 	private LuceneBiz luceneBiz = null;
 
-	/* (non-Javadoc)
-	 * @see org.aopalliance.intercept.MethodInterceptor#invoke(org.aopalliance.intercept.MethodInvocation)
-	 */
+	@Override
 	public Object invoke(MethodInvocation method) throws Throwable {
 		Object[] args = method.getArguments();
 		if ( args == null || args.length < 1 || !(args[0] instanceof TidbitSearchCriteria) ) {
@@ -70,16 +69,10 @@ public class LuceneTidbitSearchInterceptor implements MethodInterceptor {
 		return luceneBiz.findTidbits(tidbitCriteria);
 	}
 	
-	/**
-	 * @return the luceneBiz
-	 */
 	public LuceneBiz getLuceneBiz() {
 		return luceneBiz;
 	}
 	
-	/**
-	 * @param luceneBiz the luceneBiz to set
-	 */
 	public void setLuceneBiz(LuceneBiz luceneBiz) {
 		this.luceneBiz = luceneBiz;
 	}

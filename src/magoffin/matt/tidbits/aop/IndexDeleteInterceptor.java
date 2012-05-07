@@ -27,11 +27,9 @@
 package magoffin.matt.tidbits.aop;
 
 import java.lang.reflect.Method;
-
-import magoffin.matt.tidbits.lucene.IndexType;
-import magoffin.matt.tidbits.lucene.LuceneBiz;
-
+import magoffin.matt.tidbits.biz.LuceneBiz;
 import org.springframework.aop.AfterReturningAdvice;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Aspect to remove a Tidbit from the Lucene index after it has changed.
@@ -41,9 +39,10 @@ import org.springframework.aop.AfterReturningAdvice;
  */
 public class IndexDeleteInterceptor implements AfterReturningAdvice {
 
+	@Autowired
 	private LuceneBiz luceneBiz;
-	private String indexType = IndexType.TIDBIT.toString();
 
+	@Override
 	public void afterReturning(Object returnValue, Method method,
 			Object[] args, Object target) throws Throwable {
 		Long tidbitId = null;
@@ -54,35 +53,14 @@ public class IndexDeleteInterceptor implements AfterReturningAdvice {
 			}
 		}
 		if ( tidbitId != null ) {
-			luceneBiz.getLucene().deleteObjectById(
-					this.indexType, tidbitId);
+			luceneBiz.deleteTidbit(tidbitId);
 		}
 	}
 	
-	/**
-	 * @return the indexType
-	 */
-	public String getIndexType() {
-		return indexType;
-	}
-	
-	/**
-	 * @param indexType the indexType to set
-	 */
-	public void setIndexType(String indexType) {
-		this.indexType = indexType;
-	}
-
-	/**
-	 * @return the luceneBiz
-	 */
 	public LuceneBiz getLuceneBiz() {
 		return luceneBiz;
 	}
 	
-	/**
-	 * @param luceneBiz the luceneBiz to set
-	 */
 	public void setLuceneBiz(LuceneBiz luceneBiz) {
 		this.luceneBiz = luceneBiz;
 	}

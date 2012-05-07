@@ -39,7 +39,9 @@ import magoffin.matt.tidbits.domain.Tidbit;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocCollector;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
 
 /**
  * Lucene search implementation for Tidbits.
@@ -47,15 +49,22 @@ import org.springframework.context.MessageSource;
  * @author Matt Magoffin (spamsqr@msqr.us)
  * @version $Revision$ $Date$
  */
-public class LuceneBiz {
+@Service
+public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 	
 	/** Default max number of search results returned. */
 	public static final int DEFAULT_MAX_SEARCH_RESULTS = 100000;
 	
+	@Autowired
 	private LuceneService lucene;
-	private String tidbitIndexType = IndexType.TIDBIT.toString();
+
+	@Autowired
 	private MessageSource messages;
+
+	@Autowired
 	private DomainObjectFactory domainObjectFactory;
+
+	private String tidbitIndexType = IndexType.TIDBIT.toString();
 	private int maxSearchResults = DEFAULT_MAX_SEARCH_RESULTS;
 
 	/**
@@ -64,6 +73,7 @@ public class LuceneBiz {
 	 * @param tidbitCriteria the search criteria
 	 * @return the results
 	 */
+	@Override
 	public SearchResults findTidbits(final TidbitSearchCriteria tidbitCriteria) {
 		final SearchResults results = domainObjectFactory.newSearchResultsInstance();
 		results.setQuery(tidbitCriteria.getQuery());
@@ -115,13 +125,19 @@ public class LuceneBiz {
 		return results;
 	}
 
-	/**
-	 * Index an individual Tidbit.
-	 * 
-	 * @param tidbitId the ID of the Tidbit to index
-	 */
+	@Override
 	public void indexTidbit(Long tidbitId) {
 		lucene.indexObjectById(tidbitIndexType, tidbitId);
+	}
+
+	@Override
+	public void deleteTidbit(Long tidbitId) {
+		lucene.deleteObjectById(getTidbitIndexType(), tidbitId);
+	}
+
+	@Override
+	public void reindexTidbits() {
+		lucene.reindex(getTidbitIndexType());
 	}
 
 	/**

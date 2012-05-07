@@ -40,6 +40,7 @@ import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author matt
  * @version $Revision$ $Date$
  */
+@Repository
 public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitDao {
 
 	/**
