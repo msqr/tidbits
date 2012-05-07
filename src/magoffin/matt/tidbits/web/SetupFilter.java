@@ -27,18 +27,16 @@
 package magoffin.matt.tidbits.web;
 
 import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import magoffin.matt.xweb.XwebParameter;
 import magoffin.matt.xweb.util.XwebParamDao;
-
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -61,6 +59,7 @@ public class SetupFilter extends GenericFilterBean {
 		setupComplete = false;
 	}
 
+	@Override
 	public void doFilter(ServletRequest request, 
 			ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
@@ -84,13 +83,16 @@ public class SetupFilter extends GenericFilterBean {
 		WebApplicationContext webApp = WebApplicationContextUtils.getWebApplicationContext(
 				getServletContext());
 		Assert.notNull(webApp, "WebApplicationContext not available");
-		XwebParamDao settingDao = (XwebParamDao)BeanFactoryUtils.beanOfTypeIncludingAncestors(
+		XwebParamDao settingDao = BeanFactoryUtils.beanOfTypeIncludingAncestors(
 				webApp, XwebParamDao.class, false, false);
 		Assert.notNull(settingDao, "XwebParamDao not available");
-		XwebParameter setupParam = settingDao.getParameter(
-				SetupWizard.SETTING_KEY_SETUP_COMPLETE);
-		if ( setupParam != null ) {
-			setupComplete = Boolean.parseBoolean(setupParam.getValue());
+		try {
+			XwebParameter setupParam = settingDao.getParameter(SetupWizard.SETTING_KEY_SETUP_COMPLETE);
+			if ( setupParam != null ) {
+				setupComplete = Boolean.parseBoolean(setupParam.getValue());
+			}
+		} catch ( DataAccessException e ) {
+			logger.warn("Unable to check for setup completion: " + e.getMessage());
 		}
 	}
 	
