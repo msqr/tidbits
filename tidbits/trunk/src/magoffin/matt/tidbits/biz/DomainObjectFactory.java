@@ -35,8 +35,8 @@ import magoffin.matt.tidbits.domain.TidbitKind;
 import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.tidbits.domain.UiSession;
 import magoffin.matt.tidbits.domain.User;
-import magoffin.matt.xweb.XAppContext;
 import magoffin.matt.xweb.XwebParameter;
+import magoffin.matt.xweb.XwebParameters;
 
 /**
  * Object factory interface for domain objects.
@@ -106,7 +106,7 @@ public interface DomainObjectFactory {
 	 * Get a new XAppContext instance.
 	 * @return new XAppContext instance
 	 */
-	XAppContext newXAppContextInstance();
+	XwebParameters newXAppContextInstance();
 	
 	/**
 	 * Get a new XwebParameter instance.

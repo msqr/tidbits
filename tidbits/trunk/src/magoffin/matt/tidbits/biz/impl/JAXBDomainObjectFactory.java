@@ -26,8 +26,6 @@
 
 package magoffin.matt.tidbits.biz.impl;
 
-import javax.xml.bind.JAXBException;
-
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.domain.ObjectFactory;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
@@ -39,8 +37,8 @@ import magoffin.matt.tidbits.domain.TidbitKind;
 import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.tidbits.domain.UiSession;
 import magoffin.matt.tidbits.domain.User;
-import magoffin.matt.xweb.XAppContext;
 import magoffin.matt.xweb.XwebParameter;
+import magoffin.matt.xweb.XwebParameters;
 
 /**
  * JAXB implementation of DomainObjectFactory.
@@ -54,58 +52,62 @@ public class JAXBDomainObjectFactory implements DomainObjectFactory {
 	private static final magoffin.matt.xweb.ObjectFactory XWEB_OBJECT_FACTORY = 
 		new magoffin.matt.xweb.ObjectFactory();
 	
+	@Override
 	public User newUserInstance() {
 		return TIDBITS_OBJECT_FACTORY.createUser();
 	}
 	
+	@Override
 	public Tidbit newTidbitInstance() {
 		return TIDBITS_OBJECT_FACTORY.createTidbit();
 	}
 
+	@Override
 	public TidbitKind newTidbitKindInstance() {
 		return TIDBITS_OBJECT_FACTORY.createTidbitKind();
 	}
 
-	public XAppContext newXAppContextInstance() {
-		try {
-			return XWEB_OBJECT_FACTORY.createXAppContext();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+	@Override
+	public XwebParameters newXAppContextInstance() {
+		return XWEB_OBJECT_FACTORY.createXwebParameters();
 	}
 
+	@Override
 	public UiModel newModelInstance() {
 		return TIDBITS_OBJECT_FACTORY.createUiModel();
 	}
 
+	@Override
 	public UiSession newSessionInstance() {
 		return TIDBITS_OBJECT_FACTORY.createUiSession();
 	}
 
+	@Override
 	public PaginationCriteria newPaginationCriteriaInstance() {
 		return TIDBITS_OBJECT_FACTORY.createPaginationCriteria();
 	}
 
+	@Override
 	public PaginationIndex newPaginationIndexInstance() {
 		return TIDBITS_OBJECT_FACTORY.createPaginationIndex();
 	}
 
+	@Override
 	public PaginationIndexSection newPaginationIndexSectionInstance() {
 		return TIDBITS_OBJECT_FACTORY.createPaginationIndexSection();
 	}
 
+	@Override
 	public SearchResults newSearchResultsInstance() {
 		return TIDBITS_OBJECT_FACTORY.createSearchResults();
 	}
 
+	@Override
 	public XwebParameter newXwebParameterInstance() {
-		try {
-			return XWEB_OBJECT_FACTORY.createXwebParameter();
-		} catch ( JAXBException e ) {
-			throw new RuntimeException(e);
-		}
+		return XWEB_OBJECT_FACTORY.createXwebParameter();
 	}
 
+	@Override
 	public Object clone(Object original) {
 	    if ( original == null ) {
 	        return null;
