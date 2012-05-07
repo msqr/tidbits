@@ -30,7 +30,7 @@
 				</p>
 			</c:otherwise>
 		</c:choose>
-		<form id="loginForm" method="post" action="<c:url value='/j_acegi_security_check'/>">
+		<form id="loginForm" method="post" action="<c:url value='/j_spring_security_check'/>">
 			<table class="form">
 				<tr>
 					<th><label for="j_username"><fmt:message key="logon.username.displayName"/></label></th>
