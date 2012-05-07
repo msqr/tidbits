@@ -62,18 +62,22 @@ public class BasicTidbitSearchCriteria implements TidbitSearchCriteria {
 		this.tidbitTemplate = tidbitTemplate;
 	}
 
+	@Override
 	public TidbitSearchType getSearchType() {
 		return searchType;
 	}
 
+	@Override
 	public PaginationCriteria getPaginationCriteria() {
 		return paginationCriteria;
 	}
 
+	@Override
 	public Tidbit getTidbitTemplate() {
 		return tidbitTemplate;
 	}
 
+	@Override
 	public String getQuery() {
 		return query;
 	}
