@@ -42,11 +42,15 @@ import magoffin.matt.tidbits.dao.TidbitKindDao;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.glowacki.CalendarParser;
 import org.glowacki.CalendarParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import com.Ostermiller.util.CSVParser;
 
@@ -56,25 +60,29 @@ import com.Ostermiller.util.CSVParser;
  * @author matt.magoffin
  * @version $Revision$ $Date$
  */
+@Service
 public class TidbitsBizImpl implements TidbitsBiz {
 
+	@Autowired
 	private TidbitDao tidbitDao;
+
+	@Autowired
 	private TidbitKindDao tidbitKindDao;
+
+	@Autowired
 	private MessageSource messages;
+
+	@Autowired
 	private DomainObjectFactory domainObjectFactory;
 	
-	private final Log log = LogFactory.getLog(TidbitsBizImpl.class);
+	private final Logger log = LoggerFactory.getLogger(TidbitsBizImpl.class);
 	
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#findTidbits(magoffin.matt.tidbits.biz.TidbitSearchCriteria)
-	 */
 	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public SearchResults findTidbits(TidbitSearchCriteria searchCriteria) {
 		switch ( searchCriteria.getSearchType() ) {
 			case FOR_TEMPLATE:
 				return findTidbitsForTemplate(searchCriteria);
-				
-			// TODO case FOR_INDEX:
 				
 			default:
 				throw new UnsupportedOperationException();
@@ -89,14 +97,11 @@ public class TidbitsBizImpl implements TidbitsBiz {
 			return tidbitDao.getAllTidbits(
 					searchCriteria.getPaginationCriteria());
 		}
-		// TODO
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#parseCsvData(java.io.InputStream)
-	 */
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public List<Tidbit> parseCsvData(InputStream input) {
 		List<Tidbit> results = new LinkedList<Tidbit>();
 		DatatypeFactory df;
@@ -171,10 +176,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		return results;
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#saveTidbits(java.util.List)
-	 */
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public List<Long> saveTidbits(List<Tidbit> tidbits) {
 		List<Long> resultIds = new ArrayList<Long>(tidbits.size());
 		for ( Tidbit tidbit : tidbits ) {
@@ -193,26 +196,20 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		return resultIds;
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#getTidbit(java.lang.Long)
-	 */
 	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public Tidbit getTidbit(Long id) {
 		return tidbitDao.get(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#getTidbitKind(java.lang.Long)
-	 */
 	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public TidbitKind getTidbitKind(Long id) {
 		return tidbitKindDao.get(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#deleteTidbit(java.lang.Long)
-	 */
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public void deleteTidbit(Long id) {
 		Tidbit t = tidbitDao.get(id);
 		if ( t != null ) {
@@ -220,10 +217,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#deleteTidbitKind(java.lang.Long, java.lang.Long)
-	 */
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public void deleteTidbitKind(Long id, Long reassignId) {
 		if ( id.equals(reassignId) ) {
 			throw new IllegalArgumentException("Reassign ID must not be the same as the ID to delete.");
@@ -239,10 +234,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#saveTidbit(magoffin.matt.tidbits.domain.Tidbit)
-	 */
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public Tidbit saveTidbit(Tidbit tidbit) {
 		prepareTidbitForStorage(tidbit);
 		Long id = tidbitDao.store(tidbit);
@@ -272,10 +265,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#saveTidbitKind(magoffin.matt.tidbits.domain.TidbitKind)
-	 */
 	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public TidbitKind saveTidbitKind(TidbitKind kind) {
 		prepareTidbitKindForStorage(kind);
 		Long id = tidbitKindDao.store(kind);
@@ -297,10 +288,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see magoffin.matt.tidbits.biz.TidbitsBiz#getAvailableTidbitKinds()
-	 */
 	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public List<TidbitKind> getAvailableTidbitKinds() {
 		return tidbitKindDao.getAllTidbitKinds();
 	}

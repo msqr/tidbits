@@ -26,89 +26,94 @@
 
 package magoffin.matt.tidbits.aop;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import org.springframework.aop.MethodBeforeAdvice;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 /**
  * Aspect to inject the "createdBy" property into objects as they are created.
  * 
- * <p>This interceptor will apply the Acegi current user's username, if 
- * available, to all Tidbit and TidbitKind objects found in the method arguments.
- * If a method argument is a {@link Collection}, then the objects in the Collection
- * are inspected, too.</p>
+ * <p>
+ * This interceptor will apply the current user's username, if available, to all
+ * Tidbit and TidbitKind objects found in the method arguments. If a method
+ * argument is a {@link Collection}, then the objects in the Collection are
+ * inspected, too.
+ * </p>
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version $Revision$ $Date: 2012-05-07 16:06:13 +1200 (Mon, 07 May 2012)
+ *          $
  */
-public class CreatedByInterceptor implements MethodBeforeAdvice {
+@Aspect
+@Component
+public class CreatedByInterceptor {
 	
-	private String createdByPropertyName = "createdBy";
+	/**
+	 * Match TidbitsBiz methods saving Tidbit.
+	 * 
+	 * @param tidbit
+	 *        the tidbit being saved
+	 */
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbit(..)) && args(tidbit)")
+	public void saveTidbit(Tidbit tidbit) {
+	}
 
-	@Override
-	public void before(Method method, Object[] args, Object target) throws Throwable {
-		if ( args == null ) return;
+	/**
+	 * Match TidbitsBiz methods saving a list of Tidbits.
+	 * 
+	 * @param list
+	 *        the list of tidbits being saved
+	 */
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbits(..)) && args(list)")
+	public void saveTidbits(List<Tidbit> list) {
+	}
+
+	/**
+	 * Match TidbitsBiz methods saving TidbitKind.
+	 * 
+	 * @param kind
+	 *        the tidbit kind being saved
+	 */
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbitKind(..)) && args(kind)")
+	public void saveTidbitKind(TidbitKind kind) {
+	}
+
+	@Before("saveTidbit(tidbit)")
+	public void beforeTidbit(Tidbit tidbit) {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		if ( currentUser == null ) {
-			return;
+		if ( currentUser != null && tidbit != null && tidbit.getCreatedBy() == null ) {
+			tidbit.setCreatedBy(currentUser.getName());
 		}
+	}
 
-		for ( Object arg : args ) {
-			if ( arg instanceof Tidbit || arg instanceof TidbitKind ) {
-				applyCreatedBy(arg, currentUser);
-			} else if ( arg instanceof Collection<?> ) {
-				Collection<?> collection = (Collection<?>)arg;
-				for ( Object collectionObj : collection ) {
-					if ( collectionObj instanceof Tidbit || arg instanceof TidbitKind ) {
-						applyCreatedBy(collectionObj, currentUser);
-					}
+	@Before("saveTidbitKind(kind)")
+	public void beforeTidbitKind(TidbitKind kind) {
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		if ( currentUser != null && kind != null && kind.getCreatedBy() == null ) {
+			kind.setCreatedBy(currentUser.getName());
+		}
+	}
+
+	@Before("saveTidbits(list)")
+	public void beforeTidbits(List<Tidbit> list) {
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		if ( currentUser != null && list != null ) {
+			for ( Tidbit t : list ) {
+				if ( t.getCreatedBy() == null ) {
+					t.setCreatedBy(currentUser.getName());
+				}
+				if ( t.getKind() != null && t.getKind().getCreatedBy() == null ) {
+					t.getKind().setCreatedBy(currentUser.getName());
 				}
 			}
 		}
-		
-	}
-
-	private void applyCreatedBy(Object obj, Authentication currentUser) {
-		BeanWrapper wrapper = new BeanWrapperImpl(obj);
-		if ( wrapper.isWritableProperty(createdByPropertyName) 
-				&& wrapper.isReadableProperty(createdByPropertyName)) {
-			Object val = wrapper.getPropertyValue(createdByPropertyName);
-			if ( val == null ) {
-				Object userDetails = currentUser.getPrincipal();
-				if ( userDetails instanceof UserDetails ) {
-					UserDetails details = (UserDetails)userDetails;
-					wrapper.setPropertyValue(createdByPropertyName, details.getUsername());
-				}
-			}
-		}
-		if ( obj instanceof Tidbit ) {
-			// make sure TidbitKind has created by, too
-			Tidbit t = (Tidbit)obj;
-			if ( t.getKind() != null ) {
-				applyCreatedBy(t.getKind(), currentUser);
-			}
-		}
-	}
-	
-	/**
-	 * @return the createdByPropertyName
-	 */
-	public String getCreatedByPropertyName() {
-		return createdByPropertyName;
-	}
-	
-	/**
-	 * @param createdByPropertyName the createdByPropertyName to set
-	 */
-	public void setCreatedByPropertyName(String createdByPropertyName) {
-		this.createdByPropertyName = createdByPropertyName;
 	}
 
 }

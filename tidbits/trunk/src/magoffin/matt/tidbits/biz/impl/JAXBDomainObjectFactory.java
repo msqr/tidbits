@@ -39,6 +39,7 @@ import magoffin.matt.tidbits.domain.UiSession;
 import magoffin.matt.tidbits.domain.User;
 import magoffin.matt.xweb.XwebParameter;
 import magoffin.matt.xweb.XwebParameters;
+import org.springframework.stereotype.Service;
 
 /**
  * JAXB implementation of DomainObjectFactory.
@@ -46,6 +47,7 @@ import magoffin.matt.xweb.XwebParameters;
  * @author matt.magoffin
  * @version $Revision$ $Date$
  */
+@Service("domainObjectFactory")
 public class JAXBDomainObjectFactory implements DomainObjectFactory {
 	
 	private static final ObjectFactory TIDBITS_OBJECT_FACTORY = new ObjectFactory();

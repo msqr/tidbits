@@ -15,7 +15,7 @@
 	<configSets>
 		<configSet>
 			<name><![CDATA[Tidbits]]></name>
-			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
 				<config>environment/local/security-context.xml</config>
