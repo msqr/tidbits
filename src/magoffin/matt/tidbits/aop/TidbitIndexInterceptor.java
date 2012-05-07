@@ -26,12 +26,13 @@
 
 package magoffin.matt.tidbits.aop;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import magoffin.matt.tidbits.biz.LuceneBiz;
 import magoffin.matt.tidbits.domain.Tidbit;
-import org.springframework.aop.AfterReturningAdvice;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Aspect to index a Tidbit after it has changed.
@@ -39,28 +40,29 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Matt Magoffin (spamsqr@msqr.us)
  * @version $Revision$ $Date$
  */
-public class TidbitIndexInterceptor implements AfterReturningAdvice {
+@Aspect
+@Component
+public class TidbitIndexInterceptor {
 	
 	@Autowired
 	private LuceneBiz luceneBiz;
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void afterReturning(Object returnValue, Method method,
-			Object[] args, Object target) throws Throwable {
-		if ( returnValue instanceof Tidbit ) {
-			Long tidbitId = ((Tidbit) returnValue).getId();
-			if ( tidbitId != null ) {
-				luceneBiz.indexTidbit(tidbitId);
-			}
-		} else if ( returnValue instanceof List ) {
-			List<Long> resultIds = (List<Long>)returnValue;
+	@AfterReturning("magoffin.matt.tidbits.aop.Business.saveTidbit(tidbit)")
+	public void saveTidbit(Tidbit tidbit) {
+		if ( tidbit != null && tidbit.getId() != null ) {
+			luceneBiz.indexTidbit(tidbit.getId());
+		}
+	}
+
+	@AfterReturning(pointcut = "magoffin.matt.tidbits.aop.Business.saveTidbits(list)", returning = "resultIds")
+	public void saveTidbits(@SuppressWarnings("unused") List<Tidbit> list, List<Long> resultIds) {
+		if ( resultIds != null ) {
 			for ( Long tidbitId : resultIds ) {
 				luceneBiz.indexTidbit(tidbitId);
 			}
 		}
 	}
-	
+
 	public LuceneBiz getLuceneBiz() {
 		return luceneBiz;
 	}

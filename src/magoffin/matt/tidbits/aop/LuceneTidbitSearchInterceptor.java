@@ -29,11 +29,15 @@ package magoffin.matt.tidbits.aop;
 import magoffin.matt.tidbits.biz.LuceneBiz;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
+import magoffin.matt.tidbits.domain.SearchResults;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -43,30 +47,32 @@ import org.springframework.util.StringUtils;
  * @author Matt Magoffin (spamsqr@msqr.us)
  * @version $Revision$ $Date$
  */
-public class LuceneTidbitSearchInterceptor implements MethodInterceptor {
+@Aspect
+@Component
+public class LuceneTidbitSearchInterceptor {
 	
 	@Autowired
 	private LuceneBiz luceneBiz = null;
 
-	@Override
-	public Object invoke(MethodInvocation method) throws Throwable {
-		Object[] args = method.getArguments();
-		if ( args == null || args.length < 1 || !(args[0] instanceof TidbitSearchCriteria) ) {
-			return method.proceed();
+	@SuppressWarnings("unused")
+	@Pointcut("execution(magoffin.matt.tidbits.domain.SearchResults magoffin.matt.tidbits.biz.TidbitsBiz.findTidbits(..)) && args(searchCriteria)")
+	public void findTidbits(TidbitSearchCriteria searchCriteria) {
+	}
+
+	@Around("findTidbits(searchCriteria)")
+	public SearchResults findTidbits(ProceedingJoinPoint pjp, TidbitSearchCriteria searchCriteria)
+			throws Throwable {
+		if ( searchCriteria.getSearchType() != TidbitSearchType.FOR_QUERY ) {
+			return (SearchResults) pjp.proceed();
 		}
-		
-		TidbitSearchCriteria tidbitCriteria = (TidbitSearchCriteria)args[0];
-		if ( tidbitCriteria.getSearchType() != TidbitSearchType.FOR_QUERY ) {
-			return method.proceed();
-		}
-		if ( !StringUtils.hasText(tidbitCriteria.getQuery()) ) {
+		if ( !StringUtils.hasText(searchCriteria.getQuery()) ) {
 			// just do search for all
-			BeanWrapper wrapper = new BeanWrapperImpl(tidbitCriteria);
+			BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(searchCriteria);
 			wrapper.setPropertyValue("searchType", TidbitSearchType.FOR_TEMPLATE);
-			return method.proceed();
+			return (SearchResults) pjp.proceed();
 		}
 		
-		return luceneBiz.findTidbits(tidbitCriteria);
+		return luceneBiz.findTidbits(searchCriteria);
 	}
 	
 	public LuceneBiz getLuceneBiz() {

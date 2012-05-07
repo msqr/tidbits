@@ -32,7 +32,6 @@ import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -55,37 +54,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreatedByInterceptor {
 	
-	/**
-	 * Match TidbitsBiz methods saving Tidbit.
-	 * 
-	 * @param tidbit
-	 *        the tidbit being saved
-	 */
-	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbit(..)) && args(tidbit)")
-	public void saveTidbit(Tidbit tidbit) {
-	}
-
-	/**
-	 * Match TidbitsBiz methods saving a list of Tidbits.
-	 * 
-	 * @param list
-	 *        the list of tidbits being saved
-	 */
-	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbits(..)) && args(list)")
-	public void saveTidbits(List<Tidbit> list) {
-	}
-
-	/**
-	 * Match TidbitsBiz methods saving TidbitKind.
-	 * 
-	 * @param kind
-	 *        the tidbit kind being saved
-	 */
-	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbitKind(..)) && args(kind)")
-	public void saveTidbitKind(TidbitKind kind) {
-	}
-
-	@Before("saveTidbit(tidbit)")
+	@Before("magoffin.matt.tidbits.aop.Business.saveTidbit(tidbit)")
 	public void beforeTidbit(Tidbit tidbit) {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		if ( currentUser != null && tidbit != null && tidbit.getCreatedBy() == null ) {
@@ -93,7 +62,7 @@ public class CreatedByInterceptor {
 		}
 	}
 
-	@Before("saveTidbitKind(kind)")
+	@Before("magoffin.matt.tidbits.aop.Business.saveTidbitKind(kind)")
 	public void beforeTidbitKind(TidbitKind kind) {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		if ( currentUser != null && kind != null && kind.getCreatedBy() == null ) {
@@ -101,7 +70,7 @@ public class CreatedByInterceptor {
 		}
 	}
 
-	@Before("saveTidbits(list)")
+	@Before("magoffin.matt.tidbits.aop.Business.saveTidbits(list)")
 	public void beforeTidbits(List<Tidbit> list) {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		if ( currentUser != null && list != null ) {
