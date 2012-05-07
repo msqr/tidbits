@@ -26,10 +26,12 @@
 
 package magoffin.matt.tidbits.aop;
 
-import java.lang.reflect.Method;
 import magoffin.matt.tidbits.biz.LuceneBiz;
-import org.springframework.aop.AfterReturningAdvice;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Aspect to trigger a complete re-index of Lucene.
@@ -37,22 +39,17 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Matt Magoffin (spamsqr@msqr.us)
  * @version $Revision$ $Date$
  */
-public class ReindexInterceptor implements AfterReturningAdvice {
+@Aspect
+@Component
+public class ReindexInterceptor {
 
 	@Autowired
 	private LuceneBiz luceneBiz;
 
-	@Override
-	public void afterReturning(Object returnValue, Method method,
-			Object[] args, Object target) throws Throwable {
-		Long tidbitId = null;
-		for ( Object arg : args ) {
-			if ( arg instanceof Long ) {
-				tidbitId = (Long)arg;
-				break;
-			}
-		}
-		if ( tidbitId != null ) {
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.deleteTidbitKind(..)) && args(tidbitKindId,reassignId)")
+	@AfterReturning("deleteTidbitKind(tidbitKindId, reassignId)")
+	public void deleteTidbitKind(Long tidbitKindId, Long reassignId) {
+		if ( tidbitKindId != null && reassignId != null ) {
 			luceneBiz.reindexTidbits();
 		}
 	}

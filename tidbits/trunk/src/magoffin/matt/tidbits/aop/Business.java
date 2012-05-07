@@ -1,9 +1,9 @@
 /* ===================================================================
- * IndexDeleteInterceptor.java
+ * Business.java
  * 
- * Created Jul 30, 2006 3:48:47 PM
+ * Created May 8, 2012 9:18:45 AM
  * 
- * Copyright (c) 2006 Matt Magoffin (spamsqr@msqr.us)
+ * Copyright (c) 2012 Matt Magoffin.
  * 
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as 
@@ -26,46 +26,49 @@
 
 package magoffin.matt.tidbits.aop;
 
-import magoffin.matt.tidbits.biz.LuceneBiz;
-import org.aspectj.lang.annotation.AfterReturning;
+import java.util.List;
+import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.TidbitKind;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
- * Aspect to remove a Tidbit from the Lucene index after it has changed.
+ * Commong pointcuts for the application.
  * 
- * @author Matt Magoffin (spamsqr@msqr.us)
+ * @author matt
  * @version $Revision$ $Date$
  */
 @Aspect
-@Component
-public class IndexDeleteInterceptor {
-
-	@Autowired
-	private LuceneBiz luceneBiz;
+public class Business {
 
 	/**
-	 * Match TidbitsBiz methods deleting Tidbit.
+	 * Match TidbitsBiz methods saving Tidbit.
 	 * 
-	 * @param tidbitId
-	 *        the ID of the tidbit being deleted
+	 * @param tidbit
+	 *        the tidbit being saved
 	 */
-	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.deleteTidbit(..)) && args(tidbitId)")
-	@AfterReturning("deleteTidbit(tidbitId)")
-	public void deleteTidbit(Long tidbitId) {
-		if ( tidbitId != null ) {
-			luceneBiz.deleteTidbit(tidbitId);
-		}
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbit(..)) && args(tidbit)")
+	public void saveTidbit(Tidbit tidbit) {
 	}
 
-	public LuceneBiz getLuceneBiz() {
-		return luceneBiz;
+	/**
+	 * Match TidbitsBiz methods saving a list of Tidbits.
+	 * 
+	 * @param list
+	 *        the list of tidbits being saved
+	 */
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbits(..)) && args(list)")
+	public void saveTidbits(List<Tidbit> list) {
 	}
-	
-	public void setLuceneBiz(LuceneBiz luceneBiz) {
-		this.luceneBiz = luceneBiz;
+
+	/**
+	 * Match TidbitsBiz methods saving TidbitKind.
+	 * 
+	 * @param kind
+	 *        the tidbit kind being saved
+	 */
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.saveTidbitKind(..)) && args(kind)")
+	public void saveTidbitKind(TidbitKind kind) {
 	}
 
 }
