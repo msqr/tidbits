@@ -50,10 +50,12 @@ import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
 import magoffin.matt.util.DelegatingInvocationHandler;
-import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Lucene search plugin implementation for User objects.
@@ -63,9 +65,11 @@ import org.apache.lucene.index.IndexWriter;
  */
 public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePlugin {
 
+	@Autowired
 	private TidbitDao tidbitDao = null;
 	private boolean singleThreaded = false;
-	private final Logger log = Logger.getLogger(TidbitLucenePlugin.class);
+
+	private final Logger log = LoggerFactory.getLogger(TidbitLucenePlugin.class);
 
 	/**
 	 * Default constructor.

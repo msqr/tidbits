@@ -28,9 +28,10 @@ package magoffin.matt.tidbits.aop;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import magoffin.matt.tidbits.biz.LuceneBiz;
 import magoffin.matt.tidbits.domain.Tidbit;
-import magoffin.matt.tidbits.lucene.LuceneBiz;
 import org.springframework.aop.AfterReturningAdvice;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Aspect to index a Tidbit after it has changed.
@@ -40,6 +41,7 @@ import org.springframework.aop.AfterReturningAdvice;
  */
 public class TidbitIndexInterceptor implements AfterReturningAdvice {
 	
+	@Autowired
 	private LuceneBiz luceneBiz;
 
 	@Override
@@ -59,16 +61,10 @@ public class TidbitIndexInterceptor implements AfterReturningAdvice {
 		}
 	}
 	
-	/**
-	 * @return the luceneBiz
-	 */
 	public LuceneBiz getLuceneBiz() {
 		return luceneBiz;
 	}
 	
-	/**
-	 * @param luceneBiz the luceneBiz to set
-	 */
 	public void setLuceneBiz(LuceneBiz luceneBiz) {
 		this.luceneBiz = luceneBiz;
 	}
