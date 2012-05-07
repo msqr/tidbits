@@ -79,9 +79,6 @@
 	<bean id="transformerFactory" class="javax.xml.transform.TransformerFactory"
 		factory-method="newInstance"/>
 	
-	<bean id="domainObjectFactory" 
-		class="magoffin.matt.tidbits.biz.impl.JAXBDomainObjectFactory"/>
-	
 	<bean id="tidbitLucenePlugin" class="magoffin.matt.tidbits.lucene.TidbitLucenePlugin">
 		<property name="config">
 			<bean class="magoffin.matt.lucene.BasicIndexConfig"/>
