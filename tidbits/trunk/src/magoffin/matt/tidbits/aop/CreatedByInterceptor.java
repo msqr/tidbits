@@ -28,16 +28,14 @@ package magoffin.matt.tidbits.aop;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.userdetails.UserDetails;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Aspect to inject the "createdBy" property into objects as they are created.
@@ -54,6 +52,7 @@ public class CreatedByInterceptor implements MethodBeforeAdvice {
 	
 	private String createdByPropertyName = "createdBy";
 
+	@Override
 	public void before(Method method, Object[] args, Object target) throws Throwable {
 		if ( args == null ) return;
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();

@@ -26,11 +26,8 @@
 
 package magoffin.matt.tidbits.web;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -45,11 +42,11 @@ public class LogoffController extends AbstractController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		request.getSession().invalidate();
-		Cookie terminate = new Cookie(
-				TokenBasedRememberMeServices.ACEGI_SECURITY_HASHED_REMEMBER_ME_COOKIE_KEY, 
-				null);
-		terminate.setMaxAge(0);
-		response.addCookie(terminate);
+		/*
+		 * FIXME Cookie terminate = new Cookie(
+		 * TokenBasedRememberMeServices.ACEGI_SECURITY_HASHED_REMEMBER_ME_COOKIE_KEY
+		 * , null); terminate.setMaxAge(0); response.addCookie(terminate);
+		 */
 		return new ModelAndView(getSuccessView());
 	}
 
