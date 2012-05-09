@@ -303,6 +303,7 @@ function setupEditKindButton(button) {
 	});
 }
 
+/*
 // custom pagination for data table
 $j.fn.dataTableExt.oPagination.select = {
 		'fnInit': function (oSettings, fnCallbackDraw) {
@@ -334,7 +335,7 @@ $j.fn.dataTableExt.oPagination.select = {
 			}
 		}
 	};
-
+*/
 function updateSearchQueryInfo(query, matches) {
 	if ( query == null || query == '' ) {
 		// show all
@@ -403,9 +404,17 @@ $j(document).bind("XwebLocaleReady", function() {
 });
 
 $j(document).ready(function() {
+	
+	$j('.dropdown-toggle').dropdown();
+	
+	
+	
+	
+	// ------------------ OLD
+/*	
 	initLocale();
 	populateTidbitKinds();
-	
+
 	$j('.close-x').click(function() {
 		standardDialogHide(this.parentNode);
 	});
@@ -594,4 +603,5 @@ $j(document).ready(function() {
 	});
 	
 	$j('#datatable_wrapper').find('div.dataTables_paginate').hide(); // TODO fix pagination
+	*/
 });

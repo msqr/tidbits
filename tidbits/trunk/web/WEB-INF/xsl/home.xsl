@@ -135,7 +135,7 @@
 			<xsl:choose>
 				<xsl:when test="$search-results/t:tidbit">
 					<div id="body-content">
-						<table class="tidbits" id="datatable">
+						<table class="table table-striped" id="datatable">
 							<thead>
 								<tr>
 									<th><xsl:text> </xsl:text></th>
@@ -167,9 +167,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<xsl:if test="$handheld = 'true'">
-									<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results/t:tidbit"/>
-								</xsl:if>
+								<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results/t:tidbit"/>
 							</tbody>
 						</table>
 					</div>
