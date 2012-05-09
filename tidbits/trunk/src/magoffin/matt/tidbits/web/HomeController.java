@@ -26,6 +26,7 @@
 
 package magoffin.matt.tidbits.web;
 
+import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
@@ -52,6 +53,9 @@ public class HomeController {
 	@Autowired
 	private TidbitsBiz tidbitsBiz;
 
+	@Autowired
+	private DomainObjectFactory domainObjectFactory;
+
 	@RequestMapping(method = RequestMethod.GET, value = "/home.do")
 	public ModelAndView home() {
 		BasicTidbitSearchCriteria criteria = new BasicTidbitSearchCriteria();
@@ -64,7 +68,8 @@ public class HomeController {
 		UiModel model = new UiModel();
 		model.setSearchResults(tidbitsBiz.findTidbits(criteria));
 
-		return new ModelAndView("home", XwebConstants.DEFALUT_MODEL_OBJECT, model);
+		return new ModelAndView("home", XwebConstants.DEFALUT_MODEL_OBJECT,
+				domainObjectFactory.newRootElement(model));
 	}
 	
 }

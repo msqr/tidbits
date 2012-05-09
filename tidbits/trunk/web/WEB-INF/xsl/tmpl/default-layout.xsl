@@ -3,12 +3,12 @@
 	xmlns:t="http://msqr.us/xsd/TidBits"
 	xmlns:x="http://msqr.us/xsd/jaxb-web"
 	xmlns:date="http://exslt.org/dates-and-times"
-	exclude-result-prefixes="t x date">
+	exclude-result-prefixes="t x date xml">
 
 	<!-- imports -->
 	<xsl:import href="global.xsl"/>
 	
-	<xsl:output method="xml" omit-xml-declaration="no" indent="yes" media-type="application/xhtml+xml"
+	<xsl:output method="xml" omit-xml-declaration="no" indent="yes" media-type="text/html"
 		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
 		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
     
@@ -94,18 +94,17 @@
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="page-head-basecontent">
-		<link rel="stylesheet" type="text/css" href="{$web-context}/css/global-tidbits.css" media="screen,print"/>
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap.css" media="screen,print"/>
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap-responsive.css" media="screen,print"/>
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/tidbits.css" media="screen,print"/>
 		<xsl:choose>
 			<xsl:when test="$handheld = 'true'">
 				<link rel="stylesheet" type="text/css" href="{$web-context}/css/global-tidbits-mini.css" media="screen,print"/>
 				<meta name="viewport" content="width=320"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<link rel="stylesheet" type="text/css" href="{$web-context}/css/datatable.css" media="screen,print"/>
-				<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.3.2.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js-lib/jquery.center.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js-lib/jquery.dataTables.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js-lib/jquery.form.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.7.1.js" xml:space="preserve"> </script>
+				<script type="text/javascript" src="{$web-context}/js-lib/bootstrap.js" xml:space="preserve"> </script>
 				<script type="text/javascript" src="{$web-context}/js/xweb-locale.js" xml:space="preserve"> </script>
 				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}">
 					<xsl:text> </xsl:text>

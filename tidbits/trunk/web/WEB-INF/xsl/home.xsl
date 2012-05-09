@@ -21,30 +21,8 @@
 		<xsl:call-template name="main-nav">
 			<xsl:with-param name="page" select="'home'"/>
 		</xsl:call-template>
-		<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="simple-form">
-			<div>
-				<input name="query" id="search-tidbit-query">
-					<xsl:choose>
-						<xsl:when test="$search-input-support = 'true'">
-							<xsl:attribute name="type">
-								<xsl:text>search</xsl:text>
-							</xsl:attribute>
-							<xsl:attribute name="placeholder">
-								<xsl:value-of select="key('i18n','search.placeholder')"/>
-							</xsl:attribute>
-							<xsl:attribute name="autosave">
-								<xsl:text>true</xsl:text>
-							</xsl:attribute>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:attribute name="type">
-								<xsl:text>text</xsl:text>
-							</xsl:attribute>
-							<xsl:attribute name="class">
-								<xsl:text>search-otherbrowser</xsl:text>
-							</xsl:attribute>
-						</xsl:otherwise>
-					</xsl:choose>
+		<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="form-search">
+				<input name="query" id="search-tidbit-query" type="text" class="search-query">
 					<xsl:attribute name="value">
 						<xsl:if test="$handheld = 'true'">
 							<xsl:value-of select="$search-results/@query"/>
@@ -52,7 +30,6 @@
 					</xsl:attribute>
 				</input>
 				<input type="hidden" name="page" value="0"/>
-			</div>
 		</form>
 	</xsl:template>	
 	
