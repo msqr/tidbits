@@ -21,3 +21,13 @@ form#loginForm {
 label {
 	font-weight: normal;
 }
+
+h1 {
+    background-color: inherit;
+	color: #666;
+	font-size: 24pt;
+	font-weight: normal;
+	border-bottom: 2px solid #c99;
+	margin-bottom: 6pt;
+	margin-top: 0;
+}

@@ -26,6 +26,7 @@
 
 package magoffin.matt.tidbits.biz.impl;
 
+import javax.xml.bind.JAXBElement;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.domain.ObjectFactory;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
@@ -54,6 +55,17 @@ public class JAXBDomainObjectFactory implements DomainObjectFactory {
 	private static final magoffin.matt.xweb.ObjectFactory XWEB_OBJECT_FACTORY = 
 		new magoffin.matt.xweb.ObjectFactory();
 	
+	@Override
+	public JAXBElement<?> newRootElement(Object type) {
+		if ( type instanceof UiModel ) {
+			return TIDBITS_OBJECT_FACTORY.createModel((UiModel) type);
+		}
+		if ( type instanceof UiSession ) {
+			return TIDBITS_OBJECT_FACTORY.createSession((UiSession) type);
+		}
+		throw new IllegalArgumentException("Object not supported: " + type);
+	}
+
 	@Override
 	public User newUserInstance() {
 		return TIDBITS_OBJECT_FACTORY.createUser();

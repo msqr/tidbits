@@ -26,6 +26,7 @@
 
 package magoffin.matt.tidbits.biz;
 
+import javax.xml.bind.JAXBElement;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.PaginationIndex;
 import magoffin.matt.tidbits.domain.PaginationIndexSection;
@@ -47,7 +48,19 @@ import magoffin.matt.xweb.XwebParameters;
 public interface DomainObjectFactory {
 
 	/**
+	 * Get a new XML Element from a model object.
+	 * 
+	 * @param type
+	 *        the XML type object
+	 * @return the element
+	 * @throws IllegalArgumentException
+	 *         for unsupported types
+	 */
+	JAXBElement<?> newRootElement(Object type);
+
+	/**
 	 * Get a new Model instance.
+	 * 
 	 * @return new Model instance
 	 */
 	UiModel newModelInstance();
