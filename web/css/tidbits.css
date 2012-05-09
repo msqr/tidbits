@@ -31,3 +31,7 @@ h1 {
 	margin-bottom: 6pt;
 	margin-top: 0;
 }
+
+.ui-elements {
+	display: none;
+}

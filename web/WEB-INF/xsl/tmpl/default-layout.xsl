@@ -61,8 +61,6 @@
 					</xsl:attribute>
 				</xsl:if>
 				
-				<h1 class="title"><xsl:value-of select="$layout.page.title"/></h1>
-                
 				<xsl:apply-templates select="." mode="page-main-nav"/>
 				
 				<xsl:apply-templates select="." mode="page-body"/>
@@ -152,57 +150,102 @@
 	-->
 	<xsl:template name="main-nav">
 		<xsl:param name="page"/>
-		<div id="main-nav">
-			<xsl:choose>
-				<xsl:when test="$page = 'kinds'">
-					<a class="link-home" href="{$web-context}/home.do" 
-						title="{key('i18n','link.home.title')}">
-						<xsl:value-of select="key('i18n','link.home')"/>
+		<div id="main-nav" class="navbar">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="{$web-context}/home.do" 
+						title="{key('i18n','title')}">
+						<xsl:value-of select="key('i18n','title')"/>
 					</a>
-					<xsl:text> - </xsl:text>
-					<a class="link-add-kind" href="{$web-context}/newTidbitKind.do" 
-						title="{key('i18n','link.add.tidbitkind.title')}">
-						<xsl:value-of select="key('i18n','link.add.tidbitkind')"/>
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar" xml:space="preserve"> </span>
+						<span class="icon-bar" xml:space="preserve"> </span>
+						<span class="icon-bar" xml:space="preserve"> </span>
 					</a>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:choose>
-						<xsl:when test="$page = 'add-tidbit'">
-							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li>
+								<xsl:if test="$page = 'home'">
+									<xsl:attribute name="class">active</xsl:attribute>
+								</xsl:if>
+								<a class="link-home" href="{$web-context}/home.do" 
+									title="{key('i18n','link.home.title')}">
+									<xsl:value-of select="key('i18n','link.home')"/>
+								</a>
+							</li>
+							<li>
+								<xsl:if test="$page = 'kinds'">
+									<xsl:attribute name="class">active</xsl:attribute>
+								</xsl:if>
+								<a class="link-manage-kinds" href="{$web-context}/manageKinds.do" 
+									title="{key('i18n','link.edit.kinds.title')}">
+									<xsl:value-of select="key('i18n','link.edit.kinds')"/>
+								</a>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<xsl:value-of select="key('i18n','actions')"/>
+									<b class="caret" xml:space="preserve"> </b>
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a class="link-logoff" href="{$web-context}/logoff.do" 
+											title="{key('i18n','link.logoff.title')}">
+											<xsl:value-of select="key('i18n','link.logoff')"/>
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<xsl:if test="$page = 'home'">
+							<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="navbar-search pull-right">
+								<input name="query" id="search-tidbit-query" type="text" class="search-query span3" />
+								<input type="hidden" name="page" value="0"/>
+							</form>
+						</xsl:if>
+					</div>
+					<!--xsl:choose>
+						<xsl:when test="$page = 'kinds'">
+							<li class="active">
+							</li>
+							<li>
+								<a class="link-add-kind" href="{$web-context}/newTidbitKind.do" 
+									title="{key('i18n','link.add.tidbitkind.title')}">
+									<xsl:value-of select="key('i18n','link.add.tidbitkind')"/>
+								</a>
+							</li>
 						</xsl:when>
 						<xsl:otherwise>
-							<a class="link-add-tidbit" href="{$web-context}/newTidbit.do" 
-								title="{key('i18n','link.add.tidbit.title')}">
-								<xsl:value-of select="key('i18n','link.add.tidbit')"/>
-							</a>
+							<li>
+								<xsl:if test="$page = 'add-tidbit'">
+									<xsl:attribute name="class">active</xsl:attribute>
+								</xsl:if>
+								<a class="link-add-tidbit" href="{$web-context}/newTidbit.do" 
+									title="{key('i18n','link.add.tidbit.title')}">
+									<xsl:value-of select="key('i18n','link.add.tidbit')"/>
+								</a>
+							</li>
+							<li>
+							</li>
+							<xsl:if test="$handheld = 'false'">
+								<xsl:text> - </xsl:text>
+								<xsl:choose>
+									<xsl:when test="$page = 'import'">
+										<xsl:value-of select="key('i18n','link.import.csv')"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<a class="link-import-csv" href="{$web-context}/importCsv.do" 
+											title="{key('i18n','link.import.csv.title')}">
+											<xsl:value-of select="key('i18n','link.import.csv')"/>
+										</a>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:if>
 						</xsl:otherwise>
 					</xsl:choose>
-					<xsl:text> - </xsl:text>
-					<a class="link-manage-kinds" href="{$web-context}/manageKinds.do" 
-						title="{key('i18n','link.edit.kinds.title')}">
-						<xsl:value-of select="key('i18n','link.edit.kinds')"/>
-					</a>
-					<xsl:if test="$handheld = 'false'">
-						<xsl:text> - </xsl:text>
-						<xsl:choose>
-							<xsl:when test="$page = 'import'">
-								<xsl:value-of select="key('i18n','link.import.csv')"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<a class="link-import-csv" href="{$web-context}/importCsv.do" 
-									title="{key('i18n','link.import.csv.title')}">
-									<xsl:value-of select="key('i18n','link.import.csv')"/>
-								</a>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:if>
-				</xsl:otherwise>
-			</xsl:choose>
-			<xsl:text> - </xsl:text>
-			<a class="link-logoff" href="{$web-context}/logoff.do" 
-				title="{key('i18n','link.logoff.title')}">
-				<xsl:value-of select="key('i18n','link.logoff')"/>
-			</a>
+					<xsl:text> - </xsl:text-->
+				</div>
+			</div>
 		</div>
 	</xsl:template>
 	
