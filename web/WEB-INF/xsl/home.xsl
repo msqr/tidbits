@@ -4,13 +4,17 @@
 	xmlns:x="http://msqr.us/xsd/jaxb-web"
 	xmlns:date="http://exslt.org/dates-and-times"
 	exclude-result-prefixes="t x date">
-	
+
 	<!-- imports -->
 	<xsl:import href="tmpl/tidbit-form.xsl"/>
 	<xsl:import href="tmpl/tidbitkind-form.xsl"/>
 	<xsl:import href="tmpl/search-form.xsl"/>
 	<xsl:import href="tmpl/default-layout.xsl"/>
 	
+	<xsl:output method="xml" omit-xml-declaration="no" indent="yes" media-type="text/html"
+		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
+		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
+
 	<xsl:variable name="search-results" select="x:x-data/x:x-model[1]/t:model[1]/t:search-results"/>
 	
 	<xsl:template match="x:x-data" mode="page-main-nav">
