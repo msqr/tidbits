@@ -8,7 +8,7 @@
 	<!-- imports -->
 	<xsl:import href="global.xsl"/>
 	
-	<xsl:output method="xml" omit-xml-declaration="no" indent="yes"
+	<xsl:output method="xml" omit-xml-declaration="no" indent="yes" media-type="application/xhtml+xml"
 		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
 		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
     

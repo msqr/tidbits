@@ -1,14 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<link rel="stylesheet" type="text/css" href="<c:url value="/css/global-tidbits.css"/>" />
+		<link rel="stylesheet" type="text/css" href="<c:url value="/css/bootstrap.css"/>" />
+		<link rel="stylesheet" type="text/css" href="<c:url value="/css/bootstrap-responsive.css"/>" />
+		<link rel="stylesheet" type="text/css" href="<c:url value="/css/tidbits.css"/>" />
 		<title><fmt:message key="logon.title"/></title>
 		<script type="text/javascript">
 			window.onload = function() {
@@ -30,27 +30,24 @@
 				</p>
 			</c:otherwise>
 		</c:choose>
-		<form id="loginForm" method="post" action="<c:url value='/j_spring_security_check'/>">
-			<table class="form">
-				<tr>
-					<th><label for="j_username"><fmt:message key="logon.username.displayName"/></label></th>
-					<td>
-						<input type="text" name="j_username" id="j_username"/><br />
-					</td>
-				</tr>
-				<tr>
-					<th><label for="j_password"><fmt:message key="logon.password.displayName"/></label></th>
-					<td>
-						<input type="password" name="j_password" id="j_password"/><br />
-					</td>
-				</tr>
-				<tr>
-					<td></td>
-					<td>
-						<input type="submit" value="<fmt:message key="logon.displayName"/>"/>
-					</td>
-				</tr>
-			</table>
+		<form id="loginForm" method="post" action="<c:url value='/j_spring_security_check'/>" class="form-horizontal">
+			<fieldset>
+				<div class="control-group">
+					<label for="j_username" class="control-label"><fmt:message key="logon.username.displayName"/></label>
+					<div class="controls">
+						<input type="text" name="j_username" id="j_username" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="j_password" class="control-label"><fmt:message key="logon.password.displayName"/></label>
+					<div class="controls">
+						<input type="password" name="j_password" id="j_password" />
+					</div>
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary"><fmt:message key="logon.displayName"/></button>
+				</div>
+			</fieldset>
 		</form> 
-    	</body>
+    </body>
 </html> 

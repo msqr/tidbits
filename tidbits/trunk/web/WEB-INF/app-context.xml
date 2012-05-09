@@ -39,45 +39,49 @@
 	</bean>
 
 	<!-- 
+	 cacheManager: the EHCache CacheManager to enable injecting caches into beans
+	 -->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+	
+	<!-- 
 	 jaxbContext: the JAXBContext instanced used as the entry point 
 	 for XML handling
-	 -->
 	<bean id="jaxbContext" class="javax.xml.bind.JAXBContext" 
 		factory-method="newInstance">
 		<constructor-arg index="0"  type="java.lang.String">
 			<value>magoffin.matt.tidbits.domain:magoffin.matt.xweb</value>
 		</constructor-arg>
-	</bean>
+	</bean-->
 	
 	<!--  
 	 validatingDocumentBuilderFactory: a validating JAXP DocumentBuilderFactory
-	 -->
+	 >
 	<bean id="validatingDocumentBuilderFactory" 
 		class="javax.xml.parsers.DocumentBuilderFactory" 
 		factory-method="newInstance">
 		<property name="validating" value="true"/>
-	</bean>
+	</bean-->
 	
 	<!--  
 	 nonValidatingDocumentBuilderFactory: a validating JAXP DocumentBuilderFactory
-	 -->
+	 >
 	<bean id="nonValidatingDocumentBuilderFactory" class="javax.xml.parsers.DocumentBuilderFactory" 
 		factory-method="newInstance">
 		<property name="namespaceAware" value="true"/>
 		<property name="validating" value="false"/>
-	</bean>
+	</bean-->
 	
 	<!--  
 	 xpathFactory: a JAXP XPathFactory
-	 -->
+	 >
 	<bean id="xpathFactory" class="javax.xml.xpath.XPathFactory" 
-		factory-method="newInstance"/>
+		factory-method="newInstance"/-->
 	
 	<!-- 
 	 transformerFactory: a default JAXP TranformerFactory
-	 -->
+	 >
 	<bean id="transformerFactory" class="javax.xml.transform.TransformerFactory"
-		factory-method="newInstance"/>
+		factory-method="newInstance"/-->
 	
 	<bean id="tidbitLucenePlugin" class="magoffin.matt.tidbits.lucene.TidbitLucenePlugin">
 		<property name="config">
