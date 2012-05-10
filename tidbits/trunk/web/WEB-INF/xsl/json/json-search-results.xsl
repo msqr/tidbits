@@ -1,15 +1,12 @@
 <?xml version="1.0"?>
 <!--
-	Convert search results into jQuery Data Tables-compatible JSON data.
-	
-	TODO: This does not successfully escape all characters required for valid JSON.
+	Convert search results into JSON data.
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:t="http://msqr.us/xsd/TidBits" xmlns:x="http://msqr.us/xsd/jaxb-web"
 	xmlns:date="http://exslt.org/dates-and-times"
 	exclude-result-prefixes="t x date">
 
-	<xsl:import href="../tmpl/global-variables.xsl"/>
 	<xsl:import href="../tmpl/json.xsl"/>
 
 	<xsl:output method="text" media-type="application/json"/>
