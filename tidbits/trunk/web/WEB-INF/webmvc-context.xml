@@ -61,9 +61,16 @@
 		</property>
 	</bean>
 
+	<bean id="jsonXsltViewResolver" parent="xsltViewResolver">
+		<property name="contentType" value="application/json; charset=UTF-8"/>
+		<property name="order" value="2"/>
+		<property name="prefix" value="/WEB-INF/xsl/json/"/>
+		<property name="suffix" value=".xsl"/>
+	</bean>
+
 	<!-- Finally, a view resolver for JSTL views. -->
 	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 
-		<property name="order" value="2"/>
+		<property name="order" value="3"/>
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> 
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
