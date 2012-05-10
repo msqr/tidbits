@@ -27,9 +27,9 @@
 		<xsl:text>,&#xa;"pageStart": </xsl:text>
 		<xsl:choose>
 			<xsl:when test="t:pagination">
-				<xsl:value-of select="number(t:pagination/@page-offset)"/>
+				<xsl:value-of select="t:pagination/@page-offset"/>
 				<xsl:text>,&#xa;"pageSize": </xsl:text>
-				<xsl:value-of select="number(t:pagination/@page-size)"/>
+				<xsl:value-of select="t:pagination/@page-size"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>0,&#xa;"pageSize": 0</xsl:text>
