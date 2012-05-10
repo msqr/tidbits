@@ -12,12 +12,12 @@
 	<xsl:import href="../tmpl/global-variables.xsl"/>
 	<xsl:import href="../tmpl/json.xsl"/>
 
-	<xsl:output method="text"/>
+	<xsl:output method="text" media-type="application/json"/>
 
 	<xsl:template match="x:x-data">
-		<xsl:text>({&#xa;</xsl:text>
+		<xsl:text>{&#xa;</xsl:text>
 		<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results"/>
-		<xsl:text>&#xa;})</xsl:text>
+		<xsl:text>&#xa;}</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="t:search-results">

@@ -30,13 +30,16 @@ import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
+import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.tidbits.support.BasicTidbitSearchCriteria;
 import magoffin.matt.xweb.util.XwebConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -72,4 +75,25 @@ public class HomeController {
 				domainObjectFactory.newRootElement(model));
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/s.json")
+	@ResponseBody
+	public SearchResults s(BasicTidbitSearchCriteria criteria) {
+		if ( !StringUtils.hasText(criteria.getQuery()) ) {
+			criteria.setSearchType(TidbitSearchType.FOR_TEMPLATE);
+		}
+		return tidbitsBiz.findTidbits(criteria);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/search.json")
+	public ModelAndView search(BasicTidbitSearchCriteria criteria) {
+		if ( !StringUtils.hasText(criteria.getQuery()) ) {
+			criteria.setSearchType(TidbitSearchType.FOR_TEMPLATE);
+		}
+		UiModel model = new UiModel();
+		model.setSearchResults(tidbitsBiz.findTidbits(criteria));
+
+		return new ModelAndView("json-search-results", XwebConstants.DEFALUT_MODEL_OBJECT,
+				domainObjectFactory.newRootElement(model));
+	}
+
 }
