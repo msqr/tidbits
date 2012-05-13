@@ -22,64 +22,63 @@
 	</xsl:template>	
 	
 	<xsl:template match="x:x-data" mode="page-body">
-			<form class="modal fade form-horizontal" id="add-tidbit-modal">
-		<div class="modal-header">
-			<h3>Add a Tidbit</h3>
-		</div>
-		<fieldset class="modal-body">
-			<div class="control-group">
-				<label for="add-tidbit-kind" class="control-label">
-					<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
-				</label>
-				<div class="controls">
-					<select id="add-tidbit-kind">
-						<option>Password</option>
-						<option>Username</option>
-						<option>URL</option>
-					</select>
-				</div>
+		<form class="modal fade form-horizontal" id="add-tidbit-modal" 
+			method="post" action="{$web-context}/saveTidbit.do">
+			<div class="modal-header">
+				<h3>Add a Tidbit</h3>
 			</div>
-			<div class="control-group">
-				<label for="add-tidbit-name" class="control-label">
-					<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
-				</label>
-				<div class="controls">
-					<input id="add-tidbit-name" type="text" class="input-xlarge" />
+			<fieldset class="modal-body">
+				<div class="control-group">
+					<label for="add-tidbit-kind" class="control-label">
+						<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
+					</label>
+					<div class="controls">
+						<select id="add-tidbit-kind" name="kind.id">
+							<xsl:text> </xsl:text>
+						</select>
+					</div>
 				</div>
-			</div>
-			<div class="control-group">
-				<label for="add-tidbit-data" class="control-label">
-					<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
-				</label>
-				<div class="controls">
-					<textarea id="add-tidbit-data" class="input-xlarge" rows="4">
-						<xsl:text> </xsl:text>
-					</textarea>
+				<div class="control-group">
+					<label for="add-tidbit-name" class="control-label">
+						<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
+					</label>
+					<div class="controls">
+						<input id="add-tidbit-name" name="name" type="text" class="input-xlarge" />
+					</div>
 				</div>
-			</div>
-			<div class="control-group">
-				<label for="add-tidbit-comments" class="control-label">
-					<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
-				</label>
-				<div class="controls">
-					<textarea id="add-tidbit-comments" class="input-xlarge" rows="3">
-						<xsl:text> </xsl:text>
-					</textarea>
-					<span class="label">
-						<xsl:value-of select="key('i18n','optional.caption')"/>
-					</span>
+				<div class="control-group">
+					<label for="add-tidbit-data" class="control-label">
+						<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
+					</label>
+					<div class="controls">
+						<textarea id="add-tidbit-data" name="data" class="input-xlarge" rows="4">
+							<xsl:text> </xsl:text>
+						</textarea>
+					</div>
 				</div>
+				<div class="control-group">
+					<label for="add-tidbit-comments" class="control-label">
+						<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
+					</label>
+					<div class="controls">
+						<textarea id="add-tidbit-comments" name="comment" class="input-xlarge" rows="3">
+							<xsl:text> </xsl:text>
+						</textarea>
+						<span class="label">
+							<xsl:value-of select="key('i18n','optional.caption')"/>
+						</span>
+					</div>
+				</div>
+			</fieldset>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">
+					<xsl:value-of select="key('i18n','close')"/>
+				</button>
+				<button type="submit" class="btn btn-primary">
+					<xsl:value-of select="key('i18n','save.displayName')"/>
+				</button>
 			</div>
-		</fieldset>
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal">
-				<xsl:value-of select="key('i18n','close')"/>
-			</button>
-			<button class="btn btn-primary">
-				<xsl:value-of select="key('i18n','save.displayName')"/>
-			</button>
-		</div>
-	</form>
+		</form>
 	
 		
 		
