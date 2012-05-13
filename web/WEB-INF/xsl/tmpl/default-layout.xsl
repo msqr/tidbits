@@ -8,9 +8,7 @@
 	<!-- imports -->
 	<xsl:import href="global.xsl"/>
 	
-	<xsl:output method="xml" omit-xml-declaration="no" indent="yes" media-type="text/html"
-		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
-		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
+	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes" media-type="text/html"/>
     
 	<!-- 
 		Layout Stylesheet
@@ -47,9 +45,13 @@
 		<xsl:variable name="layout.body.class">
 			<xsl:apply-templates select="." mode="page-body-class"/>
 		</xsl:variable>
+		<xsl:variable name="layout.body.id">
+			<xsl:apply-templates select="." mode="page-body-id"/>
+		</xsl:variable>
+		<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
 			<head>
-				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+				<meta charset="utf-8" />
 				<title><xsl:value-of select="$layout.page.title"/></title>
 				<xsl:apply-templates select="." mode="page-head-basecontent"/>
 				<xsl:apply-templates select="." mode="page-head-content"/>
@@ -60,56 +62,29 @@
 						<xsl:value-of select="$layout.body.class"/>
 					</xsl:attribute>
 				</xsl:if>
+				<xsl:if test="string($layout.body.id)">
+					<xsl:attribute name="id">
+						<xsl:value-of select="$layout.body.id"/>
+					</xsl:attribute>
+				</xsl:if>
 				
 				<xsl:apply-templates select="." mode="page-main-nav"/>
-				
 				<xsl:apply-templates select="." mode="page-body"/>
-                
-				<!--div id="system-working" style="display: none;">
-					<xsl:value-of select="key('i18n','working.displayName')"/>
-				</div-->
-				<div id="top-hide" style="display: none;">
-					<xsl:text> </xsl:text>
-				</div>
-				<div id="message-pane" style="display: none;">
-					<div class="close-x">
-						<span class="alt-hide"><xsl:value-of select="key('i18n','close')"/></span>
-					</div>
-					<div id="message-content-pane" class="message-box">
-						<xsl:text> </xsl:text>
-					</div>
-				</div>
-				<div id="dialog-pane" style="display: none;">
-					<div class="close-x">
-						<span class="alt-hide"><xsl:value-of select="key('i18n','close')"/></span>
-					</div>
-					<div id="dialog-content-pane" class="dialog-box">
-						<xsl:text> </xsl:text>
-					</div>
-				</div>
 			</body>
 		</html>
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="page-head-basecontent">
-		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap.css" media="screen,print"/>
-		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap-responsive.css" media="screen,print"/>
-		<link rel="stylesheet" type="text/css" href="{$web-context}/css/tidbits.css" media="screen,print"/>
-		<xsl:choose>
-			<xsl:when test="$handheld = 'true'">
-				<link rel="stylesheet" type="text/css" href="{$web-context}/css/global-tidbits-mini.css" media="screen,print"/>
-				<meta name="viewport" content="width=320"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.7.1.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js-lib/bootstrap.js" xml:space="preserve"> </script>
-				<script type="text/javascript" src="{$web-context}/js/xweb-locale.js" xml:space="preserve"> </script>
-				<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}">
-					<xsl:text> </xsl:text>
-				</script>
-				<script type="text/javascript" src="{$web-context}/js/tidbits.js" xml:space="preserve"> </script>
-			</xsl:otherwise>
-		</xsl:choose>
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap-responsive.css"/>
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/tidbits.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.7.1.js"><xsl:text> </xsl:text></script>
+		<script type="text/javascript" src="{$web-context}/js-lib/jquery.transform2d.js"><xsl:text> </xsl:text></script>
+		<script type="text/javascript" src="{$web-context}/js-lib/bootstrap.js"><xsl:text> </xsl:text></script>
+		<!--script type="text/javascript" src="{$web-context}/js/xweb-locale.js"><xsl:text> </xsl:text></script>
+		<script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}"><xsl:text> </xsl:text></script-->
+		<script type="text/javascript" src="{$web-context}/js/tidbits-cards.js"><xsl:text> </xsl:text></script>
 	</xsl:template>
 	
 	<xsl:template match="x:x-errors" mode="error-intro">
@@ -150,103 +125,44 @@
 	-->
 	<xsl:template name="main-nav">
 		<xsl:param name="page"/>
-		<div id="main-nav" class="navbar">
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="brand" href="{$web-context}/home.do" 
-						title="{key('i18n','title')}">
-						<xsl:value-of select="key('i18n','title')"/>
-					</a>
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar" xml:space="preserve"> </span>
-						<span class="icon-bar" xml:space="preserve"> </span>
-						<span class="icon-bar" xml:space="preserve"> </span>
-					</a>
-					<div class="nav-collapse">
-						<ul class="nav">
-							<li>
-								<xsl:if test="$page = 'home'">
-									<xsl:attribute name="class">active</xsl:attribute>
-								</xsl:if>
-								<a class="link-home" href="{$web-context}/home.do" 
-									title="{key('i18n','link.home.title')}">
-									<xsl:value-of select="key('i18n','link.home')"/>
-								</a>
-							</li>
-							<li>
-								<xsl:if test="$page = 'kinds'">
-									<xsl:attribute name="class">active</xsl:attribute>
-								</xsl:if>
-								<a class="link-manage-kinds" href="{$web-context}/manageKinds.do" 
-									title="{key('i18n','link.edit.kinds.title')}">
-									<xsl:value-of select="key('i18n','link.edit.kinds')"/>
-								</a>
-							</li>
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-									<xsl:value-of select="key('i18n','actions')"/>
-									<b class="caret" xml:space="preserve"> </b>
-								</a>
-								<ul class="dropdown-menu">
-									<li>
-										<a class="link-logoff" href="{$web-context}/logoff.do" 
-											title="{key('i18n','link.logoff.title')}">
-											<xsl:value-of select="key('i18n','link.logoff')"/>
-										</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
-						<xsl:if test="$page = 'home'">
-							<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="navbar-search pull-right">
-								<input name="query" id="search-tidbit-query" type="text" class="search-query span3" />
-								<input type="hidden" name="page" value="0"/>
-							</form>
-						</xsl:if>
-					</div>
-					<!--xsl:choose>
-						<xsl:when test="$page = 'kinds'">
-							<li class="active">
-							</li>
-							<li>
-								<a class="link-add-kind" href="{$web-context}/newTidbitKind.do" 
-									title="{key('i18n','link.add.tidbitkind.title')}">
-									<xsl:value-of select="key('i18n','link.add.tidbitkind')"/>
-								</a>
-							</li>
-						</xsl:when>
-						<xsl:otherwise>
-							<li>
-								<xsl:if test="$page = 'add-tidbit'">
-									<xsl:attribute name="class">active</xsl:attribute>
-								</xsl:if>
-								<a class="link-add-tidbit" href="{$web-context}/newTidbit.do" 
-									title="{key('i18n','link.add.tidbit.title')}">
-									<xsl:value-of select="key('i18n','link.add.tidbit')"/>
-								</a>
-							</li>
-							<li>
-							</li>
-							<xsl:if test="$handheld = 'false'">
-								<xsl:text> - </xsl:text>
-								<xsl:choose>
-									<xsl:when test="$page = 'import'">
-										<xsl:value-of select="key('i18n','link.import.csv')"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<a class="link-import-csv" href="{$web-context}/importCsv.do" 
-											title="{key('i18n','link.import.csv.title')}">
-											<xsl:value-of select="key('i18n','link.import.csv')"/>
-										</a>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:if>
-						</xsl:otherwise>
-					</xsl:choose>
-					<xsl:text> - </xsl:text-->
-				</div>
-			</div>
-		</div>
+
+	    <div class="navbar navbar-fixed-top">
+	        <div class="navbar-inner">
+	            <div class="container">
+	
+	                <a class="brand" href="{$web-context}/home.do">
+	                	<xsl:value-of select="key('i18n','title')"/>
+	               	</a> 
+					
+					<xsl:if test="$page = 'home'">
+						<form id="nav-search-tidbit-form" action="" class="navbar-search">
+							<input type="text" placeholder="{key('i18n', 'search.displayName')}" class="search-query span4" />
+						</form>
+					</xsl:if>
+					
+					<ul class="nav hidden-phone" id="nav-other">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<xsl:value-of select="key('i18n', 'go.displayName')"/>
+								<b class="caret"><xmltext> </xmltext></b>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a class="link-logoff" href="{$web-context}/logoff.do">
+										<xsl:value-of select="key('i18n','link.logoff')"/>
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					
+					<ul class="nav pull-right" id="nav-add">
+						<li><button class="btn btn-primary" data-toggle="modal" data-target="#add-tidbit-modal">+</button></li>
+					</ul>
+						
+	            </div>
+	        </div>    
+	    </div>
 	</xsl:template>
 	
 	<xsl:template name="render.page.option">
@@ -281,6 +197,14 @@
 		does not specify any value, so no class attribute added.
 	-->
 	<xsl:template match="x:x-data" mode="page-body-class"/>
+	
+	<!-- 
+		PAGE-BODY-ID
+		
+		Add a "id" attribute to the <body> tag. Default implementation 
+		does not specify any value, so no ID attribute added.
+	-->
+	<xsl:template match="x:x-data" mode="page-body-id"/>
 	
 	<!--
 		PAGE-BODY (empty implementation)

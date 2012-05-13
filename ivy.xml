@@ -27,9 +27,6 @@
 		<dependency org="org.eclipse.persistence" name="eclipselink" rev="2.3.2">
 			<artifact name="eclipselink" type="jar"/>
 		</dependency>
-		<!--dependency org="javax.xml.bind" name="jaxb-api" rev="2.2.6" >
-    		<artifact name="jaxb-api" type="jar" />
-		</dependency-->
 		<dependency org="org.apache.derby" name="derby" rev="10.8.2.2" conf="test">
     		<artifact name="derby" type="jar" />
 		</dependency>
@@ -94,9 +91,9 @@
 		</dependency>
 		
 		<!-- JAXB -->
-		<!--dependency org="com.sun.xml.bind" name="jaxb" rev="2.1.9" >
-			<artifact name="jaxb" type="jar" />
-		</dependency-->
+		<dependency org="com.sun.xml.bind" name="jaxb-impl" rev="2.2.5.1" >
+			<artifact name="jaxb-impl" type="jar" />
+		</dependency>
 		<dependency org="org.jvnet.jaxb2_commons" name="jaxb2-basics-runtime" rev="0.6.3" >
     		<artifact name="jaxb2-basics-runtime" type="jar" />
 		</dependency>
