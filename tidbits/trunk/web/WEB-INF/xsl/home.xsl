@@ -6,43 +6,92 @@
 	exclude-result-prefixes="t x date">
 
 	<!-- imports -->
-	<xsl:import href="tmpl/tidbit-form.xsl"/>
+	<!--xsl:import href="tmpl/tidbit-form.xsl"/>
 	<xsl:import href="tmpl/tidbitkind-form.xsl"/>
-	<xsl:import href="tmpl/search-form.xsl"/>
+	<xsl:import href="tmpl/search-form.xsl"/-->
 	<xsl:import href="tmpl/default-layout.xsl"/>
 	
-	<xsl:output method="xml" omit-xml-declaration="no" indent="yes" media-type="text/html"
-		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
-		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
+	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes" media-type="text/html"/>
 
-	<xsl:variable name="search-results" select="x:x-data/x:x-model[1]/t:model[1]/t:search-results"/>
+	<xsl:template match="x:x-data" mode="page-body-id">card-container</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="page-main-nav">
 		<xsl:call-template name="main-nav">
 			<xsl:with-param name="page" select="'home'"/>
 		</xsl:call-template>
-		<form id="nav-search-tidbit-form" action="{$web-context}/search.do" method="post" class="form-search">
-				<input name="query" id="search-tidbit-query" type="text" class="search-query">
-					<xsl:attribute name="value">
-						<xsl:if test="$handheld = 'true'">
-							<xsl:value-of select="$search-results/@query"/>
-						</xsl:if>
-					</xsl:attribute>
-				</input>
-				<input type="hidden" name="page" value="0"/>
-		</form>
 	</xsl:template>	
 	
 	<xsl:template match="x:x-data" mode="page-body">
-		<div id="content-pane" class="alt_pagination">
+			<form class="modal fade form-horizontal" id="add-tidbit-modal">
+		<div class="modal-header">
+			<h3>Add a Tidbit</h3>
+		</div>
+		<fieldset class="modal-body">
+			<div class="control-group">
+				<label for="add-tidbit-kind" class="control-label">
+					<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
+				</label>
+				<div class="controls">
+					<select id="add-tidbit-kind">
+						<option>Password</option>
+						<option>Username</option>
+						<option>URL</option>
+					</select>
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="add-tidbit-name" class="control-label">
+					<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
+				</label>
+				<div class="controls">
+					<input id="add-tidbit-name" type="text" class="input-xlarge" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="add-tidbit-data" class="control-label">
+					<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
+				</label>
+				<div class="controls">
+					<textarea id="add-tidbit-data" class="input-xlarge" rows="4">
+						<xsl:text> </xsl:text>
+					</textarea>
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="add-tidbit-comments" class="control-label">
+					<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
+				</label>
+				<div class="controls">
+					<textarea id="add-tidbit-comments" class="input-xlarge" rows="3">
+						<xsl:text> </xsl:text>
+					</textarea>
+					<span class="label">
+						<xsl:value-of select="key('i18n','optional.caption')"/>
+					</span>
+				</div>
+			</div>
+		</fieldset>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal">
+				<xsl:value-of select="key('i18n','close')"/>
+			</button>
+			<button class="btn btn-primary">
+				<xsl:value-of select="key('i18n','save.displayName')"/>
+			</button>
+		</div>
+	</form>
+	
+		
+		
+		<!--div id="content-pane" class="alt_pagination">
 			<xsl:if test="$err">
 				<xsl:apply-templates select="x:x-errors" mode="error-intro"/>
 			</xsl:if>
 			<xsl:choose>
 				<xsl:when test="$handheld = 'false'">
 					<div id="search-results-info">
-						<!--form id="page-form" action="{$web-context}{$ctx/x:path}" method="post">
-							<div-->
+						<form id="page-form" action="{$web-context}{$ctx/x:path}" method="post">
+							<div>
 								<span class="header" id="matches-label">
 									<xsl:value-of select="key('i18n','search.result.query.matches')"/>
 									<xsl:text> </xsl:text>
@@ -68,8 +117,8 @@
 										<option value="100">100</option>
 									</select>
 								</span>
-							<!--/div>
-						</form-->
+							</div>
+						</form>
 					</div>
 				</xsl:when>
 				<xsl:when test="string($search-results/@query) 
@@ -181,16 +230,16 @@
 			<div id="ui-elements" class="ui-elements">
 				<xsl:apply-templates select="." mode="ui.elements"/>
 			</div>
-		</xsl:if>
+		</xsl:if-->
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="ui.elements">
-		<xsl:call-template name="tidbit.form">
+		<!--xsl:call-template name="tidbit.form">
 			<xsl:with-param name="new" select="'true'"/>
 		</xsl:call-template>
 		<xsl:call-template name="tidbit.form">
 			<xsl:with-param name="new" select="'false'"/>
-		</xsl:call-template>
+		</xsl:call-template-->
 		<form id="import-csv-form" action="{$web-context}/importCsv.do" method="post" 
 			enctype="multipart/form-data" class="simple-form">
 			<h3>
@@ -214,110 +263,6 @@
 			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
 		</form>
 		<!--xsl:call-template name="search.form"/-->
-	</xsl:template>
-	
-	<xsl:template match="t:tidbit">
-		<tr>
-			<xsl:attribute name="class">
-				<xsl:text>tidbit-data-row</xsl:text>
-				<xsl:if test="(position() mod 2) = 0">
-					<xsl:text> even</xsl:text>
-				</xsl:if>
-			</xsl:attribute>
-			<th class="start">
-				<xsl:variable name="page.offset" 
-					select="/x:x-data/x:x-model[1]/t:model[1]/t:search-results/t:pagination/@page-offset"/>
-				<xsl:choose>
-					<xsl:when test="$page.offset &gt; 0">
-						<xsl:value-of select="position() + ($page.offset * /x:x-data/x:x-model[1]/t:model[1]/t:search-results/t:pagination/@page-size)"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="position()"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</th>
-			<xsl:if test="$handheld != 'true'">
-				<td class="edit-button">
-					<div class="edit-btn" id="tidbit-{@tidbit-id}-edit" style="display: none;">
-						<span class="alt-hide"><xsl:value-of select="key('i18n','edit')"/></span>
-					</div>				
-				</td>
-			</xsl:if>
-			<td>
-				<xsl:choose>
-					<xsl:when test="$handheld = 'true'">
-						<a title="{key('i18n','edit.tidbit.title')}">
-							<xsl:attribute name="href">
-								<xsl:value-of select="$web-context"/>
-								<xsl:text>/saveTidbit.do?tidbit.tidbitId=</xsl:text>
-								<xsl:value-of select="@tidbit-id"/>
-							</xsl:attribute>
-							<xsl:value-of select="@name"/>
-						</a>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="@name"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</td>
-			<td>
-				<xsl:value-of select="t:kind/@name"/>
-			</td>
-			<xsl:if test="$handheld != 'true'">
-				<td class="data" id="tidbit-{@tidbit-id}-data">
-					<div class="data-container">
-						<xsl:choose>
-							<xsl:when test="string-length(t:data) &gt; 0">
-								<xsl:value-of select="t:data" disable-output-escaping="no" xml:space="preserve"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:text> </xsl:text>
-							</xsl:otherwise>
-						</xsl:choose>
-					</div>
-				</td>
-			</xsl:if>
-			<td>
-				<xsl:value-of select="t:comment" disable-output-escaping="no" xml:space="preserve"/>
-			</td>
-			<xsl:if test="$handheld != 'true'">
-				<td>
-					<xsl:value-of select="date:format-date(string(@creation-date),'d MMM yyyy')"/>
-					<xsl:if test="@created-by">
-						<xsl:text> </xsl:text>
-						<xsl:value-of select="key('i18n','by')"/>
-						<xsl:text> </xsl:text>
-						<xsl:value-of select="@created-by"/>
-					</xsl:if>
-				</td>
-				<td>
-					<xsl:choose>
-						<xsl:when test="@modify-date">
-							<xsl:value-of select="date:format-date(string(@modify-date),'d MMM yyyy')"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text> </xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-				</td>
-			</xsl:if>
-		</tr>
-		<xsl:if test="$handheld = 'true'">
-			<tr>
-				<xsl:attribute name="class">
-					<xsl:text>tidbit-data-row</xsl:text>
-					<xsl:if test="(position() mod 2) = 0">
-						<xsl:text> even</xsl:text>
-					</xsl:if>
-				</xsl:attribute>
-				<th class="start"><xsl:text> </xsl:text></th>
-				<td colspan="3">
-					<div class="data-display">
-						<xsl:value-of select="t:data" disable-output-escaping="no" xml:space="preserve"/>
-					</div>
-				</td>
-			</tr>
-		</xsl:if>
 	</xsl:template>
 	
 </xsl:stylesheet>

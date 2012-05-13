@@ -1,7 +1,9 @@
 body {
-	margin: 12pt;
+	margin: 0;
 	background-color: #E1E6EF;
-	font-family: "American Typewriter Light", Courier, monospace;
+	padding-top: 40px;
+	position: relative;
+	font-family: "American Typewriter", Courier, monospace;
 	font-size: 12pt;
 	font-weight: lighter;
 	line-height: 18pt;
@@ -19,19 +21,82 @@ form#loginForm {
 }
 
 label {
-	font-weight: normal;
-}
-
-h1 {
-    background-color: inherit;
-	color: #666;
-	font-size: 24pt;
-	font-weight: normal;
-	border-bottom: 2px solid #c99;
-	margin-bottom: 6pt;
-	margin-top: 0;
+	font-weight: bold;
 }
 
 .ui-elements {
 	display: none;
+}
+
+div.tidbit {
+	position: absolute;
+	top: 25px;
+	left: 25px;
+	border: 1px solid #ccc;
+	color: inherit;
+	background-color: white;
+	max-width: 240pt;
+	max-height: 180pt;
+	overflow: auto;
+	
+	/*-moz-box-shadow: 10px 10px 5px #888;
+	-webkit-box-shadow: 2px 2px 5px #999;*/
+	box-shadow: 2px 2px 5px #666;
+	border-radius: 2px;
+}
+
+div.tidbit h2 {
+	font-size: 18pt;
+	font-weight: normal;
+	line-height: 22pt;
+	margin: 0;
+	padding: 0pt 6pt;
+	border-bottom: 1pt solid #fcc;
+}
+
+div.tidbit dl {
+	margin: 6pt;
+	font-size: 11pt;
+}
+
+div.tidbit dl dt {
+	margin-top: 4pt;
+	font-weight: bold;
+	float: left;
+	clear: both;
+}
+
+div.tidbit dl dt::after {
+	content: ': ';
+}
+
+div.tidbit dl dd {
+	margin-top: 4pt;
+	font-weight: normal;
+	float: left;
+}
+
+.btn.visible {
+	display: block !important;
+}
+
+#nav-search-tidbit-form {
+    border-bottom: none;
+    border-top: none;
+    box-shadow: none;
+    float: left;
+    margin: inherit;
+    padding: inherit;
+    margin-bottom: 0;
+    margin-top: 6px;
+}
+
+#nav-add {
+	float: right;
+}
+
+@media (max-width: 1023px) {
+	#nav-other {
+		display: none;
+	}
 }
