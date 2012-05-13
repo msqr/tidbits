@@ -1,11 +1,29 @@
+/**
+ * The Tidbits namespace.
+ * 
+ * @namespace namespace
+ */
 var Tidbits = {
 
-	/** Namespace for classes. */
+	/**
+	 * Namespace for classes. 
+	 * @namespace
+	 */
 	Class: {},
 	
-	/** Namespace for runtime state. */
+	/**
+	 * Namespace for runtime state. 
+	 * @namespace
+	 */
 	Runtime: {},
 
+	/**
+	 * Names to use for user-interaction events.
+	 * 
+	 * <p>On non-touch devices these equate to <em>mousedown</em>, 
+	 * <em>mouseup</em>, etc. On touch-enabled devices these equate to
+	 * <em>touchstart</em>, <em>touchend</em>, etc.</p>
+	 */
 	touchEventNames : {
 		start: "mousedown",
 		move: "mousemove",
@@ -13,6 +31,11 @@ var Tidbits = {
 		cancel: "touchcancel"
 	},
 	
+	/**
+	 * Flag indicating if the client supports touch events.
+	 * 
+	 * @returns {Boolean} <em>true</em> if have touch support
+	 */
 	hasTouchSupport : (function() {
 		if ( 'createTouch' in document) { // True on the iPhone
 			return true;
@@ -31,6 +54,28 @@ var Tidbits = {
 			return (event.targetTouches.length > 0 ? event.targetTouches[0] : undefined);
 		}
 		return event;
+	},
+	
+	/**
+	 * Display an error alert message.
+	 * 
+	 * @param {Object} contents the HTML to display in the alert
+	 */
+	errorAlert : function(contents) {
+		$('body').append(
+				$('<div class="alert alert-error"><button class="close" data-dismiss="alert">&times;</button></div>')
+				.append(contents));
+	},
+	
+	/**
+	 * Render an i18n message.
+	 * 
+	 * <p>This is simply a shortcut for calling <code>Tidbits.Runtime.i18n.i18n()</code>.</p>
+	 * 
+	 * @returns {String} the message
+	 */
+	i18n : function() {
+		return Tidbits.Runtime.i18n.i18n.apply(Tidbits.Runtime.i18n, arguments);
 	}
 	
 };
@@ -44,21 +89,16 @@ Tidbits.touchEventNames = (function() {
 		} : Tidbits.touchEventNames;
 }());
 
-/*
-<div class="tidbit">
-	<h2>Bank</h2>
-	<dl>
-		<dt>Password</dt>
-		<dd>mypassword</dd>
-		<dt>Username</dt>
-		<dd>mylogin</dd>
-		<dt>Note</dt>
-		<dd>This is a long note, with a ton of stuff to say here. How about that?</dd>
-		<dt>URL</dt>
-		<dd><a href="http://someplace.com/">http://someplace.com/</a></dd>
-	</dl>
-</div>
-*/
+/**
+ * A single "card" object in the Tidbits UI.
+ * 
+ * <p>A "card" is a group of Tidbits that share a common name.</p>
+ * 
+ * @param {Object} data the JSON data representing a single Tidbit
+ * @param {Tidbits.Class.Cards} cards 
+ * @returns {Tidbits.Class.Card}
+ * @class
+ */
 Tidbits.Class.Card = function(data, cards) {
 	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
 	this.name = data.name;
@@ -188,6 +228,13 @@ Tidbits.Class.Card.prototype.getInfo = function() {
 	return this.info;
 };
 
+/**
+ * A collection of card objects.
+ * 
+ * @class
+ * @param {Element} container to insert all card objects into
+ * @returns {Tidbits.Class.Cards}
+ */
 Tidbits.Class.Cards = function(container) {
 	var cards = {};
 	var cardz = [];
@@ -245,11 +292,21 @@ Tidbits.Class.Cards = function(container) {
 			$(this).modal('hide').ajaxSubmit(function(data, statusText) {
 				if ( 'success' === statusText ) {
 					populateTidbits(data);
+				} else {
+					Tidbits.errorAlert('<h4 class="alert-heading">' 
+							+Tidbits.i18n('tidbit.save.error.title') 
+							+'</h4>' +statusText);
 				}
 			});
 		});
 	})();
-
+	
+	/**
+	 * Move a specific card so it appears above all other cards,
+	 * by adjusting its z-index value.
+	 * 
+	 * @param {Object} the card to move to the top
+	 */
 	this.popToTop = function(card) {
 		var idx = cardz.indexOf(card);
 		var i, len;
@@ -263,7 +320,6 @@ Tidbits.Class.Cards = function(container) {
 			}
 		}
 	};
-	
 };
 
 $(document).ready(function() {
@@ -271,5 +327,11 @@ $(document).ready(function() {
 	document.body.addEventListener('touchmove', function(event) {
 	  event.preventDefault();
 	}, false);
+	
+	Tidbits.Runtime.i18n = new XwebLocaleClass();
+	jQuery.getJSON('messages.json', function(data) {
+		Tidbits.Runtime.i18n.initJson(data);
+	});
+
 	Tidbits.Runtime.cards = new Tidbits.Class.Cards('#card-container');
 });

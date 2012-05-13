@@ -66,6 +66,11 @@
 		<property name="order" value="2"/>
 		<property name="prefix" value="/WEB-INF/xsl/json/"/>
 		<property name="suffix" value=".xsl"/>
+		<property name="messagesSource">
+				<bean id="messageSource" class="magoffin.matt.xweb.util.ResourceBundleMessagesSource">
+					<property name="basenames" value="client-messages"/>
+				</bean>	
+		</property>
 	</bean>
 
 	<!-- Finally, a view resolver for JSTL views. -->
