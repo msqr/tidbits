@@ -80,6 +80,7 @@
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/tidbits.css" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.7.1.js"><xsl:text> </xsl:text></script>
+		<script type="text/javascript" src="{$web-context}/js-lib/jquery.form.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery.transform2d.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js-lib/bootstrap.js"><xsl:text> </xsl:text></script>
 		<!--script type="text/javascript" src="{$web-context}/js/xweb-locale.js"><xsl:text> </xsl:text></script>

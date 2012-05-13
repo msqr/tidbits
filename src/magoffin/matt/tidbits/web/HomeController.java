@@ -26,10 +26,12 @@
 
 package magoffin.matt.tidbits.web;
 
+import java.util.Collections;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
+import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.tidbits.support.BasicTidbitSearchCriteria;
 import magoffin.matt.xweb.util.XwebConstants;
@@ -90,6 +92,15 @@ public class HomeController {
 		UiModel model = new UiModel();
 		model.setKind(tidbitsBiz.getAvailableTidbitKinds());
 		return new ModelAndView("json-kinds", XwebConstants.DEFALUT_MODEL_OBJECT,
+				domainObjectFactory.newRootElement(model));
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/saveTidbit.do")
+	public ModelAndView saveTidbit(Tidbit form) {
+		Tidbit result = tidbitsBiz.saveTidbit(form);
+		UiModel model = new UiModel();
+		model.setTidbit(Collections.singletonList(result));
+		return new ModelAndView("json-tidbit-result", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
 	}
 

@@ -128,11 +128,11 @@ Tidbits.Class.Card = function(data, cards) {
 	};
 	
 	touchEnd = function(e) {
-		var event = e;
-		if ( event === undefined ) {
+		if ( e === undefined ) {
 			console.log('no end event');
 			return;
 		}
+		e.preventDefault();
 		e.stopPropagation();
 		el.get(0).removeEventListener(Tidbits.touchEventNames.move, touchMove, false);
 		el.get(0).removeEventListener(Tidbits.touchEventNames.end, touchEnd, false);
@@ -151,8 +151,7 @@ Tidbits.Class.Card = function(data, cards) {
 			newX = pageX + (pageX > p2.x ? dVelX : -dVelX);
 			newY = pageY + (pageY > p2.y ? dVelY : -dVelY);
 			el.css({'-webkit-transition' : '-webkit-transform 0.2s ease-out'});
-			el.get(0).addEventListener('webkitTransitionEnd',  function( event ) {
-				console.log('momentum finished');
+			el.get(0).addEventListener('webkitTransitionEnd',  function(event) {
 				 el.css('-webkit-transition', '');
 			 }, false );
 			cardTranslate(newX, newY, e.timeStamp);
@@ -200,26 +199,57 @@ Tidbits.Class.Cards = function(container) {
 		if ( data === undefined || !jQuery.isArray(data.tidbits) ) {
 			return;
 		}
-		var prop = undefined, i = 0;
-		data.tidbits.forEach(function(tidbit) {
+		var i, len;
+		var tidbit;
+		for ( i = 0, len = data.tidbits.length; i < len; i++ ) {
+			tidbit = data.tidbits[i];
 			if ( cards[tidbit.name] === undefined ) {
 				cards[tidbit.name] = new Tidbits.Class.Card(tidbit, self);
+				cardz.splice(0, 0, cards[tidbit.name]);
 			} else {
 				cards[tidbit.name].addDetails(tidbit);
 			}
-		});
-		for ( prop in cards ) {
-			cards[prop].element.css('z-index', i);
-			cards[prop].insertIntoDocument(cardsContainer);
-			cardz.push(cards[prop]);
-			i++;
+		}
+		for ( i = 0, len = cardz.length; i < len; i++ ) {
+			var zIndex = Number(cardz[i].element.css('z-index'));
+			if ( isNaN(zIndex) || zIndex < 0 ) { // the card may already be in the DOM
+				cardz[i].element.css('z-index', (i+1));
+				cardz[i].insertIntoDocument(cardsContainer);
+			}
 		}
 	};
 	
+	// [{id:1, name:Password},...]
 	var populateKinds = function(data) {
-		
+		if ( data === undefined || !jQuery.isArray(data) ) {
+			return;
+		}
+		kinds = data;
+		var select = $('#add-tidbit-kind');
+		var i, len;
+		for ( i = 0, len = data.length; i < len; i++ ) {
+			$('<option />').attr({'value': data[i].id}).text(data[i].name).appendTo(select);
+		}
 	};
 	
+	// private init
+	(function() {
+		jQuery.getJSON('search.json', populateTidbits);
+		
+	    $('#add-tidbit-modal').on('show', function () {
+	    	if ( kinds.length === 0 ) {
+	    		jQuery.getJSON('kinds.json', populateKinds);
+	    	}
+	    }).submit(function(event) {
+			event.preventDefault();
+			$(this).modal('hide').ajaxSubmit(function(data, statusText) {
+				if ( 'success' === statusText ) {
+					populateTidbits(data);
+				}
+			});
+		});
+	})();
+
 	this.popToTop = function(card) {
 		var idx = cardz.indexOf(card);
 		var i, len;
@@ -234,11 +264,6 @@ Tidbits.Class.Cards = function(container) {
 		}
 	};
 	
-	// private init
-	(function() {
-		jQuery.getJSON('search.json', populateTidbits);
-		jQuery.getJSON('kinds.json', populateKinds);
-	})();
 };
 
 $(document).ready(function() {
