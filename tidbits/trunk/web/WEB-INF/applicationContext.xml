@@ -14,21 +14,8 @@
 	</bean>
 	
 	<bean id="messageSource" class="magoffin.matt.xweb.util.ResourceBundleMessagesSource">
-		<property name="basenames">
-			<list>
-				<value>messages</value>
-			</list>
-		</property>
+		<property name="basenames" value="messages,client-messages"/>
 	</bean>
-	
-	<!--bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basenames">
-			<list>
-				<value>messages</value>
-			</list>
-		</property>
-	</bean-->
-	
 	
 	<!-- 
 	 jaxbContext: the JAXBContext instanced used as the entry point 

@@ -103,5 +103,12 @@ public class HomeController {
 		return new ModelAndView("json-tidbit-result", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/messages.json")
+	public ModelAndView messages() {
+		UiModel model = new UiModel();
+		return new ModelAndView("json-messages", XwebConstants.DEFALUT_MODEL_OBJECT,
+				domainObjectFactory.newRootElement(model));
+	}
 
 }
