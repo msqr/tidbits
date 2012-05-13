@@ -194,6 +194,7 @@ Tidbits.Class.Cards = function(container) {
 	var cardz = [];
 	var cardsContainer = $(container);
 	var self = this;
+	var kinds = [];
 	
 	var populateTidbits = function(data) {
 		if ( data === undefined || !jQuery.isArray(data.tidbits) ) {
@@ -215,6 +216,10 @@ Tidbits.Class.Cards = function(container) {
 		}
 	};
 	
+	var populateKinds = function(data) {
+		
+	};
+	
 	this.popToTop = function(card) {
 		var idx = cardz.indexOf(card);
 		var i, len;
@@ -232,6 +237,7 @@ Tidbits.Class.Cards = function(container) {
 	// private init
 	(function() {
 		jQuery.getJSON('search.json', populateTidbits);
+		jQuery.getJSON('kinds.json', populateKinds);
 	})();
 };
 
