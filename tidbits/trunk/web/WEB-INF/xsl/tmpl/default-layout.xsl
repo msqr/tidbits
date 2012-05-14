@@ -136,7 +136,9 @@
 					
 					<xsl:if test="$page = 'home'">
 						<form id="nav-search-tidbit-form" action="search.json" class="navbar-search" method="GET">
-							<input name="query" type="text" placeholder="{key('i18n', 'search.displayName')}" class="search-query span4" />
+							<input name="query" type="text" 
+								placeholder="{key('i18n', 'search.displayName')}" class="search-query span4" 
+								autocapitalize="off"/>
 						</form>
 					</xsl:if>
 					

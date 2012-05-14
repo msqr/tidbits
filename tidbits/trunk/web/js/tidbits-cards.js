@@ -102,16 +102,19 @@ Tidbits.touchEventNames = (function() {
 Tidbits.Class.Card = function(data, cards) {
 	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
 	var touchStart = undefined, touchMove = undefined, touchEnd = undefined, cardTranslate = undefined;
-	var handleRefresh = undefined;
+	var handleRefresh = undefined, handleAdd = undefined;
 	
 	this.name = data.name;
 	this.cards = cards;
 	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
-	this.refreshElement = $('<i class="icon-refresh"></i>');
+	this.refreshElement = $('<button class="action"><i class="action icon-refresh"></i></button>');
+	this.addElement = $('<button class="action"><i class="action icon-plus"></i></button>');
 	this.element = $('<div class="tidbit"/>')
 		.css({cursor: 'move'})
+		.append(this.addElement)
+		.append(this.refreshElement)
 		.append($('<h2/>').text(data.name))
-		.append(this.refreshElement);
+		;
 	this.listElement = $('<dl/>');
 	this.element.append(this.listElement);
 	this.addDetails(data);
@@ -176,7 +179,6 @@ Tidbits.Class.Card = function(data, cards) {
 	
 	touchEnd = function(e) {
 		if ( e === undefined ) {
-			console.log('no end event');
 			return;
 		}
 		e.preventDefault();
@@ -208,19 +210,30 @@ Tidbits.Class.Card = function(data, cards) {
 	handleRefresh = function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		self.refreshElement.addClass('hit');
+		var image = self.refreshElement.find('i');
+		image.addClass('hit');
 		jQuery.getJSON('search.json?query=name:"' +encodeURIComponent(self.name) +'"', function(data) {
 			self.cards.refreshData(data);
 			
 			// in case the fetch was super quick, wait before removing the "hit" class
 			// so it animates at least a little
 			setTimeout(function() {
-				self.refreshElement.removeClass('hit');
+				image.removeClass('hit');
 			}, 500);
 		});
 	};
+	
+	// open the "add" modal, with the name pre-populated
+	handleAdd = function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$('#add-tidbit-name').val(self.name);
+		$('#add-tidbit-modal').modal('show');
+		$('#add-tidbit-kind').focus();
+	};
 
 	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
+	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
 	el.get(0).addEventListener(Tidbits.touchEventNames.start, touchStart, false);
 };
 

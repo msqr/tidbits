@@ -29,6 +29,14 @@
 			</div>
 			<fieldset class="modal-body">
 				<div class="control-group">
+					<label for="add-tidbit-name" class="control-label">
+						<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
+					</label>
+					<div class="controls">
+						<input id="add-tidbit-name" name="name" type="text" class="input-xlarge" />
+					</div>
+				</div>
+				<div class="control-group">
 					<label for="add-tidbit-kind" class="control-label">
 						<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
 					</label>
@@ -36,14 +44,6 @@
 						<select id="add-tidbit-kind" name="kind.id">
 							<xsl:text> </xsl:text>
 						</select>
-					</div>
-				</div>
-				<div class="control-group">
-					<label for="add-tidbit-name" class="control-label">
-						<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
-					</label>
-					<div class="controls">
-						<input id="add-tidbit-name" name="name" type="text" class="input-xlarge" />
 					</div>
 				</div>
 				<div class="control-group">
