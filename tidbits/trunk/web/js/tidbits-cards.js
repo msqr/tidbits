@@ -120,6 +120,7 @@ Tidbits.Class.Card = function(data, cards) {
 	this.addDetails(data);
 	this.maxWidth = 240;
 	this.maxHeight = 180;
+	this.maxAngle = Math.PI / 6.0;
 
 	var self = this;
 	var el = this.element;
@@ -151,12 +152,11 @@ Tidbits.Class.Card = function(data, cards) {
 			var deltaX = pageX - p1.x;
 			var deltaY = pageY - p1.y;
 			var matrix = el.css('transform');
-			//console.log(matrix +', ' +pageX +', ' +pageY +', ' + deltaX +', ' +deltaY +', ' +timeStamp);
 			var currTranslate = matrix.match(/,\s*(-?\d+),\s*(-?\d+)\)$/);
-			var translate = 'translate('
-				+(deltaX + (currTranslate === null ? 0 : Number(currTranslate[1])))+'px,'
-				+(deltaY + (currTranslate === null ? 0 : Number(currTranslate[2]))) +'px)';
-			el.css('transform', translate);
+			var newMatrix = matrix.substring(0, currTranslate.index) + ',' 
+				+(deltaX + (currTranslate === null ? 0 : Number(currTranslate[1]))) +','
+				+(deltaY + (currTranslate === null ? 0 : Number(currTranslate[2]))) +')';
+			el.css('transform', newMatrix);
 		}
 	};
 	
@@ -265,24 +265,33 @@ Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
 	var docHeight = $(window).height();
 	var width = this.maxWidth;
 	var height = this.maxHeight;
-	var startX = Math.floor(Math.random() * docWidth);
-	var startY = 0 - height - Math.floor(Math.random() * (docHeight - height));
+	
+	// start from random position on circle centered in page
+	var r = Math.max(docWidth, docHeight) + width;
+	var randomAngle = Math.PI * 2 * Math.random();
+	var startX = (docWidth / 2.0) + (Math.cos(randomAngle) * r);
+	var startY = (docWidth / 2.0) + (Math.sin(randomAngle) * r);
 	var endX = this.cards.margins.left + Math.floor(Math.random() * (
 			docWidth - this.cards.margins.left - this.cards.margins.right - width));
 	var endY = this.cards.margins.top + Math.floor(Math.random() * (
 			docHeight - this.cards.margins.top - this.cards.margins.bottom - height));
-	this.element.css('transform', 'translate('+startX +'px,'+startY+'px)');
+	var endAngle = this.maxAngle * 2 * Math.random() - this.maxAngle;
+	this.element.css('transform', 'matrix(1,0,0,1,'+startX +','+startY+')');
 	$(container).append(this.element);
 	
 	var el = this.element;
 	setTimeout(function() {
-		el.css({
-			'-webkit-transition' : '-webkit-transform 0.6s ease-out',
-			'transform': 'translate('+endX +'px,'+endY+'px)'
-		});
+		// TODO: cross-browser test for -o, -moz -ie prefix
 		el.get(0).addEventListener('webkitTransitionEnd',  function(event) {
 			 el.css('-webkit-transition', '');
 		 }, false );
+		var a = Math.cos(endAngle);
+		var b = Math.sin(endAngle);
+		el.css({
+			'-webkit-transition' : '-webkit-transform 0.3s ease-out',
+			'-webkit-transform': 'matrix('+a +','+ (0-b)
+				+',' +b +',' +a +',' +endX +','+endY+')'
+		});
 	}, 10);
 };
 
