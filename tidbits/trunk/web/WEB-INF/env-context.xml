@@ -18,8 +18,6 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<ctx:property-placeholder location="classpath:/env.properties,classpath:/jpa.properties"/>
-
 	<tx:annotation-driven transaction-manager="txManager"/>
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>

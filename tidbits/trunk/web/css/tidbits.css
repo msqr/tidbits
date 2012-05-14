@@ -2,7 +2,6 @@
 
 body {
 	margin: 0;
-	background-color: #E1E6EF;
 	padding-top: 40px;
 	position: relative;
 	font-family: "American Typewriter", Courier, monospace;
@@ -10,6 +9,7 @@ body {
 	font-weight: lighter;
 	line-height: 18pt;
 	overflow: hidden;
+	background: url("../img/whitey.png") repeat scroll 0% 0% #E1E6EF;
 }
 
 p {
@@ -38,11 +38,13 @@ div.tidbit {
 	border: 1px solid #ccc;
 	color: inherit;
 	background-color: white;
-	max-width: 240pt;
-	max-height: 180pt;
+	max-width: 320pt;
+	max-height: 240pt;
 	overflow: auto;
 	box-shadow: 2px 2px 5px #666;
 	border-radius: 2px;
+	background: url("../img/lined_paper_light.png") repeat fixed 0% 0% #fafafa;
+	overflow-x: hidden;
 }
 
 div.tidbit h2 {
@@ -52,6 +54,8 @@ div.tidbit h2 {
 	margin: 0;
 	padding: 0 60px 0 6px;
 	border-bottom: 1pt solid #fcc;
+	color: inherit;
+	background-color: #fafafa;
 }
 
 div.tidbit i.action {
