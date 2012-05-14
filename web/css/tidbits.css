@@ -50,16 +50,21 @@ div.tidbit h2 {
 	font-weight: normal;
 	line-height: 22pt;
 	margin: 0;
-	padding: 0 24pt 0 6pt;
+	padding: 0 60px 0 6px;
 	border-bottom: 1pt solid #fcc;
 }
 
-div.tidbit i.icon-refresh {
-	position: absolute;
-	top: 4px;
-	right: 4px;
+div.tidbit i.action {
 	opacity: 0.25;
+}
+
+div.tidbit button.action {
+	float: right;
 	cursor: pointer;
+	padding: 4px 8px;
+	margin: 2px 0 0 0;
+	border: none;
+	background: none;
 }
 
 @-webkit-keyframes rotate {

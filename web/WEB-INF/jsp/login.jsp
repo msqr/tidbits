@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -35,7 +34,7 @@
 				<div class="control-group">
 					<label for="j_username" class="control-label"><fmt:message key="logon.username.displayName"/></label>
 					<div class="controls">
-						<input type="text" name="j_username" id="j_username" />
+						<input type="text" name="j_username" id="j_username" autocapitalize="off"/>
 					</div>
 				</div>
 				<div class="control-group">
