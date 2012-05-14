@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 body {
 	margin: 0;
 	background-color: #E1E6EF;
@@ -7,6 +9,7 @@ body {
 	font-size: 12pt;
 	font-weight: lighter;
 	line-height: 18pt;
+	overflow: hidden;
 }
 
 p {
@@ -38,9 +41,6 @@ div.tidbit {
 	max-width: 240pt;
 	max-height: 180pt;
 	overflow: auto;
-	
-	/*-moz-box-shadow: 10px 10px 5px #888;
-	-webkit-box-shadow: 2px 2px 5px #999;*/
 	box-shadow: 2px 2px 5px #666;
 	border-radius: 2px;
 }
@@ -76,8 +76,9 @@ div.tidbit dl dd {
 	float: left;
 }
 
-.btn.visible {
-	display: block !important;
+div.tidbit dl dd + dd::before {
+    color: #66F;
+    content: ' • ';
 }
 
 #nav-search-tidbit-form {
