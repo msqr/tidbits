@@ -26,7 +26,12 @@
 
 	<bean id="propertyConfigurer" class="magoffin.matt.xweb.util.XwebParamPropertiesPlaceholderConfigurer">
 		<property name="order" value="1"/>
-		<property name="locations" value="classpath:/env.properties"/>
+		<property name="locations">
+			<list>
+				<value>classpath:/env.properties</value>
+				<value>classpath:/jpa.properties</value>
+			</list>
+		</property>
 		<property name="settingDao" ref="settingDao"/>
 	</bean>
 	
