@@ -61,24 +61,26 @@ public class HomeController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/home.do")
 	public ModelAndView home() {
-		BasicTidbitSearchCriteria criteria = new BasicTidbitSearchCriteria();
-		criteria.setSearchType(TidbitSearchType.FOR_TEMPLATE);
-		PaginationCriteria pagination = new PaginationCriteria();
-		pagination.setPageSize(DEFAULT_MAX_RESULTS);
-		pagination.setPageOffset(0L);
-		criteria.setPaginationCriteria(pagination);
-
 		UiModel model = new UiModel();
-		model.setSearchResults(tidbitsBiz.findTidbits(criteria));
-
 		return new ModelAndView("home", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/search.json")
 	public ModelAndView search(BasicTidbitSearchCriteria criteria) {
-		if ( !StringUtils.hasText(criteria.getQuery()) ) {
+		if ( StringUtils.hasText(criteria.getQuery()) ) {
+			criteria.setSearchType(TidbitSearchType.FOR_QUERY);
+		} else {
 			criteria.setSearchType(TidbitSearchType.FOR_TEMPLATE);
+		}
+		if ( criteria.getPaginationCriteria() == null ) {
+			criteria.setPaginationCriteria(new PaginationCriteria());
+		}
+		if ( criteria.getPaginationCriteria().getPageSize() == null ) {
+			criteria.getPaginationCriteria().setPageSize(DEFAULT_MAX_RESULTS);
+		}
+		if ( criteria.getPaginationCriteria().getPageOffset() == null ) {
+			criteria.getPaginationCriteria().setPageOffset(0L);
 		}
 		UiModel model = new UiModel();
 		model.setSearchResults(tidbitsBiz.findTidbits(criteria));

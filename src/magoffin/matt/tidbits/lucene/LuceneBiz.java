@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.List;
 import magoffin.matt.lucene.LuceneService;
 import magoffin.matt.lucene.LuceneService.IndexSearcherOp;
-import magoffin.matt.lucene.SearchMatch;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.SearchQueryException;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
@@ -98,8 +97,10 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 				int endIdx = col.getTotalHits();
 				if ( tidbitCriteria.getPaginationCriteria() != null ) {
 					results.setPagination(tidbitCriteria.getPaginationCriteria());
-					int pageOffset = (int)tidbitCriteria.getPaginationCriteria().getPageOffset();
-					int pageSize = tidbitCriteria.getPaginationCriteria().getPageSize().intValue();
+					int pageOffset = (tidbitCriteria.getPaginationCriteria().getPageOffset() == null ? 0
+							: tidbitCriteria.getPaginationCriteria().getPageOffset().intValue());
+					int pageSize = (tidbitCriteria.getPaginationCriteria().getPageSize() == null ? 0
+							: tidbitCriteria.getPaginationCriteria().getPageSize().intValue());
 					startIdx = pageOffset * pageSize;
 					if ( startIdx >= col.getTotalHits() ) {
 						startIdx = 0;
@@ -111,10 +112,9 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 				}
 				
 				results.setTotalResults(Long.valueOf(col.getTotalHits()));
-				List<SearchMatch> matches = lucene.build(
-						tidbitIndexType,col,startIdx,endIdx);
+				List<?> matches = lucene.build(tidbitIndexType, col, startIdx, endIdx);
 				results.setReturnedResults(Long.valueOf(matches.size()));
-				for ( SearchMatch match : matches ) {
+				for ( Object match : matches ) {
 					if ( Tidbit.class.isAssignableFrom(match.getClass()) ) {
 						results.getTidbit().add((Tidbit) match);
 					}

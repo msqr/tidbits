@@ -102,7 +102,8 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 		final Long count = countQuery.getSingleResult();
 
 		TypedQuery<Tidbit> allQuery = getEm().createNamedQuery("TidbitsAll", Tidbit.class);
-		allQuery.setFirstResult(((int) pagination.getPageOffset())
+		allQuery.setFirstResult((pagination.getPageOffset() == null ? 0 : pagination.getPageOffset()
+				.intValue())
 				* (pagination.getPageSize() == null ? 0 : pagination.getPageSize().intValue()));
 		if ( pagination.getPageSize() != null ) {
 			allQuery.setMaxResults(pagination.getPageSize().intValue());

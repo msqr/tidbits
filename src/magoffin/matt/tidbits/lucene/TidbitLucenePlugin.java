@@ -40,16 +40,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import magoffin.matt.lucene.IndexEvent;
 import magoffin.matt.lucene.IndexEvent.EventType;
 import magoffin.matt.lucene.IndexResults;
-import magoffin.matt.lucene.LucenePlugin;
 import magoffin.matt.lucene.LuceneService.IndexWriterOp;
 import magoffin.matt.lucene.LuceneServiceUtils;
 import magoffin.matt.lucene.SearchCriteria;
-import magoffin.matt.lucene.SearchMatch;
 import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import magoffin.matt.util.DelegatingInvocationHandler;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
@@ -63,7 +60,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author matt.magoffin
  * @version $Revision$ $Date$
  */
-public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePlugin {
+public class TidbitLucenePlugin extends AbstractLucenePlugin {
 
 	@Autowired
 	private TidbitDao tidbitDao = null;
@@ -161,7 +158,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 	}
 
 	@Override
-	public List<SearchMatch> search(SearchCriteria criteria) {
+	public List<?> search(SearchCriteria criteria) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -173,7 +170,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 	}
 	
 	@Override
-	public SearchMatch build(Document doc) {
+	public Object build(Document doc) {
 		Tidbit tidbit = getDomainObjectFactory().newTidbitInstance();
 		tidbit.setId(Long.valueOf(doc.get(IndexField.ITEM_ID.getFieldName())));
 		tidbit.setComment(doc.get(IndexField.ITEM_COMMENT.getFieldName()));
@@ -217,12 +214,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin implements LucenePl
 			}
 		}
 		
-		if ( SearchMatch.class.isAssignableFrom(tidbit.getClass()) ) {
-			return (SearchMatch)tidbit;
-		}
-		SearchMatch match = (SearchMatch)DelegatingInvocationHandler.wrapObject(
-				tidbit, SearchMatch.class);
-		return match;
+		return tidbit;
 	}
 
 	private List<Object> indexTidbit(Tidbit tidbit, IndexWriter writer) {

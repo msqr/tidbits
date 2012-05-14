@@ -84,7 +84,6 @@
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery.transform2d.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js-lib/bootstrap.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js/xweb-locale.js"><xsl:text> </xsl:text></script>
-		<!--script id="appstate-js" type="text/javascript" src="{$web-context}/js/appstate.js?context={$web-context}&amp;lang={$ctx/x:user-locale}"><xsl:text> </xsl:text></script-->
 		<script type="text/javascript" src="{$web-context}/js/tidbits-cards.js?lang={$ctx/x:user-locale}"><xsl:text> </xsl:text></script>
 	</xsl:template>
 	
@@ -136,8 +135,8 @@
 	               	</a> 
 					
 					<xsl:if test="$page = 'home'">
-						<form id="nav-search-tidbit-form" action="" class="navbar-search">
-							<input type="text" placeholder="{key('i18n', 'search.displayName')}" class="search-query span4" />
+						<form id="nav-search-tidbit-form" action="search.json" class="navbar-search" method="GET">
+							<input name="query" type="text" placeholder="{key('i18n', 'search.displayName')}" class="search-query span4" />
 						</form>
 					</xsl:if>
 					

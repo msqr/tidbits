@@ -58,7 +58,6 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	private DomainObjectFactory domainObjectFactory;
 	private String indexType = null;
 
-
 	@Override
 	public final LuceneIndexConfig init(LuceneService luceneService, Set<IndexListener> indexEventListenersSet) {
 		this.lucene = luceneService;

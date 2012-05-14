@@ -2,6 +2,12 @@
 <project name="hyperjaxb3-ejb-template-basic-ant" default="install">
 	<property name="artifactId" value="hyperjaxb3-ejb-template-basic-ant"/>
 	<property name="version" value="0.5.6"/>
+
+	<property name="compile.debug" value="true" />
+	<property name="compile.deprecation" value="false" />
+	<property name="compile.optimize" value="true" />
+	<property name="compile.nowarn" value="true" />	
+
 	<path id="compile.path">
 		<fileset dir="${basedir}/lib">
 			<include name="commons-lang-*.jar"/>
@@ -144,6 +150,10 @@
 			destdir="${basedir}/target/classes" 
 			srcdir="${basedir}/src/main/java:${basedir}/target/generated-sources/xjc"
 			classpathref="compile.path"
+			debug="${compile.debug}" 
+			deprecation="${compile.deprecation}" 
+			optimize="${compile.optimize}" 
+			nowarn="${compile.nowarn}"
 			source="1.5"
 			target="1.5">
 		</javac>

@@ -101,12 +101,17 @@ Tidbits.touchEventNames = (function() {
  */
 Tidbits.Class.Card = function(data, cards) {
 	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
+	var touchStart = undefined, touchMove = undefined, touchEnd = undefined, cardTranslate = undefined;
+	var handleRefresh = undefined;
+	
 	this.name = data.name;
 	this.cards = cards;
 	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
+	this.refreshElement = $('<i class="icon-refresh"></i>');
 	this.element = $('<div class="tidbit"/>')
+		.css({cursor: 'move'})
 		.append($('<h2/>').text(data.name))
-		.css({cursor: 'move'});
+		.append(this.refreshElement);
 	this.listElement = $('<dl/>');
 	this.element.append(this.listElement);
 	this.addDetails(data);
@@ -117,7 +122,6 @@ Tidbits.Class.Card = function(data, cards) {
 	var el = this.element;
 	var p1 = {x:0, y:0, t:0};
 	var p2 = {x:0, y:0, t:0};
-	var touchStart = undefined, touchMove = undefined, touchEnd = undefined, cardTranslate = undefined;
 	var minInertiaDistance = 0;
 	
 	// momentum?
@@ -201,6 +205,22 @@ Tidbits.Class.Card = function(data, cards) {
 		}
 	};
 
+	handleRefresh = function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		self.refreshElement.addClass('hit');
+		jQuery.getJSON('search.json?query=name:"' +encodeURIComponent(self.name) +'"', function(data) {
+			self.cards.refreshData(data);
+			
+			// in case the fetch was super quick, wait before removing the "hit" class
+			// so it animates at least a little
+			setTimeout(function() {
+				self.refreshElement.removeClass('hit');
+			}, 500);
+		});
+	};
+
+	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
 	el.get(0).addEventListener(Tidbits.touchEventNames.start, touchStart, false);
 };
 
@@ -208,10 +228,20 @@ Tidbits.Class.Card.prototype.addDetails = function(data) {
 	if ( data === undefined || data.kind === undefined ) {
 		return;
 	}
-	if ( this.info[data.kind] === undefined ) {
+	var info = this.info[data.kind];
+	if ( info === undefined ) {
 		this.info[data.kind] = [];
+		info = this.info[data.kind];
 	}
-	this.info[data.kind].push({id:data.id, value:data.value});
+	var i, len;
+	for ( i = 0, len = info.length; i < len; i++ ) {
+		if ( info[i].id === data.id ) {
+			// update existing value
+			info[i].value = data.value;
+			return;
+		}
+	}
+	info.push({id:data.id, value:data.value});
 };
 
 Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
@@ -301,6 +331,7 @@ Tidbits.Class.Cards = function(container, margins) {
 				cardz[i].insertIntoDocument(cardsContainer);
 			} else {
 				cardz[i].refresh();
+				cardz[i].element.css('z-index', (i+1));
 			}
 		}
 	};
@@ -316,6 +347,14 @@ Tidbits.Class.Cards = function(container, margins) {
 		for ( i = 0, len = data.length; i < len; i++ ) {
 			$('<option />').attr({'value': data[i].id}).text(data[i].name).appendTo(select);
 		}
+	};
+	
+	var replaceAllTidbitsWithSearchResults = function(data) {
+		// TODO animate cards out
+		cardsContainer.children('.tidbit').remove();
+		cards = {};
+		cardz = [];
+		populateTidbits(data);
 	};
 	
 	// private init
@@ -338,6 +377,20 @@ Tidbits.Class.Cards = function(container, margins) {
 				}
 			});
 		});
+	    
+	    
+	    $('#nav-search-tidbit-form').submit(function(event) {
+			event.preventDefault();
+			$(this).ajaxSubmit(function(data, statusText) {
+				if ( 'success' === statusText ) {
+					replaceAllTidbitsWithSearchResults(data);
+				} else {
+					Tidbits.errorAlert('<h4 class="alert-heading">' 
+							+Tidbits.i18n('tidbit.search.error.title') 
+							+'</h4>' +statusText);
+				}
+			});
+	    }).find('input').focus();
 	})();
 	
 	/**
@@ -360,6 +413,10 @@ Tidbits.Class.Cards = function(container, margins) {
 		}
 	};
 	
+	this.refreshData = function(data, ascending) {
+		populateTidbits(data, ascending);
+	};
+	
 	this.margins = margins;
 };
 
@@ -376,5 +433,5 @@ $(document).ready(function() {
 	
 	var nav = $('#navbar');
 	Tidbits.Runtime.cards = new Tidbits.Class.Cards('#card-container',
-			{top:nav.height(), left:0, right:0, bottom: 0});
+			{top:nav.height(), left:20, right:20, bottom:20});
 });
