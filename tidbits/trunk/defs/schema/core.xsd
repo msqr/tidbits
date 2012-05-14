@@ -48,14 +48,14 @@
 	
 	<xs:complexType name="pagination-index-section">
 		<xs:attribute name="index-key" type="xs:string" use="required"/>
-		<xs:attribute name="count" type="xs:int" use="optional" default="0"/>
+		<xs:attribute name="count" type="xs:int" use="optional"/>
 		<xs:attribute name="selected" type="xs:boolean" use="optional" default="false"/>
 	</xs:complexType>
 	
 	<xs:complexType name="pagination-criteria">
 		<xs:attribute name="index-key" type="xs:string" use="optional"/>
 		<xs:attribute name="page-size" type="xs:nonNegativeInteger" use="optional"/>
-		<xs:attribute name="page-offset" type="xs:nonNegativeInteger" default="0"/>
+		<xs:attribute name="page-offset" type="xs:nonNegativeInteger" use="optional"/>
 		<xs:attribute name="max-results" type="xs:nonNegativeInteger" use="optional"/>
 	</xs:complexType>
 	

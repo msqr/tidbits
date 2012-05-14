@@ -101,7 +101,7 @@
 		<constructor-arg index="0" type="java.lang.String" value="${index.timezone.java}"/>
 	</bean>
 
-	<util:list id="luceneSearchServicePlugins">
+	<util:list id="luceneSearchServicePlugins" value-type="magoffin.matt.lucene.LucenePlugin">
 		<ref bean="tidbitLucenePlugin"/>
 	</util:list>
 	

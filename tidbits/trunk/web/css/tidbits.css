@@ -50,8 +50,33 @@ div.tidbit h2 {
 	font-weight: normal;
 	line-height: 22pt;
 	margin: 0;
-	padding: 0pt 6pt;
+	padding: 0 24pt 0 6pt;
 	border-bottom: 1pt solid #fcc;
+}
+
+div.tidbit i.icon-refresh {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	opacity: 0.25;
+	cursor: pointer;
+}
+
+@-webkit-keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to { 
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+
+div.tidbit i.icon-refresh.hit {
+    -webkit-animation-name:             rotate; 
+    -webkit-animation-duration:         0.5s; 
+    -webkit-animation-iteration-count:  infinite;
+    -webkit-animation-timing-function:  ease-in-out;
 }
 
 div.tidbit dl {
