@@ -102,13 +102,16 @@ Tidbits.touchEventNames = (function() {
 Tidbits.Class.Card = function(data, cards) {
 	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
 	this.name = data.name;
+	this.cards = cards;
 	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
 	this.element = $('<div class="tidbit"/>')
 		.append($('<h2/>').text(data.name))
-		.css({'cursor': 'move', '-webkit-animation-timing-function':'ease-in-out'});
+		.css({cursor: 'move'});
 	this.listElement = $('<dl/>');
 	this.element.append(this.listElement);
 	this.addDetails(data);
+	this.maxWidth = 240;
+	this.maxHeight = 180;
 
 	var self = this;
 	var el = this.element;
@@ -213,15 +216,44 @@ Tidbits.Class.Card.prototype.addDetails = function(data) {
 
 Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
 	// create list elements
+	this.refresh();
+	
+	var docWidth = $(window).width();
+	var docHeight = $(window).height();
+	var width = this.maxWidth;
+	var height = this.maxHeight;
+	var startX = Math.floor(Math.random() * docWidth);
+	var startY = 0 - height - Math.floor(Math.random() * (docHeight - height));
+	var endX = this.cards.margins.left + Math.floor(Math.random() * (
+			docWidth - this.cards.margins.left - this.cards.margins.right - width));
+	var endY = this.cards.margins.top + Math.floor(Math.random() * (
+			docHeight - this.cards.margins.top - this.cards.margins.bottom - height));
+	this.element.css('transform', 'translate('+startX +'px,'+startY+'px)');
+	$(container).append(this.element);
+	
+	var el = this.element;
+	setTimeout(function() {
+		el.css({
+			'-webkit-transition' : '-webkit-transform 0.6s ease-out',
+			'transform': 'translate('+endX +'px,'+endY+'px)'
+		});
+		el.get(0).addEventListener('webkitTransitionEnd',  function(event) {
+			 el.css('-webkit-transition', '');
+		 }, false );
+	}, 10);
+};
+
+Tidbits.Class.Card.prototype.refresh = function() {
+	this.listElement.empty();
 	var prop = undefined;
-	var me = this;
+	var i, len, details;
 	for ( prop in this.info ) {
 		this.listElement.append($('<dt/>').text(prop));
-		this.info[prop].forEach(function(detail) {
-			me.listElement.append($('<dd/>').text(detail.value));
-		});
+		details = this.info[prop];
+		for ( i = 0, len = details.length; i < len; i++ ) {
+			this.listElement.append($('<dd/>').text(details[i].value));
+		}
 	}
-	$(container).append(this.element);
 };
 
 Tidbits.Class.Card.prototype.getInfo = function() {
@@ -233,16 +265,17 @@ Tidbits.Class.Card.prototype.getInfo = function() {
  * 
  * @class
  * @param {Element} container to insert all card objects into
+ * @param {Object} margins top, left, right, bottom margins
  * @returns {Tidbits.Class.Cards}
  */
-Tidbits.Class.Cards = function(container) {
+Tidbits.Class.Cards = function(container, margins) {
 	var cards = {};
 	var cardz = [];
 	var cardsContainer = $(container);
 	var self = this;
 	var kinds = [];
 	
-	var populateTidbits = function(data) {
+	var populateTidbits = function(data, ascending) {
 		if ( data === undefined || !jQuery.isArray(data.tidbits) ) {
 			return;
 		}
@@ -252,16 +285,22 @@ Tidbits.Class.Cards = function(container) {
 			tidbit = data.tidbits[i];
 			if ( cards[tidbit.name] === undefined ) {
 				cards[tidbit.name] = new Tidbits.Class.Card(tidbit, self);
-				cardz.splice(0, 0, cards[tidbit.name]);
+				if ( ascending === true ) {
+					cardz.push(cards[tidbit.name]);
+				} else {
+					cardz.splice(0, 0, cards[tidbit.name]);
+				}
 			} else {
 				cards[tidbit.name].addDetails(tidbit);
 			}
 		}
 		for ( i = 0, len = cardz.length; i < len; i++ ) {
 			var zIndex = Number(cardz[i].element.css('z-index'));
-			if ( isNaN(zIndex) || zIndex < 0 ) { // the card may already be in the DOM
+			if ( isNaN(zIndex) || zIndex < 1 ) { // the card may already be in the DOM
 				cardz[i].element.css('z-index', (i+1));
 				cardz[i].insertIntoDocument(cardsContainer);
+			} else {
+				cardz[i].refresh();
 			}
 		}
 	};
@@ -291,7 +330,7 @@ Tidbits.Class.Cards = function(container) {
 			event.preventDefault();
 			$(this).modal('hide').ajaxSubmit(function(data, statusText) {
 				if ( 'success' === statusText ) {
-					populateTidbits(data);
+					populateTidbits(data, true);
 				} else {
 					Tidbits.errorAlert('<h4 class="alert-heading">' 
 							+Tidbits.i18n('tidbit.save.error.title') 
@@ -320,6 +359,8 @@ Tidbits.Class.Cards = function(container) {
 			}
 		}
 	};
+	
+	this.margins = margins;
 };
 
 $(document).ready(function() {
@@ -332,6 +373,8 @@ $(document).ready(function() {
 	jQuery.getJSON('messages.json', function(data) {
 		Tidbits.Runtime.i18n.initJson(data);
 	});
-
-	Tidbits.Runtime.cards = new Tidbits.Class.Cards('#card-container');
+	
+	var nav = $('#navbar');
+	Tidbits.Runtime.cards = new Tidbits.Class.Cards('#card-container',
+			{top:nav.height(), left:0, right:0, bottom: 0});
 });

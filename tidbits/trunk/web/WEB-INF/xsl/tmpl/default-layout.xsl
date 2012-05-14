@@ -127,7 +127,7 @@
 	<xsl:template name="main-nav">
 		<xsl:param name="page"/>
 
-	    <div class="navbar navbar-fixed-top">
+	    <div id="navbar" class="navbar navbar-fixed-top">
 	        <div class="navbar-inner">
 	            <div class="container">
 	
