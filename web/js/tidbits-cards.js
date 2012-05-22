@@ -90,6 +90,90 @@ Tidbits.touchEventNames = (function() {
 }());
 
 /**
+ * Simple implementation of a 2D CSS transform matrix.
+ * 
+ * @class
+ * @returns {Tidbits.Class.Matrix}
+ */
+Tidbits.Class.Matrix = function() {
+	// TODO: cross-browser test for -o, -moz -ie prefix
+	var supportFloat32Array = "Float32Array" in window;
+	this.matrix = (supportFloat32Array ? new Float32Array(6) : [1,0,0,1,0,0]);
+};
+
+/**
+ * Generate a CSS matrix3d() function string from the current matrix.
+ * 
+ * @returns {String} the CSS matrix3d() function
+ */
+Tidbits.Class.Matrix.prototype.toMatrix3D = function() {
+	return "matrix3d(" 
+			+ this.matrix[0] +"," +this.matrix[1] +",0,0,"
+			+ this.matrix[2] +',' +this.matrix[3] +",0,0,"
+			+ "0,0,1,0,"
+			+ this.matrix[4] +',' +this.matrix[5] +",0,1)";
+};
+
+/**
+ * Set the z-axis rotation of the matrix.
+ * 
+ * @param {Number} angle the rotation angle, in radians
+ */
+Tidbits.Class.Matrix.prototype.setRotation = function(angle) {
+	var a = Math.cos(angle);
+	var b = Math.sin(angle);
+	this.matrix[0] = this.matrix[3] = a;
+	this.matrix[1] = (0-b);
+	this.matrix[2] = b;
+};
+
+/**
+ * Set the current 2D translate of the matrix.
+ * 
+ * @param {Number} x the x offset
+ * @param {Number} y the y offset
+ */
+Tidbits.Class.Matrix.prototype.setTranslation = function(x, y) {
+	this.matrix[4] = x;
+	this.matrix[5] = y;
+};
+
+/**
+ * Append a 2D translate to the current matrix.
+ * 
+ * @param {Number} x the x offset
+ * @param {Number} y the y offset
+ */
+Tidbits.Class.Matrix.prototype.translate = function(x, y) {
+	this.matrix[4] += x;
+	this.matrix[5] += y;
+};
+
+/**
+ * Apply the matrix transform to an element.
+ * 
+ * @param {Element} elm the element to apply the transform to
+ */
+Tidbits.Class.Matrix.prototype.apply = function(elm) {
+	var m = this.toMatrix3D();
+	elm.style.webkitTransform = m;
+};
+
+/**
+ * Apply the matrix transform to an element, with an "ease out" transition.
+ * 
+ * @param {Element} elm the element to apply the transform to
+ */
+Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
+	elm.addEventListener('webkitTransitionEnd',  function(event) {
+		elm.style.webkitTransition = '';
+	 }, false );
+	elm.style.webkitTransition = '-webkit-transform 0.3s ease-out';
+	this.apply(elm);
+};
+
+
+/**
  * A single "card" object in the Tidbits UI.
  * 
  * <p>A "card" is a group of Tidbits that share a common name.</p>
@@ -121,12 +205,14 @@ Tidbits.Class.Card = function(data, cards) {
 	this.maxWidth = 240;
 	this.maxHeight = 180;
 	this.maxAngle = Math.PI / 6.0;
+	this.matrix = new Tidbits.Class.Matrix();
 
 	var self = this;
 	var el = this.element;
 	var p1 = {x:0, y:0, t:0};
 	var p2 = {x:0, y:0, t:0};
 	var minInertiaDistance = 0;
+	
 	
 	// momentum?
 	var momenumHowMuch = 30;  // change this for greater or lesser momentum
@@ -147,16 +233,16 @@ Tidbits.Class.Card = function(data, cards) {
 		el.get(0).addEventListener(Tidbits.touchEventNames.end, touchEnd, false);
 	};
 	
-	cardTranslate = function(pageX, pageY, timeStamp) {
+	cardTranslate = function(pageX, pageY, timeStamp, ease) {
 		if ( pageX >= 0 && pageY >= 0 ) {
 			var deltaX = pageX - p1.x;
 			var deltaY = pageY - p1.y;
-			var matrix = el.css('transform');
-			var currTranslate = matrix.match(/,\s*(-?\d+),\s*(-?\d+)\)$/);
-			var newMatrix = matrix.substring(0, currTranslate.index) + ',' 
-				+(deltaX + (currTranslate === null ? 0 : Number(currTranslate[1]))) +','
-				+(deltaY + (currTranslate === null ? 0 : Number(currTranslate[2]))) +')';
-			el.css('transform', newMatrix);
+			self.matrix.translate(deltaX, deltaY);
+			if ( ease === true ) {
+				self.matrix.easeOut(el.get(0));
+			} else {
+				self.matrix.apply(el.get(0));
+			}
 		}
 	};
 	
@@ -199,11 +285,11 @@ Tidbits.Class.Card = function(data, cards) {
 
 			newX = pageX + (pageX > p2.x ? dVelX : -dVelX);
 			newY = pageY + (pageY > p2.y ? dVelY : -dVelY);
-			el.css({'-webkit-transition' : '-webkit-transform 0.2s ease-out'});
+			/*el.css({'-webkit-transition' : '-webkit-transform 0.2s ease-out'});
 			el.get(0).addEventListener('webkitTransitionEnd',  function(event) {
 				 el.css('-webkit-transition', '');
-			 }, false );
-			cardTranslate(newX, newY, e.timeStamp);
+			 }, false );*/
+			cardTranslate(newX, newY, e.timeStamp, true);
 		}
 	};
 
@@ -280,18 +366,18 @@ Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
 	$(container).append(this.element);
 	
 	var el = this.element;
+	var elm = el.get(0);
+	var matrix = this.matrix;
 	setTimeout(function() {
-		// TODO: cross-browser test for -o, -moz -ie prefix
-		el.get(0).addEventListener('webkitTransitionEnd',  function(event) {
-			 el.css('-webkit-transition', '');
-		 }, false );
-		var a = Math.cos(endAngle);
-		var b = Math.sin(endAngle);
+		matrix.setRotation(endAngle);
+		matrix.setTranslation(endX, endY);
+		matrix.easeOut(elm);
+		/*
 		el.css({
 			'-webkit-transition' : '-webkit-transform 0.3s ease-out',
-			'-webkit-transform': 'matrix('+a +','+ (0-b)
-				+',' +b +',' +a +',' +endX +','+endY+')'
+			'-webkit-transform': m
 		});
+		*/
 	}, 10);
 };
 
