@@ -175,11 +175,22 @@ Tidbits.Class.Matrix.prototype.toMatrix2D = function() {
  * @param {Number} angle the rotation angle, in radians
  */
 Tidbits.Class.Matrix.prototype.setRotation = function(angle) {
+	// TODO this clears any scale, should we care?
 	var a = Math.cos(angle);
 	var b = Math.sin(angle);
 	this.matrix[0] = this.matrix[3] = a;
 	this.matrix[1] = (0-b);
 	this.matrix[2] = b;
+};
+
+/**
+ * Set a uniform x,y scaling factor of the matrix.
+ * @param {Number} s the scale factor
+ */
+Tidbits.Class.Matrix.prototype.setScale = function(s) {
+	// TODO this clears any rotation, should we care?
+	this.matrix[0] = s;
+	this.matrix[3] = s;
 };
 
 /**
@@ -248,7 +259,7 @@ Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
  */
 Tidbits.Class.Card = function(data, cards) {
 	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
-	var touchStart = undefined, touchMove = undefined, touchEnd = undefined, cardTranslate = undefined;
+	//var touchStart = undefined, touchMove = undefined, touchEnd = undefined;
 	var handleRefresh = undefined, handleAdd = undefined;
 	
 	this.name = data.name;
@@ -269,6 +280,7 @@ Tidbits.Class.Card = function(data, cards) {
 	this.maxHeight = 180;
 	this.maxAngle = Math.PI / 6.0;
 	this.matrix = new Tidbits.Class.Matrix();
+	this.fac = false; // front and center
 
 	var self = this;
 	var el = this.element;
@@ -282,20 +294,7 @@ Tidbits.Class.Card = function(data, cards) {
 	var momenumHowMuch = 30;  // change this for greater or lesser momentum
 	var momentumMinDrift = 0; // minimum drift after a drag move
 	
-	touchStart = function(e) {
-		var event = Tidbits.anyEvent(e);
-		if ( event === undefined ) {
-			return;
-		}
-		e.stopPropagation();
-		cards.popToTop(self);
-		var pageX = event.pageX < 0 ? 0 : event.pageX;
-		var pageY = event.pageY < 0 ? 0 : event.pageY;
-		p1 = {x:pageX, y:pageY, t:e.timeStamp};
-		p2 = {x:pageX, y:pageY, t:e.timeStamp};
-	};
-	
-	cardTranslate = function(pageX, pageY, timeStamp, ease) {
+	var cardTranslate = function(pageX, pageY, timeStamp, ease) {
 		if ( pageX >= 0 && pageY >= 0 ) {
 			var deltaX = pageX - p1.x;
 			var deltaY = pageY - p1.y;
@@ -308,7 +307,7 @@ Tidbits.Class.Card = function(data, cards) {
 		}
 	};
 	
-	touchMove = function(e) {
+	var touchMove = function(e) {
 		var event = Tidbits.anyEvent(e);
 		if ( event === undefined ) {
 			return;
@@ -325,20 +324,39 @@ Tidbits.Class.Card = function(data, cards) {
 		p1.t = e.timeStamp;
 	};
 	
-	touchEnd = function(e) {
+	var touchStart = function(e) {
+		var event = Tidbits.anyEvent(e);
+		if ( event === undefined ) {
+			return;
+		}
+		e.stopPropagation();
+		cards.popToTop(self);
+		var pageX = event.pageX < 0 ? 0 : event.pageX;
+		var pageY = event.pageY < 0 ? 0 : event.pageY;
+		p1 = {x:pageX, y:pageY, t:e.timeStamp};
+		p2 = {x:pageX, y:pageY, t:e.timeStamp};
+		elm.addEventListener(Tidbits.touchEventNames.move, touchMove, false);
+	};
+	
+	var touchEnd = function(e) {
 		if ( e === undefined ) {
 			return;
 		}
+		elm.removeEventListener(Tidbits.touchEventNames.move, touchMove, false);
 		e.preventDefault();
 		e.stopPropagation();
 
 		// test for double-tap
 		var tapTimeDiff = (lastTapEnd === 0 ? 0 : e.timeStamp - lastTapEnd);
 		lastTapEnd = e.timeStamp;
-		console.log("lastTapEnd = " +lastTapEnd +", tapTimeDiff = " +tapTimeDiff);
+		//console.log("lastTapEnd = " +lastTapEnd +", tapTimeDiff = " +tapTimeDiff);
 		if ( tapTimeDiff > 0 && tapTimeDiff < 500 ) {
 			// double tap here
-			console.log("dtap");
+			if ( self.fac === true ) {
+				self.awayWithYou();
+			} else {
+				self.frontAndCenter();
+			}
 			return;
 		}
 		
@@ -387,8 +405,39 @@ Tidbits.Class.Card = function(data, cards) {
 	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
 	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
 	elm.addEventListener(Tidbits.touchEventNames.start, touchStart, false);
-	elm.addEventListener(Tidbits.touchEventNames.move, touchMove, false);
 	elm.addEventListener(Tidbits.touchEventNames.end, touchEnd, false);
+};
+
+Tidbits.Class.Card.prototype.frontAndCenter = function() {
+	var viewWidth = window.innerWidth;
+	var viewHeight = window.innerHeight;
+	var maxSize = {width:viewWidth - 40, height:viewHeight - 40};
+	var aSize = {width:this.element.width(), height:this.element.height()};
+	
+	var scale = 1.0;
+	if ( aSize.width > 0 && aSize.height > 0.0 ) {
+		var dw = maxSize.width / aSize.width;
+		var dh = maxSize.height / aSize.height;
+		scale = dw < dh ? dw : dh;
+	}
+	var fitSize = {
+			width:Math.min(Math.floor(maxSize.width), Math.ceil(aSize.width * scale)),
+			height:Math.min(Math.floor(maxSize.height), Math.ceil(aSize.height * scale))
+			};
+	console.log("scale = " +scale + ", fitSize = " +fitSize.width +"x" +fitSize.height);
+	
+	// create a temp Matrix to transform the card to, when unfocus() we can restore the card's
+	// former Matrix
+	var m = new Tidbits.Class.Matrix();
+	m.setScale(scale);
+	m.setTranslation((viewWidth - aSize.width) / 2, (viewHeight - aSize.height) / 2);
+	m.easeOut(this.element.get(0));
+	this.fac = true;
+};
+
+Tidbits.Class.Card.prototype.awayWithYou = function() {
+	this.matrix.easeOut(this.element.get(0));
+	this.fac = false;
 };
 
 Tidbits.Class.Card.prototype.addDetails = function(data) {
