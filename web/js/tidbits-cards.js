@@ -47,6 +47,8 @@ var Tidbits = {
 			return false;
 		}
 	}()),
+	
+	hiRes : (window.devicePixelRatio === undefined ? false : window.devicePixelRatio > 1),
 
 	anyEvent : function(event) {
 		event.preventDefault();
@@ -102,6 +104,46 @@ Tidbits.Class.Matrix = function() {
 };
 
 /**
+ * Cross-browser support for various matrix properties.
+ */
+Tidbits.Class.Matrix.prototype.support = (function() {
+	// adapted from jquery.transform2d.js
+	var divStyle = document.createElement("div").style;
+	var suffix = "Transform";
+	var testProperties = [
+		"O" + suffix,
+		"ms" + suffix,
+		"Webkit" + suffix,
+		"Moz" + suffix
+	];
+	var eventProperties = ["oTransitionEnd","MSTransitionEnd","webkitTransitionEnd","transitionend"];
+	var transitionProperties = ["OTransition","MSTransition","WebkitTransition","MozTransition"];
+	var transitionTransform = ["-o-transform", "-ms-transform", "-webkit-transform", "-moz-transform"];
+	var tProp = "Transform", 
+		trProp = "Transition",
+		trTransform = "transform",
+		trEndEvent = "transitionEnd";
+	var i = testProperties.length;
+	while ( i-- ) {
+		if ( testProperties[i] in divStyle ) {
+			tProp = testProperties[i];
+			trProp = transitionProperties[i];
+			trTransform = transitionTransform[i];
+			trEndEvent = eventProperties[i];
+			break;
+		}
+	}
+	
+	return {
+		use3d : (window.devicePixelRatio !== undefined && window.devicePixelRatio > 1 ? true : false),
+		tProp : tProp,
+		trProp : trProp,
+		trTransform : trTransform,
+		trEndEvent : trEndEvent
+	};
+})();
+
+/**
  * Generate a CSS matrix3d() function string from the current matrix.
  * 
  * @returns {String} the CSS matrix3d() function
@@ -112,6 +154,19 @@ Tidbits.Class.Matrix.prototype.toMatrix3D = function() {
 			+ this.matrix[2] +',' +this.matrix[3] +",0,0,"
 			+ "0,0,1,0,"
 			+ this.matrix[4] +',' +this.matrix[5] +",0,1)";
+};
+
+/**
+ * Generate a CSS matrix() function string from the current matrix.
+ * 
+ * @returns {String} the CSS matrix() function
+ */
+Tidbits.Class.Matrix.prototype.toMatrix2D = function() {
+	return "matrix(" 
+			+ this.matrix[0] +"," +this.matrix[1] +","
+			+ this.matrix[2] +',' +this.matrix[3] +","
+			+ this.matrix[4] +',' +this.matrix[5] 
+			+")";
 };
 
 /**
@@ -152,23 +207,31 @@ Tidbits.Class.Matrix.prototype.translate = function(x, y) {
 /**
  * Apply the matrix transform to an element.
  * 
+ * <p>Hi hi-res displays, the {@link #toMatrix3D()} transform is used,
+ * otherwise {@link #toMatrix2D()} is used. Found that legibility of 
+ * text was too blurry on older displays when 3D transform was applied,
+ * but 3D transform provide better performance.</p>
+ * 
  * @param {Element} elm the element to apply the transform to
  */
 Tidbits.Class.Matrix.prototype.apply = function(elm) {
-	var m = this.toMatrix3D();
-	elm.style.webkitTransform = m;
+	var m = (this.support.use3d === true ? this.toMatrix3D() : this.toMatrix2D());
+	elm.style[this.support.tProp] = m;
 };
 
 /**
  * Apply the matrix transform to an element, with an "ease out" transition.
  * 
+ * <p>Calls {@link #apply(elm)} internally.</p>
+ * 
  * @param {Element} elm the element to apply the transform to
  */
 Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
-	elm.addEventListener('webkitTransitionEnd',  function(event) {
-		elm.style.webkitTransition = '';
+	var self = this;
+	elm.addEventListener(self.support.trEndEvent,  function(event) {
+		elm.style[self.support.trProp] = '';
 	 }, false );
-	elm.style.webkitTransition = '-webkit-transform 0.3s ease-out';
+	elm.style[self.support.trProp] = self.support.trTransform +' 0.3s ease-out';
 	this.apply(elm);
 };
 
