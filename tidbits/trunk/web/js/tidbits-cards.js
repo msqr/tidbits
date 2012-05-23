@@ -272,10 +272,11 @@ Tidbits.Class.Card = function(data, cards) {
 
 	var self = this;
 	var el = this.element;
+	var elm = el.get(0);
 	var p1 = {x:0, y:0, t:0};
 	var p2 = {x:0, y:0, t:0};
 	var minInertiaDistance = 0;
-	
+	var lastTapEnd = 0;
 	
 	// momentum?
 	var momenumHowMuch = 30;  // change this for greater or lesser momentum
@@ -292,8 +293,6 @@ Tidbits.Class.Card = function(data, cards) {
 		var pageY = event.pageY < 0 ? 0 : event.pageY;
 		p1 = {x:pageX, y:pageY, t:e.timeStamp};
 		p2 = {x:pageX, y:pageY, t:e.timeStamp};
-		el.get(0).addEventListener(Tidbits.touchEventNames.move, touchMove, false);
-		el.get(0).addEventListener(Tidbits.touchEventNames.end, touchEnd, false);
 	};
 	
 	cardTranslate = function(pageX, pageY, timeStamp, ease) {
@@ -302,9 +301,9 @@ Tidbits.Class.Card = function(data, cards) {
 			var deltaY = pageY - p1.y;
 			self.matrix.translate(deltaX, deltaY);
 			if ( ease === true ) {
-				self.matrix.easeOut(el.get(0));
+				self.matrix.easeOut(elm);
 			} else {
-				self.matrix.apply(el.get(0));
+				self.matrix.apply(elm);
 			}
 		}
 	};
@@ -332,8 +331,16 @@ Tidbits.Class.Card = function(data, cards) {
 		}
 		e.preventDefault();
 		e.stopPropagation();
-		el.get(0).removeEventListener(Tidbits.touchEventNames.move, touchMove, false);
-		el.get(0).removeEventListener(Tidbits.touchEventNames.end, touchEnd, false);
+
+		// test for double-tap
+		var tapTimeDiff = (lastTapEnd === 0 ? 0 : e.timeStamp - lastTapEnd);
+		lastTapEnd = e.timeStamp;
+		console.log("lastTapEnd = " +lastTapEnd +", tapTimeDiff = " +tapTimeDiff);
+		if ( tapTimeDiff > 0 && tapTimeDiff < 500 ) {
+			// double tap here
+			console.log("dtap");
+			return;
+		}
 		
 		var pageX = p1.x;
 		var pageY = p1.y;
@@ -348,10 +355,6 @@ Tidbits.Class.Card = function(data, cards) {
 
 			newX = pageX + (pageX > p2.x ? dVelX : -dVelX);
 			newY = pageY + (pageY > p2.y ? dVelY : -dVelY);
-			/*el.css({'-webkit-transition' : '-webkit-transform 0.2s ease-out'});
-			el.get(0).addEventListener('webkitTransitionEnd',  function(event) {
-				 el.css('-webkit-transition', '');
-			 }, false );*/
 			cardTranslate(newX, newY, e.timeStamp, true);
 		}
 	};
@@ -383,7 +386,9 @@ Tidbits.Class.Card = function(data, cards) {
 
 	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
 	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
-	el.get(0).addEventListener(Tidbits.touchEventNames.start, touchStart, false);
+	elm.addEventListener(Tidbits.touchEventNames.start, touchStart, false);
+	elm.addEventListener(Tidbits.touchEventNames.move, touchMove, false);
+	elm.addEventListener(Tidbits.touchEventNames.end, touchEnd, false);
 };
 
 Tidbits.Class.Card.prototype.addDetails = function(data) {
