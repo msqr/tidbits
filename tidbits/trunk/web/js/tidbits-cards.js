@@ -246,6 +246,134 @@ Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
 	this.apply(elm);
 };
 
+/**
+ * A Bit of information, as a collection of Tidbits with a common name.
+ * 
+ * @class
+ * @param {Object} data the info model data
+ * @param {Element} container the container element to use to hold the DOM elements for this Bit
+ * @returns {Tidbits.Class.Bit}
+ */
+Tidbits.Class.Bit = function(data, container) {
+	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
+	this.name = data.name;
+	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
+	this.refreshElement = $('<button class="action"><i class="action ticon icon-refresh-t">\uf021</i></button>');
+	this.addElement = $('<button class="action"><i class="action icon-plus"></i></button>');
+	this.element = $(container)
+		.append(this.addElement)
+		.append(this.refreshElement)
+		.append($('<h2/>').text(data.name))
+		;
+	this.listElement = $('<dl/>');
+	this.element.append(this.listElement);
+	this.addDetails(data);
+
+	var self = this;
+
+	var handleRefresh = function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var image = self.refreshElement.find('i');
+		image.addClass('hit');
+		jQuery.getJSON('search.json?query=name:"' +encodeURIComponent(self.name) +'"', function(data) {
+			self.cards.refreshData(data);
+			
+			// in case the fetch was super quick, wait before removing the "hit" class
+			// so it animates at least a little
+			setTimeout(function() {
+				image.removeClass('hit');
+			}, 500);
+		});
+	};
+	
+	// open the "add" modal, with the name pre-populated
+	var handleAdd = function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$('#add-tidbit-name').val(self.name);
+		$('#add-tidbit-modal').modal('show');
+		$('#add-tidbit-kind').focus();
+	};
+
+	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
+	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
+};
+
+/**
+ * Add info details to the info model.
+ * 
+ * @param {Object} data the info data to insert
+ */
+Tidbits.Class.Bit.prototype.addDetails = function(data) {
+	if ( data === undefined || data.kind === undefined ) {
+		return;
+	}
+	var info = this.info[data.kind];
+	if ( info === undefined ) {
+		this.info[data.kind] = [];
+		info = this.info[data.kind];
+	}
+	var i, len;
+	for ( i = 0, len = info.length; i < len; i++ ) {
+		if ( info[i].id === data.id ) {
+			// update existing value
+			info[i].value = data.value;
+			return;
+		}
+	}
+	info.push({id:data.id, value:data.value});
+};
+
+/**
+ * Call-back function for extending classes to implement.
+ * 
+ * <p>This method will be called by the {@link #insertIntoDocument(Element)}
+ * function.</p>
+ * 
+ * @param {Element} container the DOM element this Bit will be inserted into
+ */
+Tidbits.Class.Bit.prototype.willInsertIntoDocument = function(container) {};
+
+/**
+ * Refresh own DOM structure and then insert into the container DOM element.
+ * 
+ * @param {Element} container the DOM element to insert this Bit into
+ */
+Tidbits.Class.Bit.prototype.insertIntoDocument = function(container) {
+	// create list elements
+	this.refresh();
+	this.willInsertIntoDocument(container);
+	$(container).append(this.element);
+};
+
+/**
+ * Refresh own DOM structure.
+ * 
+ * <p>This will delete all children elements of this Bit's container
+ * element and re-create them using the current model info.</p>
+ */
+Tidbits.Class.Bit.prototype.refresh = function() {
+	this.listElement.empty();
+	var prop = undefined;
+	var i, len, details;
+	for ( prop in this.info ) {
+		this.listElement.append($('<dt/>').text(prop));
+		details = this.info[prop];
+		for ( i = 0, len = details.length; i < len; i++ ) {
+			this.listElement.append($('<dd/>').text(details[i].value));
+		}
+	}
+};
+
+/**
+ * Get the info model object.
+ * 
+ * @returns {Object} the bit info
+ */
+Tidbits.Class.Bit.prototype.getInfo = function() {
+	return this.info;
+};
 
 /**
  * A single "card" object in the Tidbits UI.
@@ -258,23 +386,10 @@ Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
  * @class
  */
 Tidbits.Class.Card = function(data, cards) {
-	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
-	//var touchStart = undefined, touchMove = undefined, touchEnd = undefined;
-	var handleRefresh = undefined, handleAdd = undefined;
-	
-	this.name = data.name;
+	var superclass = Tidbits.Class.Bit;
+	superclass.call(this, data, '<div class="tidbit"/>');
+
 	this.cards = cards;
-	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
-	this.refreshElement = $('<button class="action"><i class="action ticon icon-refresh-t">\uf021</i></button>');
-	this.addElement = $('<button class="action"><i class="action icon-plus"></i></button>');
-	this.element = $('<div class="tidbit"/>')
-		.append(this.addElement)
-		.append(this.refreshElement)
-		.append($('<h2/>').text(data.name))
-		;
-	this.listElement = $('<dl/>');
-	this.element.append(this.listElement);
-	this.addDetails(data);
 	this.maxWidth = 240;
 	this.maxHeight = 180;
 	this.maxAngle = Math.PI / 6.0;
@@ -379,36 +494,12 @@ Tidbits.Class.Card = function(data, cards) {
 		}
 	};
 
-	handleRefresh = function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		var image = self.refreshElement.find('i');
-		image.addClass('hit');
-		jQuery.getJSON('search.json?query=name:"' +encodeURIComponent(self.name) +'"', function(data) {
-			self.cards.refreshData(data);
-			
-			// in case the fetch was super quick, wait before removing the "hit" class
-			// so it animates at least a little
-			setTimeout(function() {
-				image.removeClass('hit');
-			}, 500);
-		});
-	};
-	
-	// open the "add" modal, with the name pre-populated
-	handleAdd = function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		$('#add-tidbit-name').val(self.name);
-		$('#add-tidbit-modal').modal('show');
-		$('#add-tidbit-kind').focus();
-	};
-
-	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
-	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
 	elm.addEventListener(Tidbits.touchEventNames.start, touchStart, false);
 	elm.addEventListener(Tidbits.touchEventNames.end, touchEnd, false);
 };
+
+Tidbits.Class.Card.prototype = Object.create(Tidbits.Class.Bit.prototype);
+Tidbits.Class.Card.prototype.constructor = Tidbits.Class.Card;
 
 Tidbits.Class.Card.prototype.frontAndCenter = function() {
 	var viewWidth = window.innerWidth;
@@ -446,30 +537,7 @@ Tidbits.Class.Card.prototype.awayWithYou = function() {
 	this.fac = false;
 };
 
-Tidbits.Class.Card.prototype.addDetails = function(data) {
-	if ( data === undefined || data.kind === undefined ) {
-		return;
-	}
-	var info = this.info[data.kind];
-	if ( info === undefined ) {
-		this.info[data.kind] = [];
-		info = this.info[data.kind];
-	}
-	var i, len;
-	for ( i = 0, len = info.length; i < len; i++ ) {
-		if ( info[i].id === data.id ) {
-			// update existing value
-			info[i].value = data.value;
-			return;
-		}
-	}
-	info.push({id:data.id, value:data.value});
-};
-
-Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
-	// create list elements
-	this.refresh();
-	
+Tidbits.Class.Card.prototype.willInsertIntoDocument = function(container) {
 	var docWidth = $(window).width();
 	var docHeight = $(window).height();
 	var width = this.maxWidth;
@@ -486,7 +554,6 @@ Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
 			docHeight - this.cards.margins.top - this.cards.margins.bottom - height));
 	var endAngle = this.maxAngle * 2 * Math.random() - this.maxAngle;
 	this.element.css('transform', 'matrix(1,0,0,1,'+startX +','+startY+')');
-	$(container).append(this.element);
 	
 	var el = this.element;
 	var elm = el.get(0);
@@ -495,28 +562,15 @@ Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
 		matrix.setRotation(endAngle);
 		matrix.setTranslation(endX, endY);
 		matrix.easeOut(elm);
-	}, 10);
+	}, 100);
 };
 
-Tidbits.Class.Card.prototype.refresh = function() {
-	this.listElement.empty();
-	var prop = undefined;
-	var i, len, details;
-	for ( prop in this.info ) {
-		this.listElement.append($('<dt/>').text(prop));
-		details = this.info[prop];
-		for ( i = 0, len = details.length; i < len; i++ ) {
-			this.listElement.append($('<dd/>').text(details[i].value));
-		}
-	}
-};
-
-Tidbits.Class.Card.prototype.getInfo = function() {
-	return this.info;
+Tidbits.Class.Bits = function(container) {
+	
 };
 
 /**
- * A collection of card objects.
+ * A collection of Card objects.
  * 
  * @class
  * @param {Element} container to insert all card objects into

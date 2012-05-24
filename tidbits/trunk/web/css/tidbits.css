@@ -1,15 +1,19 @@
 @charset "UTF-8";
 
 body {
-	margin: 0;
-	padding: 0;
+	margin: 20px;
 	position: relative;
 	font-family: "American Typewriter", Courier, monospace;
 	font-size: 12pt;
 	font-weight: lighter;
 	line-height: 18pt;
-	overflow: hidden;
 	background: url("../img/whitey.png") repeat scroll 0% 0% #E1E6EF;
+}
+
+body.app {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
 }
 
 p {
