@@ -268,7 +268,6 @@ Tidbits.Class.Card = function(data, cards) {
 	this.refreshElement = $('<button class="action"><i class="action icon-refresh"></i></button>');
 	this.addElement = $('<button class="action"><i class="action icon-plus"></i></button>');
 	this.element = $('<div class="tidbit"/>')
-		.css({cursor: 'move'})
 		.append(this.addElement)
 		.append(this.refreshElement)
 		.append($('<h2/>').text(data.name))
@@ -280,7 +279,7 @@ Tidbits.Class.Card = function(data, cards) {
 	this.maxHeight = 180;
 	this.maxAngle = Math.PI / 6.0;
 	this.matrix = new Tidbits.Class.Matrix();
-	this.fac = false; // front and center
+	this.fac = false; // front and center, used to toggle touch behavior
 
 	var self = this;
 	var el = this.element;
@@ -325,6 +324,10 @@ Tidbits.Class.Card = function(data, cards) {
 	};
 	
 	var touchStart = function(e) {
+		if ( self.fac === true ) {
+			// this card is front and center, so don't deail with tracking touches
+			return;
+		}
 		var event = Tidbits.anyEvent(e);
 		if ( event === undefined ) {
 			return;
@@ -349,9 +352,8 @@ Tidbits.Class.Card = function(data, cards) {
 		// test for double-tap
 		var tapTimeDiff = (lastTapEnd === 0 ? 0 : e.timeStamp - lastTapEnd);
 		lastTapEnd = e.timeStamp;
-		//console.log("lastTapEnd = " +lastTapEnd +", tapTimeDiff = " +tapTimeDiff);
 		if ( tapTimeDiff > 0 && tapTimeDiff < 500 ) {
-			// double tap here
+			// double tap here, so toggle the front and center aspect of this card
 			if ( self.fac === true ) {
 				self.awayWithYou();
 			} else {
@@ -420,11 +422,13 @@ Tidbits.Class.Card.prototype.frontAndCenter = function() {
 		var dh = maxSize.height / aSize.height;
 		scale = dw < dh ? dw : dh;
 	}
+	/*
 	var fitSize = {
 			width:Math.min(Math.floor(maxSize.width), Math.ceil(aSize.width * scale)),
 			height:Math.min(Math.floor(maxSize.height), Math.ceil(aSize.height * scale))
 			};
 	console.log("scale = " +scale + ", fitSize = " +fitSize.width +"x" +fitSize.height);
+	*/
 	
 	// create a temp Matrix to transform the card to, when unfocus() we can restore the card's
 	// former Matrix
@@ -432,11 +436,13 @@ Tidbits.Class.Card.prototype.frontAndCenter = function() {
 	m.setScale(scale);
 	m.setTranslation((viewWidth - aSize.width) / 2, (viewHeight - aSize.height) / 2);
 	m.easeOut(this.element.get(0));
+	this.element.addClass('fac');
 	this.fac = true;
 };
 
 Tidbits.Class.Card.prototype.awayWithYou = function() {
 	this.matrix.easeOut(this.element.get(0));
+	this.element.removeClass('fac');
 	this.fac = false;
 };
 
@@ -489,12 +495,6 @@ Tidbits.Class.Card.prototype.insertIntoDocument = function(container) {
 		matrix.setRotation(endAngle);
 		matrix.setTranslation(endX, endY);
 		matrix.easeOut(elm);
-		/*
-		el.css({
-			'-webkit-transition' : '-webkit-transform 0.3s ease-out',
-			'-webkit-transform': m
-		});
-		*/
 	}, 10);
 };
 

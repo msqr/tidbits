@@ -45,6 +45,11 @@ div.tidbit {
 	border-radius: 2px;
 	background: url("../img/lined_paper_light.png") repeat fixed 0% 0% #fafafa;
 	overflow-x: hidden;
+	cursor: move;
+}
+
+div.tidbit.fac {
+	cursor: auto;
 }
 
 div.tidbit h2 {
