@@ -265,7 +265,7 @@ Tidbits.Class.Card = function(data, cards) {
 	this.name = data.name;
 	this.cards = cards;
 	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
-	this.refreshElement = $('<button class="action"><i class="action icon-refresh"></i></button>');
+	this.refreshElement = $('<button class="action"><i class="action ticon icon-refresh-t">\uf021</i></button>');
 	this.addElement = $('<button class="action"><i class="action icon-plus"></i></button>');
 	this.element = $('<div class="tidbit"/>')
 		.append(this.addElement)
