@@ -15,6 +15,8 @@
 
 	<xsl:template match="x:x-data" mode="page-body-id">card-container</xsl:template>
 	
+	<xsl:template match="x:x-data" mode="page-body-class">app</xsl:template>
+	
 	<xsl:template match="x:x-data" mode="page-main-nav">
 		<xsl:call-template name="main-nav">
 			<xsl:with-param name="page" select="'home'"/>
