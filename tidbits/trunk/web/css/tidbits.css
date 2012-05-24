@@ -2,7 +2,7 @@
 
 body {
 	margin: 0;
-	padding-top: 40px;
+	padding: 0;
 	position: relative;
 	font-family: "American Typewriter", Courier, monospace;
 	font-size: 12pt;
@@ -85,12 +85,33 @@ div.tidbit button.action {
   }
 }
 
+@-moz-keyframes rotate {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to { 
+    -moz-transform: rotate(360deg);
+  }
+}
 
-div.tidbit i.icon-refresh.hit {
+div.tidbit i.icon-refresh-t.hit {
     -webkit-animation-name:             rotate; 
     -webkit-animation-duration:         0.5s; 
     -webkit-animation-iteration-count:  infinite;
     -webkit-animation-timing-function:  ease-in-out;
+    -moz-animation-name:             	rotate; 
+    -moz-animation-duration:         	0.5s; 
+    -moz-animation-iteration-count:  	infinite;
+    -moz-animation-timing-function:  	ease-in-out;
+}
+
+/* :before can't be animated, so have to manually apply this style */
+div.tidbit i.ticon {
+	font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
 }
 
 div.tidbit dl {

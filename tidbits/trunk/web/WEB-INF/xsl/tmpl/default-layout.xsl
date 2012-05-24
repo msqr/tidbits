@@ -77,6 +77,7 @@
 	<xsl:template match="x:x-data" mode="page-head-basecontent">
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap.css" />
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap-responsive.css"/>
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/font-awesome.css" />
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/tidbits.css" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.7.1.js"><xsl:text> </xsl:text></script>
@@ -126,7 +127,7 @@
 	<xsl:template name="main-nav">
 		<xsl:param name="page"/>
 
-	    <div id="navbar" class="navbar navbar-fixed-top">
+	    <div id="navbar" class="navbar">
 	        <div class="navbar-inner">
 	            <div class="container">
 	
