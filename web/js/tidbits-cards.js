@@ -251,11 +251,13 @@ Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
  * 
  * @class
  * @param {Object} data the info model data
+ * @param {Tidbits.Class.Bits} the manager
  * @param {Element} container the container element to use to hold the DOM elements for this Bit
  * @returns {Tidbits.Class.Bit}
  */
-Tidbits.Class.Bit = function(data, container) {
+Tidbits.Class.Bit = function(data, bits, container) {
 	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
+	this.bits = bits;
 	this.name = data.name;
 	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
 	this.refreshElement = $('<button class="action"><i class="action ticon icon-refresh-t">\uf021</i></button>');
@@ -277,7 +279,7 @@ Tidbits.Class.Bit = function(data, container) {
 		var image = self.refreshElement.find('i');
 		image.addClass('hit');
 		jQuery.getJSON('search.json?query=name:"' +encodeURIComponent(self.name) +'"', function(data) {
-			self.cards.refreshData(data);
+			self.bits.refreshData(data);
 			
 			// in case the fetch was super quick, wait before removing the "hit" class
 			// so it animates at least a little
@@ -381,15 +383,14 @@ Tidbits.Class.Bit.prototype.getInfo = function() {
  * <p>A "card" is a group of Tidbits that share a common name.</p>
  * 
  * @param {Object} data the JSON data representing a single Tidbit
- * @param {Tidbits.Class.Cards} cards 
+ * @param {Tidbits.Class.Bits} bits the manager
  * @returns {Tidbits.Class.Card}
  * @class
  */
-Tidbits.Class.Card = function(data, cards) {
+Tidbits.Class.Card = function(data, bits) {
 	var superclass = Tidbits.Class.Bit;
-	superclass.call(this, data, '<div class="tidbit"/>');
+	superclass.call(this, data, bits, '<div class="tidbit"/>');
 
-	this.cards = cards;
 	this.maxWidth = 240;
 	this.maxHeight = 180;
 	this.maxAngle = Math.PI / 6.0;
@@ -448,7 +449,7 @@ Tidbits.Class.Card = function(data, cards) {
 			return;
 		}
 		e.stopPropagation();
-		cards.popToTop(self);
+		bits.popToTop(self);
 		var pageX = event.pageX < 0 ? 0 : event.pageX;
 		var pageY = event.pageY < 0 ? 0 : event.pageY;
 		p1 = {x:pageX, y:pageY, t:e.timeStamp};
@@ -548,10 +549,10 @@ Tidbits.Class.Card.prototype.willInsertIntoDocument = function(container) {
 	var randomAngle = Math.PI * 2 * Math.random();
 	var startX = (docWidth / 2.0) + (Math.cos(randomAngle) * r);
 	var startY = (docWidth / 2.0) + (Math.sin(randomAngle) * r);
-	var endX = this.cards.margins.left + Math.floor(Math.random() * (
-			docWidth - this.cards.margins.left - this.cards.margins.right - width));
-	var endY = this.cards.margins.top + Math.floor(Math.random() * (
-			docHeight - this.cards.margins.top - this.cards.margins.bottom - height));
+	var endX = this.bits.margins.left + Math.floor(Math.random() * (
+			docWidth - this.bits.margins.left - this.bits.margins.right - width));
+	var endY = this.bits.margins.top + Math.floor(Math.random() * (
+			docHeight - this.bits.margins.top - this.bits.margins.bottom - height));
 	var endAngle = this.maxAngle * 2 * Math.random() - this.maxAngle;
 	this.element.css('transform', 'matrix(1,0,0,1,'+startX +','+startY+')');
 	
@@ -565,21 +566,17 @@ Tidbits.Class.Card.prototype.willInsertIntoDocument = function(container) {
 	}, 100);
 };
 
-Tidbits.Class.Bits = function(container) {
-	
-};
-
 /**
- * A collection of Card objects.
+ * A collection of Bit objects.
  * 
  * @class
  * @param {Element} container to insert all card objects into
  * @param {Object} margins top, left, right, bottom margins
- * @returns {Tidbits.Class.Cards}
+ * @returns {Tidbits.Class.Bits}
  */
-Tidbits.Class.Cards = function(container, margins) {
-	var cards = {};
-	var cardz = [];
+Tidbits.Class.Bits = function(container, margins) {
+	var bits = {};
+	var bitz = [];
 	var cardsContainer = $(container);
 	var self = this;
 	var kinds = [];
@@ -592,25 +589,25 @@ Tidbits.Class.Cards = function(container, margins) {
 		var tidbit;
 		for ( i = 0, len = data.tidbits.length; i < len; i++ ) {
 			tidbit = data.tidbits[i];
-			if ( cards[tidbit.name] === undefined ) {
-				cards[tidbit.name] = new Tidbits.Class.Card(tidbit, self);
+			if ( bits[tidbit.name] === undefined ) {
+				bits[tidbit.name] = new Tidbits.Class.Card(tidbit, self);
 				if ( ascending === true ) {
-					cardz.push(cards[tidbit.name]);
+					bitz.push(bits[tidbit.name]);
 				} else {
-					cardz.splice(0, 0, cards[tidbit.name]);
+					bitz.splice(0, 0, bits[tidbit.name]);
 				}
 			} else {
-				cards[tidbit.name].addDetails(tidbit);
+				bits[tidbit.name].addDetails(tidbit);
 			}
 		}
-		for ( i = 0, len = cardz.length; i < len; i++ ) {
-			var zIndex = Number(cardz[i].element.css('z-index'));
+		for ( i = 0, len = bitz.length; i < len; i++ ) {
+			var zIndex = Number(bitz[i].element.css('z-index'));
 			if ( isNaN(zIndex) || zIndex < 1 ) { // the card may already be in the DOM
-				cardz[i].element.css('z-index', (i+1));
-				cardz[i].insertIntoDocument(cardsContainer);
+				bitz[i].element.css('z-index', (i+1));
+				bitz[i].insertIntoDocument(cardsContainer);
 			} else {
-				cardz[i].refresh();
-				cardz[i].element.css('z-index', (i+1));
+				bitz[i].refresh();
+				bitz[i].element.css('z-index', (i+1));
 			}
 		}
 	};
@@ -629,10 +626,10 @@ Tidbits.Class.Cards = function(container, margins) {
 	};
 	
 	var replaceAllTidbitsWithSearchResults = function(data) {
-		// TODO animate cards out
+		// TODO animate bits out
 		cardsContainer.children('.tidbit').remove();
-		cards = {};
-		cardz = [];
+		bits = {};
+		bitz = [];
 		populateTidbits(data);
 	};
 	
@@ -673,21 +670,21 @@ Tidbits.Class.Cards = function(container, margins) {
 	})();
 	
 	/**
-	 * Move a specific card so it appears above all other cards,
+	 * Move a specific Bit so it appears above all other bits,
 	 * by adjusting its z-index value.
 	 * 
-	 * @param {Object} the card to move to the top
+	 * @param {Tidbits.Class.Bit} the bit to move to the top
 	 */
-	this.popToTop = function(card) {
-		var idx = cardz.indexOf(card);
+	this.popToTop = function(bit) {
+		var idx = bitz.indexOf(bit);
 		var i, len;
-		if ( idx !== -1 && ((idx + 1) !== cardz.length) ) {
+		if ( idx !== -1 && ((idx + 1) !== bitz.length) ) {
 			// move card to top of stack
-			cardz.push(cardz.splice(idx, 1)[0]);
+			bitz.push(bitz.splice(idx, 1)[0]);
 			
-			// adjust z index of shuffled cards
-			for ( i = idx, len = cardz.length; i < len; i++ ) {
-				cardz[i].element.css('z-index', i);
+			// adjust z index of shuffled bits
+			for ( i = idx, len = bitz.length; i < len; i++ ) {
+				bitz[i].element.css('z-index', i);
 			}
 		}
 	};
@@ -711,6 +708,6 @@ $(document).ready(function() {
 	});
 	
 	var nav = $('#navbar');
-	Tidbits.Runtime.cards = new Tidbits.Class.Cards('#card-container',
+	Tidbits.Runtime.bits = new Tidbits.Class.Bits('#card-container',
 			{top:nav.height(), left:20, right:20, bottom:20});
 });
