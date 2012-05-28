@@ -4,9 +4,9 @@ body {
 	margin: 20px;
 	position: relative;
 	font-family: "American Typewriter", Courier, monospace;
-	font-size: 12pt;
+	font-size: 13px;
 	font-weight: lighter;
-	line-height: 18pt;
+	line-height: 18px;
 	background: url("../img/whitey.png") repeat scroll 0% 0% #E1E6EF;
 }
 
@@ -18,13 +18,13 @@ body.app {
 
 p {
 	font-family: "American Typewriter", Courier, monospace;
-	font-size: 12pt;
+	font-size: 13px;
 	font-weight: lighter;
-	line-height: 18pt;
+	line-height: 18px;
 }
 
 form#loginForm {
-	max-width: 456pt;
+	max-width: 456px;
 }
 
 label {
@@ -32,7 +32,7 @@ label {
 }
 
 .help-block {
-	font-size: 10pt;
+	font-size: 10px;
 }
 
 .ui-elements {
@@ -53,8 +53,8 @@ div.tidbit.card {
 	left: 0;
 	border: 1px solid #ccc;
 	color: inherit;
-	max-width: 320pt;
-	max-height: 240pt;
+	max-width: 320px;
+	max-height: 240px;
 	overflow: auto;
 	background: url("../img/lined_paper_light.png") repeat fixed 0% 0% #fafafa;
 	overflow-x: hidden;
@@ -66,12 +66,12 @@ div.tidbit.fac {
 }
 
 div.tidbit h2 {
-	font-size: 18pt;
+	font-size: 20px;
 	font-weight: normal;
-	line-height: 22pt;
+	line-height: 28px;
 	margin: 0;
 	padding: 0 60px 0 6px;
-	border-bottom: 1pt solid #fcc;
+	border-bottom: 1px solid #fcc;
 	color: inherit;
 	background-color: #fafafa;
 }
@@ -128,12 +128,18 @@ div.tidbit i.ticon {
 }
 
 div.tidbit dl {
-	margin: 6pt;
-	font-size: 11pt;
+	margin: 0px 6px 12px 6px;
+	/*font-size: 12px;*/
+}
+
+div.tidbit dt,
+div.tidbit dd {
+	font-size: 12px;
+	line-height: 15px;
 }
 
 div.tidbit dl dt {
-	margin-top: 4pt;
+	/*margin-top: 4px;*/
 	font-weight: bold;
 }
 
@@ -147,7 +153,7 @@ div.tidbit dl dt::after {
 }
 
 div.tidbit dl dd {
-	margin-top: 4pt;
+	/*margin-top: 4px;*/
 	font-weight: normal;
 }
 
@@ -246,6 +252,16 @@ div.tidbit.card dl dd + dd::before {
 
 #kind-table-body form button {
 	margin-left: 1em;
+}
+
+@media (min-width: 481px) {
+	.form-horizontal .control-label {
+		width: 80px;
+	}
+	
+	.form-horizontal .controls {
+		margin-left: 100px;
+	}	
 }
 
 @media (max-width: 1023px) {
