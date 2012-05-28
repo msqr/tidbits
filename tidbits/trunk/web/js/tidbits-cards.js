@@ -236,14 +236,36 @@ Tidbits.Class.Matrix.prototype.apply = function(elm) {
  * <p>Calls {@link #apply(elm)} internally.</p>
  * 
  * @param {Element} elm the element to apply the transform to
+ * @param {String} timing the CSS timing function to use
+ * @param {String} duration the CSS duration to use
+ * @param {Function} finished an optional callback function to execute when 
+ * the animation completes
+ * 
  */
-Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
+Tidbits.Class.Matrix.prototype.animate = function(elm, timing, duration, finished) {
 	var self = this;
 	elm.addEventListener(self.support.trEndEvent,  function(event) {
 		elm.style[self.support.trProp] = '';
 	 }, false );
-	elm.style[self.support.trProp] = self.support.trTransform +' 0.3s ease-out';
+	var cssValue = self.support.trTransform 
+		+' ' 
+		+(duration !== undefined ? duration : '0.3s')
+		+' ' 
+		+(timing !== undefined ? timing : 'ease-out');
+	elm.style[self.support.trProp] = cssValue;
 	this.apply(elm);
+};
+
+
+/**
+ * Apply the matrix transform to an element, with an "ease out" transition.
+ * 
+ * <p>Calls {@link #apply(elm)} internally.</p>
+ * 
+ * @param {Element} elm the element to apply the transform to
+ */
+Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
+	this.animate(elm, 'ease-out');
 };
 
 /**
@@ -389,7 +411,7 @@ Tidbits.Class.Bit.prototype.getInfo = function() {
  */
 Tidbits.Class.Card = function(data, bits) {
 	var superclass = Tidbits.Class.Bit;
-	superclass.call(this, data, bits, '<div class="tidbit"/>');
+	superclass.call(this, data, bits, '<div class="tidbit card"/>');
 
 	this.maxWidth = 240;
 	this.maxHeight = 180;
@@ -580,6 +602,7 @@ Tidbits.Class.Bits = function(container, margins) {
 	var cardsContainer = $(container);
 	var self = this;
 	var kinds = [];
+	var cardMode = false;
 	
 	var populateTidbits = function(data, ascending) {
 		if ( data === undefined || !jQuery.isArray(data.tidbits) ) {
@@ -590,7 +613,9 @@ Tidbits.Class.Bits = function(container, margins) {
 		for ( i = 0, len = data.tidbits.length; i < len; i++ ) {
 			tidbit = data.tidbits[i];
 			if ( bits[tidbit.name] === undefined ) {
-				bits[tidbit.name] = new Tidbits.Class.Card(tidbit, self);
+				bits[tidbit.name] = (cardMode === true 
+						? new Tidbits.Class.Card(tidbit, self)
+						: new Tidbits.Class.Bit(tidbit, self, '<div class="tidbit"/>'));
 				if ( ascending === true ) {
 					bitz.push(bits[tidbit.name]);
 				} else {
@@ -600,15 +625,29 @@ Tidbits.Class.Bits = function(container, margins) {
 				bits[tidbit.name].addDetails(tidbit);
 			}
 		}
-		for ( i = 0, len = bitz.length; i < len; i++ ) {
-			var zIndex = Number(bitz[i].element.css('z-index'));
-			if ( isNaN(zIndex) || zIndex < 1 ) { // the card may already be in the DOM
-				bitz[i].element.css('z-index', (i+1));
-				bitz[i].insertIntoDocument(cardsContainer);
-			} else {
-				bitz[i].refresh();
-				bitz[i].element.css('z-index', (i+1));
+		if ( cardMode === true ) {
+			for ( i = 0, len = bitz.length; i < len; i++ ) {
+				var zIndex = Number(bitz[i].element.css('z-index'));
+				if ( isNaN(zIndex) || zIndex < 1 ) { // the card may already be in the DOM
+					bitz[i].element.css('z-index', (i+1));
+					bitz[i].insertIntoDocument(cardsContainer);
+				} else {
+					bitz[i].refresh();
+					bitz[i].element.css('z-index', (i+1));
+				}
 			}
+		} else {
+			// for non-card mode, insert in reverse order, so newest on top
+			for ( i = bitz.length - 1; i >= 0; i-- ) {
+				var zIndex = Number(bitz[i].element.css('z-index'));
+				if ( isNaN(zIndex) || zIndex < 1 ) { // the card may already be in the DOM
+					bitz[i].element.css('z-index', 1);
+					bitz[i].insertIntoDocument(cardsContainer);
+				} else {
+					bitz[i].refresh();
+				}
+			}
+			
 		}
 	};
 	
@@ -626,21 +665,55 @@ Tidbits.Class.Bits = function(container, margins) {
 	};
 	
 	var replaceAllTidbitsWithSearchResults = function(data) {
-		// TODO animate bits out
-		cardsContainer.children('.tidbit').remove();
-		bits = {};
-		bitz = [];
-		populateTidbits(data);
+		// animate bits out, if they have a matrix
+		var i , len, m;
+		
+		var reset = function() {
+			bits = {};
+			bitz = [];
+			populateTidbits(data);
+		};
+		
+		if ( cardMode === true ) {
+			var screenHeight = $(window).height();
+			var oldBitz = bitz; // local reference for animation complete
+			var onComplete = function() {
+				$(this).remove();
+			};
+			for ( i = 0, len = oldBitz.length; i < len; i++ ) {
+				m = oldBitz[i].matrix;
+				if ( m !== undefined ) {
+					m.translate(0, screenHeight + 20);
+					m.animate(oldBitz[i].element.get(0), 'ease-in', '0.3s', onComplete);
+				}
+			}
+			setTimeout(reset, 250);
+		} else {
+			cardsContainer.children('.tidbit').remove();
+			reset();
+		}
 	};
 	
 	// private init
 	(function() {
+		var screenWidth = $(window).width();
+		console.log("Screen width: " +screenWidth);
+		if ( screenWidth > 480 ) {
+			cardMode = true;
+			
+			// prevent elastic scrolling
+			document.body.addEventListener('touchmove', function(event) {
+			  event.preventDefault();
+			}, false);
+		};
+		
 		jQuery.getJSON('search.json', populateTidbits);
 		
 	    $('#add-tidbit-modal').on('show', function () {
 	    	if ( kinds.length === 0 ) {
 	    		jQuery.getJSON('kinds.json', populateKinds);
 	    	}
+	    	$('#add-tidbit-name').focus();
 	    }).submit(function(event) {
 			event.preventDefault();
 			$(this).modal('hide').ajaxSubmit(function(data, statusText) {
@@ -666,7 +739,10 @@ Tidbits.Class.Bits = function(container, margins) {
 							+'</h4>' +statusText);
 				}
 			});
-	    }).find('input').focus();
+	    });
+	    if ( cardMode === true ) {
+		    $('#nav-search-tidbit-form input[type=text]').focus();
+	    }
 	})();
 	
 	/**
@@ -697,17 +773,11 @@ Tidbits.Class.Bits = function(container, margins) {
 };
 
 $(document).ready(function() {
-	// prevent elastic scrolling
-	document.body.addEventListener('touchmove', function(event) {
-	  event.preventDefault();
-	}, false);
-	
 	Tidbits.Runtime.i18n = new XwebLocaleClass();
 	jQuery.getJSON('messages.json', function(data) {
 		Tidbits.Runtime.i18n.initJson(data);
 	});
 	
-	var nav = $('#navbar');
 	Tidbits.Runtime.bits = new Tidbits.Class.Bits('#card-container',
-			{top:nav.height(), left:20, right:20, bottom:20});
+			{top:($('#navbar').height() + 20), left:20, right:20, bottom:20});
 });

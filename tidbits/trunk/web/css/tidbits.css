@@ -36,17 +36,22 @@ label {
 }
 
 div.tidbit {
+	margin-bottom: 1em;
+	background-color: #fafafa;
+	padding-bottom: 6px;
+	box-shadow: 2px 2px 5px #666;
+	border-radius: 2px;
+}
+
+div.tidbit.card {
 	position: absolute;
 	top: 0;
 	left: 0;
 	border: 1px solid #ccc;
 	color: inherit;
-	background-color: white;
 	max-width: 320pt;
 	max-height: 240pt;
 	overflow: auto;
-	box-shadow: 2px 2px 5px #666;
-	border-radius: 2px;
 	background: url("../img/lined_paper_light.png") repeat fixed 0% 0% #fafafa;
 	overflow-x: hidden;
 	cursor: move;
@@ -126,6 +131,9 @@ div.tidbit dl {
 div.tidbit dl dt {
 	margin-top: 4pt;
 	font-weight: bold;
+}
+
+div.tidbit.card dl dt {
 	float: left;
 	clear: both;
 }
@@ -137,10 +145,13 @@ div.tidbit dl dt::after {
 div.tidbit dl dd {
 	margin-top: 4pt;
 	font-weight: normal;
+}
+
+div.tidbit.card dl dd {
 	float: left;
 }
 
-div.tidbit dl dd + dd::before {
+div.tidbit.card dl dd + dd::before {
     color: #66F;
     content: ' • ';
 }
@@ -164,4 +175,8 @@ div.tidbit dl dd + dd::before {
 	#nav-other {
 		display: none;
 	}
+}
+
+#add-tidbit-modal {
+	display: none;
 }
