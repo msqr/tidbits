@@ -148,6 +148,9 @@ div.tidbit.card .content {
 
 div.tidbit.card.fac .content {
 	overflow-y: auto;
+	/* Grr, this doesn't work on absolutely positioned elements?
+	-webkit-overflow-scrolling: touch;
+	*/
 }
 
 div.tidbit.card dd {
@@ -170,7 +173,6 @@ div.tidbit dl dt::after {
 }
 
 div.tidbit dl dd {
-	/*margin-top: 4px;*/
 	font-weight: normal;
 }
 
