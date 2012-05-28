@@ -6,9 +6,6 @@
 	exclude-result-prefixes="t x date">
 
 	<!-- imports -->
-	<!--xsl:import href="tmpl/tidbit-form.xsl"/>
-	<xsl:import href="tmpl/tidbitkind-form.xsl"/>
-	<xsl:import href="tmpl/search-form.xsl"/-->
 	<xsl:import href="tmpl/default-layout.xsl"/>
 	
 	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes" media-type="text/html"/>
@@ -24,65 +21,93 @@
 	</xsl:template>	
 	
 	<xsl:template match="x:x-data" mode="page-body">
-		<form class="modal fade form-horizontal" id="add-tidbit-modal" 
-			method="post" action="{$web-context}/saveTidbit.do">
-			<div class="modal-header">
-				<h3>Add a Tidbit</h3>
+		<div class="modal fade flipper-container" id="add-tidbit-modal">
+			<div class="flipper">
+				<form class="face front form-horizontal" id="tidbit-form"
+					method="post" action="{$web-context}/saveTidbit.do">
+					<div class="modal-header">
+						<h3><xsl:value-of select="key('i18n', 'new.tidbit.title')"/></h3>
+					</div>
+					<fieldset class="modal-body">
+						<div class="control-group">
+							<label for="add-tidbit-name" class="control-label">
+								<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
+							</label>
+							<div class="controls">
+								<input id="add-tidbit-name" name="name" type="text" class="span6" />
+							</div>
+						</div>
+						<div class="control-group">
+							<label for="add-tidbit-kind" class="control-label">
+								<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
+							</label>
+							<div class="controls">
+								<select id="add-tidbit-kind" name="kind.id" class="span6">
+									<xsl:text> </xsl:text>
+								</select>
+							</div>
+						</div>
+						<div class="control-group">
+							<label for="add-tidbit-data" class="control-label">
+								<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
+							</label>
+							<div class="controls">
+								<textarea id="add-tidbit-data" name="data" class="span6" rows="4">
+									<xsl:text> </xsl:text>
+								</textarea>
+							</div>
+						</div>
+						<div class="control-group hidden-phone">
+							<label for="add-tidbit-comments" class="control-label">
+								<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
+							</label>
+							<div class="controls">
+								<textarea id="add-tidbit-comments" name="comment" class="span6" rows="3">
+									<xsl:text> </xsl:text>
+								</textarea>
+								<span class="label">
+									<xsl:value-of select="key('i18n','optional.caption')"/>
+								</span>
+							</div>
+						</div>
+					</fieldset>
+					<div class="modal-footer">
+						<button type="button" class="btn pull-left" id="manage-categories-btn">
+							<xsl:value-of select="key('i18n','link.edit.kinds')"/>
+						</button>
+						<button type="button" class="btn" data-dismiss="modal">
+							<xsl:value-of select="key('i18n','close')"/>
+						</button>
+						<button type="submit" class="btn btn-primary">
+							<xsl:value-of select="key('i18n','save.displayName')"/>
+						</button>
+					</div>
+				</form>
+				<div class="face back form-horizontal">
+					<div class="modal-header">
+						<h3><xsl:value-of select="key('i18n', 'edit.kinds.title')"/></h3>
+					</div>
+					<fieldset class="modal-body">
+						<table class="table table-striped">
+							<tbody id="kind-table-body">
+								<xsl:text> </xsl:text>
+							</tbody>
+						</table>
+					</fieldset>
+					<div class="modal-footer">
+						<button type="button" class="btn pull-left" id="manage-tidbit-btn">
+							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
+						</button>
+						<button type="button" class="btn" data-dismiss="modal">
+							<xsl:value-of select="key('i18n','close')"/>
+						</button>
+						<button type="submit" class="btn btn-primary" id="add-new-kind-btn">
+							<xsl:value-of select="key('i18n','link.add.tidbitkind')"/>
+						</button>
+					</div>
+				</div>
 			</div>
-			<fieldset class="modal-body">
-				<div class="control-group">
-					<label for="add-tidbit-name" class="control-label">
-						<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
-					</label>
-					<div class="controls">
-						<input id="add-tidbit-name" name="name" type="text" class="span3" />
-					</div>
-				</div>
-				<div class="control-group">
-					<label for="add-tidbit-kind" class="control-label">
-						<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
-					</label>
-					<div class="controls">
-						<select id="add-tidbit-kind" name="kind.id" class="span3">
-							<xsl:text> </xsl:text>
-						</select>
-					</div>
-				</div>
-				<div class="control-group">
-					<label for="add-tidbit-data" class="control-label">
-						<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
-					</label>
-					<div class="controls">
-						<textarea id="add-tidbit-data" name="data" class="span3" rows="4">
-							<xsl:text> </xsl:text>
-						</textarea>
-					</div>
-				</div>
-				<div class="control-group hidden-phone">
-					<label for="add-tidbit-comments" class="control-label">
-						<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
-					</label>
-					<div class="controls">
-						<textarea id="add-tidbit-comments" name="comment" class="span3" rows="3">
-							<xsl:text> </xsl:text>
-						</textarea>
-						<span class="label">
-							<xsl:value-of select="key('i18n','optional.caption')"/>
-						</span>
-					</div>
-				</div>
-			</fieldset>
-			<div class="modal-footer">
-				<button type="button" class="btn" data-dismiss="modal">
-					<xsl:value-of select="key('i18n','close')"/>
-				</button>
-				<button type="submit" class="btn btn-primary">
-					<xsl:value-of select="key('i18n','save.displayName')"/>
-				</button>
-			</div>
-		</form>
-	
-		
+		</div>
 		
 		<!--div id="content-pane" class="alt_pagination">
 			<xsl:if test="$err">
@@ -235,12 +260,7 @@
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="ui.elements">
-		<!--xsl:call-template name="tidbit.form">
-			<xsl:with-param name="new" select="'true'"/>
-		</xsl:call-template>
-		<xsl:call-template name="tidbit.form">
-			<xsl:with-param name="new" select="'false'"/>
-		</xsl:call-template-->
+		<!-- TODO: add CSV import back
 		<form id="import-csv-form" action="{$web-context}/importCsv.do" method="post" 
 			enctype="multipart/form-data" class="simple-form">
 			<h3>
@@ -263,7 +283,7 @@
 			</div>
 			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
 		</form>
-		<!--xsl:call-template name="search.form"/-->
+		-->
 	</xsl:template>
 	
 </xsl:stylesheet>

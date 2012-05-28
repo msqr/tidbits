@@ -230,6 +230,9 @@ public class TidbitsBizImpl implements TidbitsBiz {
 			if ( log.isDebugEnabled() ) {
 				log.debug("Reassigned " +updated +" tidbits to kind [" +r.getName() +"]");
 			}
+
+			// re-load k because reassign flushes
+			k = tidbitKindDao.get(id);
 			tidbitKindDao.delete(k);
 		}
 	}
