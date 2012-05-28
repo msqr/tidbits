@@ -32,6 +32,7 @@ import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.TidbitKind;
 import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.tidbits.support.BasicTidbitSearchCriteria;
 import magoffin.matt.xweb.util.XwebConstants;
@@ -40,6 +41,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -106,6 +108,22 @@ public class HomeController {
 				domainObjectFactory.newRootElement(model));
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, value = "/saveKind.do")
+	public ModelAndView saveTidbitKind(TidbitKind form) {
+		TidbitKind kind = tidbitsBiz.saveTidbitKind(form);
+		UiModel model = new UiModel();
+		model.getKind().add(kind);
+		return new ModelAndView("json-kinds", XwebConstants.DEFALUT_MODEL_OBJECT,
+				domainObjectFactory.newRootElement(model));
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/deleteKind.do")
+	public ModelAndView saveTidbitKind(@RequestParam("id") Long kindId,
+			@RequestParam("reassign") Long reassignId) {
+		tidbitsBiz.deleteTidbitKind(kindId, reassignId);
+		return new ModelAndView("json-service-result");
+	}
+
 	@RequestMapping(method = RequestMethod.GET, value = "/messages.json")
 	public ModelAndView messages() {
 		UiModel model = new UiModel();

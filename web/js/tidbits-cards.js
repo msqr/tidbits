@@ -651,6 +651,145 @@ Tidbits.Class.Bits = function(container, margins) {
 		}
 	};
 	
+	var handleKindEditClick = undefined;
+	
+	var handleKindEditSubmit = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		var me = $(this);
+		var id = me.find('input[name=id]').val();
+		var name = me.find('input[name=name]').val();
+		me.ajaxSubmit(function(data, statusText) {
+			if ( 'success' === statusText && Array.isArray(data) && data.length > 0 ) {
+				// restore click to edit handler
+				me.parent().bind('click', handleKindEditClick);
+				
+				// set @data-id, in case submitted new value
+				var newId = data[0].id;
+				me.parent().attr({'data-id':newId});
+				
+				// replace form with text
+				me.replaceWith(name);
+				
+				if ( id !== '' ) {
+					// update existing category
+					$('option[value="'+id+'"]').text(name);
+				} else {
+					// add new category
+					$('#add-tidbit-kind').append($('<option/>').attr({value:newId}).text(name));
+				}
+			} else {
+				Tidbits.errorAlert('<h4 class="alert-heading">' 
+						+Tidbits.i18n('kind.save.error.title') 
+						+'</h4>' +statusText);
+			}
+		});
+	};
+	
+	var handleDeleteKindCancelClick = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		
+		var form = $(this.form);
+		var name = form.find('input[name=name]').val();
+		var cell = form.parent();
+		
+		// restore click to edit handler
+		cell.bind('click', handleKindEditClick);
+		
+		// replace form with text name
+		cell.empty();
+		cell.append(name);
+	};
+	
+	var handleKindDeleteSubmit = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		var form = $(this);
+		var id = form.find('input[name=id]').val();
+		form.ajaxSubmit(function(data, statusText) {
+			if ( 'success' === statusText ) {
+				// delete row
+				form.parent().parent().remove();
+				
+				// delete <option>
+				$('option[value="'+id+'"]').remove();
+			} else {
+				Tidbits.errorAlert('<h4 class="alert-heading">' 
+						+Tidbits.i18n('kind.save.error.title') 
+						+'</h4>' +statusText);
+			}
+		});
+	};
+	
+	var handleDeleteKindClick = function(event) {
+		event.preventDefault();
+		var form = $(this.form);
+		var id = form.find('input[name=id]').val();
+		var name = form.find('input[name=name]').val();
+		var cell = form.parent();
+		if ( id === '' ) {
+			// not really a kind, so just delete row
+			cell.parent().remove();
+		} else {
+			$(form).replaceWith(name);
+			var reassignSelect = $('<select name="reassign"/>');
+			$('#kind-table-body td').each(function() {
+				var td = $(this);
+				var cellId = td.attr('data-id');
+				if ( cellId !== id ) {
+					reassignSelect.append($('<option/>').attr({value:cellId}).text(td.text()));
+				}
+			});
+			$('<form class="form-inline" method="post" action="deleteKind.do"/>')
+				.append($('<input type="hidden" name="id"/>').val(id))
+				.append($('<input type="hidden" name="name"/>').val(name))
+				.append(reassignSelect)
+				.append($('<button type="button" class="btn"/>').text(
+						Tidbits.i18n('cancel.displayName')).click(handleDeleteKindCancelClick))
+				.append($('<button type="submit" class="btn btn-danger"/>').text(
+						Tidbits.i18n('delete.displayName')))
+				.submit(handleKindDeleteSubmit)
+				.appendTo(cell);
+			$('<div class="help-block"/>')
+				.text(Tidbits.i18n('delete.kind.reassign.caption'))
+				.appendTo(cell);
+			
+		}
+	};
+	
+	handleKindEditClick = function(event) {
+		event.preventDefault();
+		var me = $(this);
+		var kindId = me.attr('data-id');
+		var form = $('<form class="form-inline" method="post" action="saveKind.do"/>')
+				.append($('<input type="hidden" name="id"/>').val(kindId))
+				.append($('<input type="text" name="name" autofocus="autofocus"/>').val(me.text()))
+				.append($('<button type="submit" class="btn btn-primary"/>').text(
+						Tidbits.i18n('save.displayName')))
+				.append($('<button type="button" class="btn"/>').text(
+						Tidbits.i18n('delete.kind.displayName')).click(handleDeleteKindClick))
+				.submit(handleKindEditSubmit);
+		me.html(form);
+		me.unbind('click');
+	};
+	
+	var addManageTidbitKindRow = function(tbody, data) {
+		$('<tr/>').append(
+				$('<td/>').attr({'data-id':data.id})
+					.click(handleKindEditClick)
+					.text(data.name)
+				).appendTo(tbody);
+	};
+	
+	
+	var handleAddNewKind = function(event) {
+		event.preventDefault();
+		var tbody = $('#kind-table-body');
+		addManageTidbitKindRow(tbody, {id:'', name:''});
+		tbody.find('td:last').click();
+	};
+	
 	// [{id:1, name:Password},...]
 	var populateKinds = function(data) {
 		if ( data === undefined || !jQuery.isArray(data) ) {
@@ -658,9 +797,11 @@ Tidbits.Class.Bits = function(container, margins) {
 		}
 		kinds = data;
 		var select = $('#add-tidbit-kind');
+		var tbody = $('#kind-table-body');
 		var i, len;
 		for ( i = 0, len = data.length; i < len; i++ ) {
 			$('<option />').attr({'value': data[i].id}).text(data[i].name).appendTo(select);
+			addManageTidbitKindRow(tbody, data[i]);
 		}
 	};
 	
@@ -714,9 +855,12 @@ Tidbits.Class.Bits = function(container, margins) {
 	    		jQuery.getJSON('kinds.json', populateKinds);
 	    	}
 	    	$('#add-tidbit-name').focus();
-	    }).submit(function(event) {
+	    });
+	    
+	    $('#tidbit-form').submit(function(event) {
 			event.preventDefault();
-			$(this).modal('hide').ajaxSubmit(function(data, statusText) {
+			$('#add-tidbit-modal').modal('hide');
+			$(this).ajaxSubmit(function(data, statusText) {
 				if ( 'success' === statusText ) {
 					populateTidbits(data, true);
 				} else {
@@ -726,6 +870,22 @@ Tidbits.Class.Bits = function(container, margins) {
 				}
 			});
 		});
+	    
+	    $('#add-new-kind-btn').click(handleAddNewKind);
+	    
+	    var handleModalFlip = function(event) {
+	    	// flip the card around
+	    	event.preventDefault();
+	    	var el = $('#add-tidbit-modal .flipper');
+	    	var currTransform = el.css('transform');
+	    	if ( currTransform === 'none' ) {
+	    		el.css('transform', 'rotateY(180deg)');
+	    	} else {
+	    		el.css('transform', '');
+	    	}
+	    };
+	    $('#manage-categories-btn').click(handleModalFlip);
+	    $('#manage-tidbit-btn').click(handleModalFlip);
 	    
 	    
 	    $('#nav-search-tidbit-form').submit(function(event) {

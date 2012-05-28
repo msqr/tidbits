@@ -36,7 +36,12 @@
 	</bean>
 	
 	<bean id="messageSource" class="magoffin.matt.xweb.util.ResourceBundleMessagesSource">
-		<property name="basenames" value="messages"/>
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+				<value>client-messages</value>
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
