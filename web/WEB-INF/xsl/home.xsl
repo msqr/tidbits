@@ -34,7 +34,7 @@
 								<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
 							</label>
 							<div class="controls">
-								<input id="add-tidbit-name" name="name" type="text" class="span6" />
+								<input id="add-tidbit-name" name="name" type="text" class="span5" />
 							</div>
 						</div>
 						<div class="control-group">
@@ -42,7 +42,7 @@
 								<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
 							</label>
 							<div class="controls">
-								<select id="add-tidbit-kind" name="kind.id" class="span6">
+								<select id="add-tidbit-kind" name="kind.id" class="span5">
 									<xsl:text> </xsl:text>
 								</select>
 							</div>
@@ -52,7 +52,7 @@
 								<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
 							</label>
 							<div class="controls">
-								<textarea id="add-tidbit-data" name="data" class="span6" rows="4">
+								<textarea id="add-tidbit-data" name="data" class="span5" rows="4">
 									<xsl:text> </xsl:text>
 								</textarea>
 							</div>
@@ -62,7 +62,7 @@
 								<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
 							</label>
 							<div class="controls">
-								<textarea id="add-tidbit-comments" name="comment" class="span6" rows="3">
+								<textarea id="add-tidbit-comments" name="comment" class="span5" rows="3">
 									<xsl:text> </xsl:text>
 								</textarea>
 								<span class="label">
