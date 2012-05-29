@@ -21,14 +21,14 @@
 	</xsl:template>	
 	
 	<xsl:template match="x:x-data" mode="page-body">
-		<div class="modal fade flipper-container" id="add-tidbit-modal">
+		<div class="editor flipper-container" id="tidbit-editor" style="visibility: hidden;">
 			<div class="flipper">
 				<form class="face front form-horizontal" id="tidbit-form"
 					method="post" action="{$web-context}/saveTidbit.do">
-					<div class="modal-header">
+					<div class="header">
 						<h3><xsl:value-of select="key('i18n', 'new.tidbit.title')"/></h3>
 					</div>
-					<fieldset class="modal-body">
+					<fieldset class="body">
 						<div class="control-group">
 							<label for="add-tidbit-name" class="control-label">
 								<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
@@ -71,11 +71,11 @@
 							</div>
 						</div>
 					</fieldset>
-					<div class="modal-footer">
+					<div class="footer modal-footer">
 						<button type="button" class="btn pull-left" id="manage-categories-btn">
 							<xsl:value-of select="key('i18n','link.edit.kinds')"/>
 						</button>
-						<button type="button" class="btn" data-dismiss="modal">
+						<button type="button" class="btn" data-dismiss="editor">
 							<xsl:value-of select="key('i18n','close')"/>
 						</button>
 						<button type="submit" class="btn btn-primary">
@@ -84,26 +84,31 @@
 					</div>
 				</form>
 				<div class="face back form-horizontal">
-					<div class="modal-header">
+					<div class="header">
 						<h3><xsl:value-of select="key('i18n', 'edit.kinds.title')"/></h3>
 					</div>
-					<fieldset class="modal-body">
+					<fieldset class="body">
 						<table class="table table-striped">
 							<tbody id="kind-table-body">
 								<xsl:text> </xsl:text>
 							</tbody>
 						</table>
 					</fieldset>
-					<div class="modal-footer">
+					<div class="footer modal-footer">
 						<button type="button" class="btn pull-left" id="manage-tidbit-btn">
 							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
 						</button>
-						<button type="button" class="btn" data-dismiss="modal">
+						<button type="button" class="btn" data-dismiss="editor">
 							<xsl:value-of select="key('i18n','close')"/>
 						</button>
 						<button type="submit" class="btn btn-primary" id="add-new-kind-btn">
 							<xsl:value-of select="key('i18n','link.add.tidbitkind')"/>
 						</button>
+					</div>
+				</div>
+				<div class="face bottom form-horizontal">
+					<div class="header">
+						<h3>Tidbits Listing</h3>
 					</div>
 				</div>
 			</div>

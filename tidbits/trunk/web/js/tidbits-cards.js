@@ -100,7 +100,17 @@ Tidbits.touchEventNames = (function() {
 Tidbits.Class.Matrix = function() {
 	// TODO: cross-browser test for -o, -moz -ie prefix
 	var supportFloat32Array = "Float32Array" in window;
-	this.matrix = (supportFloat32Array ? new Float32Array(6) : [1,0,0,1,0,0]);
+	this.matrix = (function() {
+			var result;
+			if ( supportFloat32Array ) {
+				result = new Float32Array(6);
+				result[0] = 1;
+				result[3] = 1;
+			} else {
+				result = [1,0,0,1,0,0];
+			}
+			return result;
+		})();
 };
 
 /**
@@ -216,6 +226,26 @@ Tidbits.Class.Matrix.prototype.translate = function(x, y) {
 };
 
 /**
+ * Get the current 2D translation value.
+ * 
+ * @returns {Object} object with x,y Number properties
+ */
+Tidbits.Class.Matrix.prototype.getTranslation = function() {
+	return {x:this.matrix[4], y:this.matrix[5]};
+};
+
+/**
+ * Get the 2D distance between a location and this matrix's translation.
+ * 
+ * @param location a location object, with x,y Number properties
+ * @returns {Number} the calculated distance
+ */
+Tidbits.Class.Matrix.prototype.getDistanceFrom = function(location) {
+	return Math.sqrt(Math.pow((location.x - this.matrix[4]), 2), 
+			Math.pow((location.y - this.matrix[5]), 2));
+};
+
+/**
  * Apply the matrix transform to an element.
  * 
  * <p>Hi hi-res displays, the {@link #toMatrix3D()} transform is used,
@@ -244,9 +274,17 @@ Tidbits.Class.Matrix.prototype.apply = function(elm) {
  */
 Tidbits.Class.Matrix.prototype.animate = function(elm, timing, duration, finished) {
 	var self = this;
-	elm.addEventListener(self.support.trEndEvent,  function(event) {
-		elm.style[self.support.trProp] = '';
-	 }, false );
+	var listener = undefined;
+	listener = function(event) {
+		if ( event.target === elm ) {
+			elm.removeEventListener(self.support.trEndEvent, listener, false);
+			elm.style[self.support.trProp] = '';
+			if ( finished !== undefined ) {
+				finished.apply(self);
+			}
+		}
+	};
+	elm.addEventListener(self.support.trEndEvent, listener, false);
 	var cssValue = self.support.trTransform 
 		+' ' 
 		+(duration !== undefined ? duration : '0.3s')
@@ -260,12 +298,25 @@ Tidbits.Class.Matrix.prototype.animate = function(elm, timing, duration, finishe
 /**
  * Apply the matrix transform to an element, with an "ease out" transition.
  * 
- * <p>Calls {@link #apply(elm)} internally.</p>
+ * <p>Calls {@link #animate(elm)} internally.</p>
  * 
  * @param {Element} elm the element to apply the transform to
+ * @param {Function} finished an optional callback function to execute when 
  */
-Tidbits.Class.Matrix.prototype.easeOut = function(elm) {
-	this.animate(elm, 'ease-out');
+Tidbits.Class.Matrix.prototype.easeOut = function(elm, finished) {
+	this.animate(elm, 'ease-out', undefined, finished);
+};
+
+/**
+ * Apply the matrix transform to an element, with an "ease in" transition.
+ * 
+ * <p>Calls {@link #animate(elm)} internally.</p>
+ * 
+ * @param {Element} elm the element to apply the transform to
+ * @param {Function} finished an optional callback function to execute when 
+ */
+Tidbits.Class.Matrix.prototype.easeIn = function(elm, finished) {
+	this.animate(elm, 'ease-in', undefined, finished);
 };
 
 /**
@@ -289,8 +340,8 @@ Tidbits.Class.Bit = function(data, bits, container) {
 		.append(this.refreshElement)
 		.append($('<h2/>').text(data.name))
 		;
-	this.listElement = $('<dl/>');
-	this.element.append(this.listElement);
+	this.listElement = $('<dl class="clearfix"/>');
+	this.element.append($('<div class="content"/>').append(this.listElement));
 	this.addDetails(data);
 
 	var self = this;
@@ -316,7 +367,7 @@ Tidbits.Class.Bit = function(data, bits, container) {
 		e.preventDefault();
 		e.stopPropagation();
 		$('#add-tidbit-name').val(self.name);
-		$('#add-tidbit-modal').modal('show');
+		Tidbits.Runtime.editor.show();
 		$('#add-tidbit-kind').focus();
 	};
 
@@ -416,16 +467,21 @@ Tidbits.Class.Card = function(data, bits) {
 	this.maxWidth = 240;
 	this.maxHeight = 180;
 	this.maxAngle = Math.PI / 6.0;
+	this.longTouchMs = 1250;
+	this.longTouchWiggle = 8;
 	this.matrix = new Tidbits.Class.Matrix();
 	this.fac = false; // front and center, used to toggle touch behavior
 
 	var self = this;
 	var el = this.element;
 	var elm = el.get(0);
+	var m0 = {x:0, y:0};
 	var p1 = {x:0, y:0, t:0};
 	var p2 = {x:0, y:0, t:0};
 	var minInertiaDistance = 0;
 	var lastTapEnd = 0;
+	var longTouchTimer = undefined;
+	var longTouch = undefined;
 	
 	// momentum?
 	var momenumHowMuch = 30;  // change this for greater or lesser momentum
@@ -444,6 +500,19 @@ Tidbits.Class.Card = function(data, bits) {
 		}
 	};
 	
+	var cancelLongTouch = function() {
+		if ( longTouchTimer !== undefined ) {
+			clearTimeout(longTouchTimer);
+			longTouchTimer = undefined;
+		}
+	};
+	
+	var startLongTouch = function() {
+		cancelLongTouch();
+		m0 = self.matrix.getTranslation();
+		longTouchTimer = setTimeout(longTouch, self.longTouchMs);
+	};
+	
 	var touchMove = function(e) {
 		var event = Tidbits.anyEvent(e);
 		if ( event === undefined ) {
@@ -455,6 +524,15 @@ Tidbits.Class.Card = function(data, bits) {
 		var pageY = event.pageY;
 		cardTranslate(pageX, pageY, e.timeStamp);
 		
+		// allow long tap still, as long as we didn't move much
+		if ( longTouchTimer !== undefined ) {
+			var distanceFromStart = self.matrix.getDistanceFrom(m0);
+			if ( distanceFromStart >  self.longTouchWiggle ) {
+				console.log("Cancelling long touch timer, distance from start is " + distanceFromStart);
+				cancelLongTouch();
+			}
+		}
+		
 		p2.x = p1.x, p2.y = p1.y, p2.t = p1.t;
 		p1.x = pageX;
 		p1.y = pageY;
@@ -462,6 +540,9 @@ Tidbits.Class.Card = function(data, bits) {
 	};
 	
 	var touchStart = function(e) {
+		// long touch support
+		startLongTouch();
+		
 		if ( self.fac === true ) {
 			// this card is front and center, so don't deail with tracking touches
 			return;
@@ -479,13 +560,21 @@ Tidbits.Class.Card = function(data, bits) {
 		elm.addEventListener(Tidbits.touchEventNames.move, touchMove, false);
 	};
 	
-	var touchEnd = function(e) {
+	var touchCancel = function(e) {
+		cancelLongTouch();
+		elm.removeEventListener(Tidbits.touchEventNames.move, touchMove, false);
 		if ( e === undefined ) {
 			return;
 		}
-		elm.removeEventListener(Tidbits.touchEventNames.move, touchMove, false);
 		e.preventDefault();
 		e.stopPropagation();
+	};
+	
+	var touchEnd = function(e) {
+		touchCancel(e);
+		if ( e === undefined ) {
+			return;
+		}
 
 		// test for double-tap
 		var tapTimeDiff = (lastTapEnd === 0 ? 0 : e.timeStamp - lastTapEnd);
@@ -517,7 +606,13 @@ Tidbits.Class.Card = function(data, bits) {
 		}
 	};
 
+	longTouch = function() {
+		touchCancel();
+		console.log("long touch");
+	};
+	
 	elm.addEventListener(Tidbits.touchEventNames.start, touchStart, false);
+	elm.addEventListener(Tidbits.touchEventNames.cancel, touchCancel, false);
 	elm.addEventListener(Tidbits.touchEventNames.end, touchEnd, false);
 };
 
@@ -601,7 +696,6 @@ Tidbits.Class.Bits = function(container, margins) {
 	var bitz = [];
 	var cardsContainer = $(container);
 	var self = this;
-	var kinds = [];
 	var cardMode = false;
 	
 	var populateTidbits = function(data, ascending) {
@@ -650,6 +744,107 @@ Tidbits.Class.Bits = function(container, margins) {
 			
 		}
 	};
+	
+	var replaceAllTidbitsWithSearchResults = function(data) {
+		// animate bits out, if they have a matrix
+		var i , len, m;
+		
+		var reset = function() {
+			bits = {};
+			bitz = [];
+			populateTidbits(data);
+		};
+		
+		if ( cardMode === true ) {
+			var screenHeight = $(window).height();
+			var oldBitz = bitz; // local reference for animation complete
+			var onComplete = function() {
+				$(this).remove();
+			};
+			for ( i = 0, len = oldBitz.length; i < len; i++ ) {
+				m = oldBitz[i].matrix;
+				if ( m !== undefined ) {
+					m.translate(0, screenHeight + 20);
+					m.animate(oldBitz[i].element.get(0), 'ease-in', '0.3s', onComplete);
+				}
+			}
+			setTimeout(reset, 250);
+		} else {
+			cardsContainer.children('.tidbit').remove();
+			reset();
+		}
+	};
+	
+	// private init
+	(function() {
+		var screenWidth = $(window).width();
+		if ( screenWidth > 480 ) {
+			cardMode = true;
+			
+			// prevent elastic scrolling
+			document.body.addEventListener('touchmove', function(event) {
+			  event.preventDefault();
+			}, false);
+		};
+		
+		jQuery.getJSON('search.json', populateTidbits);
+		
+	    $('#nav-search-tidbit-form').submit(function(event) {
+			event.preventDefault();
+			$(this).ajaxSubmit(function(data, statusText) {
+				if ( 'success' === statusText ) {
+					replaceAllTidbitsWithSearchResults(data);
+				} else {
+					Tidbits.errorAlert('<h4 class="alert-heading">' 
+							+Tidbits.i18n('tidbit.search.error.title') 
+							+'</h4>' +statusText);
+				}
+			});
+	    });
+	    if ( cardMode === true ) {
+		    $('#nav-search-tidbit-form input[type=text]').focus();
+	    }
+	})();
+	
+	/**
+	 * Move a specific Bit so it appears above all other bits,
+	 * by adjusting its z-index value.
+	 * 
+	 * @param {Tidbits.Class.Bit} the bit to move to the top
+	 */
+	this.popToTop = function(bit) {
+		var idx = bitz.indexOf(bit);
+		var i, len;
+		if ( idx !== -1 && ((idx + 1) !== bitz.length) ) {
+			// move card to top of stack
+			bitz.push(bitz.splice(idx, 1)[0]);
+			
+			// adjust z index of shuffled bits
+			for ( i = idx, len = bitz.length; i < len; i++ ) {
+				bitz[i].element.css('z-index', i);
+			}
+		}
+	};
+	
+	this.refreshData = function(data, ascending) {
+		populateTidbits(data, ascending);
+	};
+	
+	this.margins = margins;
+};
+
+/**
+ * The Tidbits editor.
+ * 
+ * @param {Element} container the editor container
+ * @returns {Tidbits.Class.Editor}
+ */
+Tidbits.Class.Editor = function(container, toggle) {
+	this.element = $(container);
+	this.elm = this.element.get(0);
+	this.matrix = new Tidbits.Class.Matrix();
+	
+	var self = this;
 	
 	var handleKindEditClick = undefined;
 	
@@ -795,7 +990,6 @@ Tidbits.Class.Bits = function(container, margins) {
 		if ( data === undefined || !jQuery.isArray(data) ) {
 			return;
 		}
-		kinds = data;
 		var select = $('#add-tidbit-kind');
 		var tbody = $('#kind-table-body');
 		var i, len;
@@ -805,61 +999,21 @@ Tidbits.Class.Bits = function(container, margins) {
 		}
 	};
 	
-	var replaceAllTidbitsWithSearchResults = function(data) {
-		// animate bits out, if they have a matrix
-		var i , len, m;
-		
-		var reset = function() {
-			bits = {};
-			bitz = [];
-			populateTidbits(data);
-		};
-		
-		if ( cardMode === true ) {
-			var screenHeight = $(window).height();
-			var oldBitz = bitz; // local reference for animation complete
-			var onComplete = function() {
-				$(this).remove();
-			};
-			for ( i = 0, len = oldBitz.length; i < len; i++ ) {
-				m = oldBitz[i].matrix;
-				if ( m !== undefined ) {
-					m.translate(0, screenHeight + 20);
-					m.animate(oldBitz[i].element.get(0), 'ease-in', '0.3s', onComplete);
-				}
-			}
-			setTimeout(reset, 250);
-		} else {
-			cardsContainer.children('.tidbit').remove();
-			reset();
-		}
-	};
-	
 	// private init
 	(function() {
-		var screenWidth = $(window).width();
-		console.log("Screen width: " +screenWidth);
-		if ( screenWidth > 480 ) {
-			cardMode = true;
-			
-			// prevent elastic scrolling
-			document.body.addEventListener('touchmove', function(event) {
-			  event.preventDefault();
-			}, false);
-		};
-		
-		jQuery.getJSON('search.json', populateTidbits);
-		
-	    $('#add-tidbit-modal').on('show', function () {
-	    	if ( kinds.length === 0 ) {
-	    		jQuery.getJSON('kinds.json', populateKinds);
-	    	}
-	    	$('#add-tidbit-name').focus();
-	    });
+		self.element.find('button[data-dismiss=editor]').click(function() {
+			self.hide();
+		});
+		$(toggle).click(function(e) {
+			e.preventDefault();
+			self.show();
+		});
+
+	    jQuery.getJSON('kinds.json', populateKinds);
 	    
 	    $('#tidbit-form').submit(function(event) {
 			event.preventDefault();
-			$('#add-tidbit-modal').modal('hide');
+			Tidbits.Runtime.editor.hide();
 			$(this).ajaxSubmit(function(data, statusText) {
 				if ( 'success' === statusText ) {
 					populateTidbits(data, true);
@@ -876,7 +1030,7 @@ Tidbits.Class.Bits = function(container, margins) {
 	    var handleModalFlip = function(event) {
 	    	// flip the card around
 	    	event.preventDefault();
-	    	var el = $('#add-tidbit-modal .flipper');
+	    	var el = $('#tidbit-editor .flipper');
 	    	var currTransform = el.css('transform');
 	    	if ( currTransform === 'none' ) {
 	    		el.css('transform', 'rotateY(180deg)');
@@ -887,49 +1041,38 @@ Tidbits.Class.Bits = function(container, margins) {
 	    $('#manage-categories-btn').click(handleModalFlip);
 	    $('#manage-tidbit-btn').click(handleModalFlip);
 	    
-	    
-	    $('#nav-search-tidbit-form').submit(function(event) {
-			event.preventDefault();
-			$(this).ajaxSubmit(function(data, statusText) {
-				if ( 'success' === statusText ) {
-					replaceAllTidbitsWithSearchResults(data);
-				} else {
-					Tidbits.errorAlert('<h4 class="alert-heading">' 
-							+Tidbits.i18n('tidbit.search.error.title') 
-							+'</h4>' +statusText);
-				}
-			});
-	    });
-	    if ( cardMode === true ) {
-		    $('#nav-search-tidbit-form input[type=text]').focus();
-	    }
 	})();
-	
-	/**
-	 * Move a specific Bit so it appears above all other bits,
-	 * by adjusting its z-index value.
-	 * 
-	 * @param {Tidbits.Class.Bit} the bit to move to the top
-	 */
-	this.popToTop = function(bit) {
-		var idx = bitz.indexOf(bit);
-		var i, len;
-		if ( idx !== -1 && ((idx + 1) !== bitz.length) ) {
-			// move card to top of stack
-			bitz.push(bitz.splice(idx, 1)[0]);
-			
-			// adjust z index of shuffled bits
-			for ( i = idx, len = bitz.length; i < len; i++ ) {
-				bitz[i].element.css('z-index', i);
-			}
-		}
+};
+
+Tidbits.Class.Editor.prototype.show = function() {
+	var win = $(window);
+	var halfWidth = this.element.width() / 2;
+	var halfHeight = this.element.height() / 2;
+	var centerX = Math.floor(win.width() / 2 - halfWidth);
+	var centerY = Math.floor(win.height() / 2 - halfHeight);
+	var self = this;
+	var move = function() {
+		self.matrix.setTranslation(centerX, centerY);
+		self.matrix.easeOut(self.elm, function() {
+	    	$('#add-tidbit-name').focus();
+		});;
 	};
-	
-	this.refreshData = function(data, ascending) {
-		populateTidbits(data, ascending);
-	};
-	
-	this.margins = margins;
+	if ( this.element.css('visibility') === 'hidden' ) {
+		this.matrix.setTranslation(centerX, halfHeight * -3);
+		this.matrix.apply(this.elm);
+		this.element.css('visibility', '');
+		setTimeout(move, 10);
+	} else {
+		move();
+	}
+};
+
+Tidbits.Class.Editor.prototype.hide = function() {
+	var height = this.element.height();
+	this.matrix.setTranslation(
+			this.matrix.getTranslation().x, 
+			Math.ceil(height * -1.5));
+	this.matrix.easeIn(this.elm);
 };
 
 $(document).ready(function() {
@@ -940,4 +1083,5 @@ $(document).ready(function() {
 	
 	Tidbits.Runtime.bits = new Tidbits.Class.Bits('#card-container',
 			{top:($('#navbar').height() + 20), left:20, right:20, bottom:20});
+	Tidbits.Runtime.editor = new Tidbits.Class.Editor('#tidbit-editor', '#add-new-tidbit-btn');
 });
