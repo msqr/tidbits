@@ -73,7 +73,10 @@
 					</fieldset>
 					<div class="footer modal-footer">
 						<button type="button" class="btn pull-left" id="manage-categories-btn">
-							<xsl:value-of select="key('i18n','link.edit.kinds')"/>
+							<i class="icon-list"><xsl:text> </xsl:text></i>
+						</button>
+						<button type="button" class="btn pull-left" id="manage-categories-btn">
+							<i class="icon-edit"><xsl:text> </xsl:text></i>
 						</button>
 						<button type="button" class="btn" data-dismiss="editor">
 							<xsl:value-of select="key('i18n','close')"/>
@@ -108,7 +111,18 @@
 				</div>
 				<div class="face bottom form-horizontal">
 					<div class="header">
-						<h3>Tidbits Listing</h3>
+						<h3>Tidbit Listing</h3>
+					</div>
+					<div class="footer modal-footer">
+						<button type="button" class="btn pull-left" id="manage-tidbit-btn">
+							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
+						</button>
+						<button type="button" class="btn" data-dismiss="editor">
+							<xsl:value-of select="key('i18n','close')"/>
+						</button>
+						<button type="submit" class="btn btn-primary" id="add-new-kind-btn">
+							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
+						</button>
 					</div>
 				</div>
 			</div>
