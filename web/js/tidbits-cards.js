@@ -261,6 +261,24 @@ Tidbits.Class.Matrix.prototype.apply = function(elm) {
 };
 
 /**
+ * Apply a one-time animation callback listener.
+ * 
+ * @param elm the element to add the one-time listener to
+ * @param finished
+ */
+Tidbits.Class.Matrix.prototype.animateListen = function(elm, finished) {
+	var listener = undefined;
+	var self = this;
+	listener = function(event) {
+		if ( event.target === elm ) {
+			elm.removeEventListener(self.support.trEndEvent, listener, false);
+			finished.apply(self);
+		}
+	};
+	elm.addEventListener(self.support.trEndEvent, listener, false);
+};
+
+/**
  * Apply the matrix transform to an element, with an "ease out" transition.
  * 
  * <p>Calls {@link #apply(elm)} internally.</p>
@@ -274,23 +292,18 @@ Tidbits.Class.Matrix.prototype.apply = function(elm) {
  */
 Tidbits.Class.Matrix.prototype.animate = function(elm, timing, duration, finished) {
 	var self = this;
-	var listener = undefined;
-	listener = function(event) {
-		if ( event.target === elm ) {
-			elm.removeEventListener(self.support.trEndEvent, listener, false);
-			elm.style[self.support.trProp] = '';
-			if ( finished !== undefined ) {
-				finished.apply(self);
-			}
+	this.animateListen(elm, function() {
+		elm.style[self.support.trProp] = '';
+		if ( finished !== undefined ) {
+			finished.apply(self);
 		}
-	};
-	elm.addEventListener(self.support.trEndEvent, listener, false);
-	var cssValue = self.support.trTransform 
+	});
+	var cssValue = this.support.trTransform 
 		+' ' 
 		+(duration !== undefined ? duration : '0.3s')
 		+' ' 
 		+(timing !== undefined ? timing : 'ease-out');
-	elm.style[self.support.trProp] = cssValue;
+	elm.style[this.support.trProp] = cssValue;
 	this.apply(elm);
 };
 
@@ -845,6 +858,10 @@ Tidbits.Class.Editor = function(container, toggle) {
 	this.matrix = new Tidbits.Class.Matrix();
 	
 	var self = this;
+	var flipper = this.element.find('.flipper');
+	var front = this.element.find('.front');
+	var back = this.element.find('.back');
+	var bottom = this.element.find('.bottom');
 	
 	var handleKindEditClick = undefined;
 	
@@ -1001,9 +1018,10 @@ Tidbits.Class.Editor = function(container, toggle) {
 	
 	// private init
 	(function() {
+		/* TODO: re-add this
 		self.element.find('button[data-dismiss=editor]').click(function() {
 			self.hide();
-		});
+		});*/
 		$(toggle).click(function(e) {
 			e.preventDefault();
 			self.show();
@@ -1030,16 +1048,43 @@ Tidbits.Class.Editor = function(container, toggle) {
 	    var handleModalFlip = function(event) {
 	    	// flip the card around
 	    	event.preventDefault();
-	    	var el = $('#tidbit-editor .flipper');
-	    	var currTransform = el.css('transform');
+	    	var currTransform = flipper.css('transform');
 	    	if ( currTransform === 'none' ) {
-	    		el.css('transform', 'rotateY(180deg)');
+	    		flipper.css('transform', 'rotateY(180deg)');
+	    		bottom.addClass('alt');
 	    	} else {
-	    		el.css('transform', '');
+	    		bottom.removeClass('alt');
+	    		flipper.css('transform', '');
 	    	}
 	    };
 	    $('#manage-categories-btn').click(handleModalFlip);
 	    $('#manage-tidbit-btn').click(handleModalFlip);
+	    
+	    var handleBottomFlip = function(event) {
+	    	// flip the card up
+	    	event.preventDefault();
+	    	var show = (bottom.css('display') === 'none');
+	    	var alt = bottom.hasClass('alt');
+	    	var newTransform = (show === true ? 'rotateX(-180deg)' : '');
+	    	var otherSide = back;
+	    	if ( alt == true ) {
+	    		newTransform = 'rotateY(180deg) ' +newTransform;
+	    		otherSide = front;
+	    	}
+    		flipper.css('transform', newTransform);
+	    	if ( show === true ) {
+	    		otherSide.css('display', 'none');
+	    		bottom.css('display', 'block');
+	    	} else {
+	    		self.matrix.animateListen(flipper.get(0), function() {
+		    		otherSide.css('display', 'block');
+		    		bottom.css('display', 'none');
+	    		});
+	    	}
+	    };
+	    flipper.find('button[data-dismiss=editor]').click(handleBottomFlip);
+	    //$('#manage-categories-btn').click(handleModalFlip);
+	    //$('#manage-tidbit-btn').click(handleModalFlip);
 	    
 	})();
 };

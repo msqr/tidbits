@@ -304,6 +304,11 @@ div.tidbit.card dl dd + dd::before {
 	-moz-transform: rotateX(180deg);
 }
 
+.flipper .face.bottom.alt {
+	-webkit-transform: rotateZ(180deg);
+	-moz-transform: rotateZ(180deg);
+}
+
 #kind-table-body td {
 	font-weight: normal;
 	cursor: pointer;
