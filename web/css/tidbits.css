@@ -209,16 +209,56 @@ div.tidbit.card dl dd + dd::before {
 	overflow: visible !important;
 }
 
-.modal {
-  background-color: transparent;
-  border: none;
+.editor {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1099;
+	
+	background-color: transparent;
+	border: none;
+	
+	/*
+	-webkit-border-radius: none;
+	-moz-border-radius: none;
+	border-radius: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	*/
+}
 
-  -webkit-border-radius: none;
-  -moz-border-radius: none;
-  border-radius: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
+.editor .header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 18px;
+	padding: 9px 15px;
+	border-bottom: 1px solid #eee;
+}
+
+.editor .body {
+	position: absolute;
+	top: 36px;
+	left: 0;
+	right: 0;
+	bottom: 58px;
+	padding: 9px 15px;
+	overflow-y: auto;
+}
+
+.editor .footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 28px;
+}
+
+.footer .btn + .btn {
+	margin-left: 5px;
+	margin-bottom: 0;
 }
 
 .flipper {
@@ -231,32 +271,37 @@ div.tidbit.card dl dd + dd::before {
 
 .flipper .face {
 	position: absolute;
+	z-index: 1;
 	width: 560px;
 	height: 480px;
 	background-color: white;
 	-webkit-backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
 
-  background-color: #ffffff;
-  border: 1px solid #999;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  *border: 1px solid #999;
-  /* IE6-7 */
-
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding-box;
-  background-clip: padding-box;
+	background-color: #ffffff;
+	border: 1px solid #999;
+	
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding-box;
+	background-clip: padding-box;
 }
 
 .flipper .face.back {
 	-webkit-transform: rotateY(180deg);
 	-moz-transform: rotateY(180deg);
+}
+
+.flipper .face.bottom {
+	display: none;
+	z-index: 2;
+	-webkit-transform: rotateX(180deg);
+	-moz-transform: rotateX(180deg);
 }
 
 #kind-table-body td {
@@ -293,7 +338,7 @@ div.tidbit.card dl dd + dd::before {
 	.flipper,
 	.flipper .face {
 		width: 300px;
-		height: 400px;
+		height: 360px;
 	}
 }
 

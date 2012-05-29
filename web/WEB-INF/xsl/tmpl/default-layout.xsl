@@ -161,7 +161,7 @@
 					</ul>
 					
 					<ul class="nav pull-right" id="nav-add">
-						<li><button class="btn btn-primary" data-toggle="modal" data-target="#add-tidbit-modal">+</button></li>
+						<li><button class="btn btn-primary" id="add-new-tidbit-btn">+</button></li>
 					</ul>
 						
 	            </div>
