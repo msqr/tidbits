@@ -858,7 +858,6 @@ Tidbits.Class.Editor = function(container) {
 	this.matrix = new Tidbits.Class.Matrix();
 	this.bit = undefined;
 	this.editModel = {};
-	this.kinds = {};
 	
 	var self = this;
 	
@@ -930,6 +929,9 @@ Tidbits.Class.Editor = function(container) {
 				
 				// delete <option>
 				$('option[value="'+id+'"]').remove();
+				
+				// update model
+				Tidbits.Runtime.kinds.removeKind(Number(id));
 			} else {
 				Tidbits.errorAlert('<h4 class="alert-heading">' 
 						+Tidbits.i18n('kind.save.error.title') 
@@ -948,8 +950,17 @@ Tidbits.Class.Editor = function(container) {
 			// not really a kind, so just delete row
 			cell.parent().remove();
 		} else {
-			$(form).replaceWith(name);
+			form.replaceWith(name);
+			id = Number(id);
 			var reassignSelect = $('<select name="reassign"/>');
+			var i, len;
+			var kinds = Tidbits.Runtime.kinds.getKinds();
+			for ( i = 0, len = kinds.length; i < len; i++ ) {
+				if ( kinds[i].id !== id ) {
+					reassignSelect.append($('<option/>').attr({value:kinds[i].id}).text(kinds[i].name));
+				}
+			}
+			/*
 			$('#kind-table-body td').each(function() {
 				var td = $(this);
 				var cellId = td.attr('data-id');
@@ -957,6 +968,7 @@ Tidbits.Class.Editor = function(container) {
 					reassignSelect.append($('<option/>').attr({value:cellId}).text(td.text()));
 				}
 			});
+			*/
 			$('<form class="form-inline" method="post" action="deleteKind.do"/>')
 				.append($('<input type="hidden" name="id"/>').val(id))
 				.append($('<input type="hidden" name="name"/>').val(name))
@@ -967,7 +979,7 @@ Tidbits.Class.Editor = function(container) {
 						Tidbits.i18n('delete.displayName')))
 				.submit(handleKindDeleteSubmit)
 				.appendTo(cell);
-			$('<div class="help-block"/>')
+			$('<div class="alert alert-info"/>')
 				.text(Tidbits.i18n('delete.kind.reassign.caption'))
 				.appendTo(cell);
 			
@@ -1011,7 +1023,7 @@ Tidbits.Class.Editor = function(container) {
 		if ( data === undefined || !jQuery.isArray(data) ) {
 			return;
 		}
-		self.kinds = data;
+		Tidbits.Runtime.kinds.setKinds(data);
 		var select = $('#add-tidbit-kind');
 		var tbody = $('#kind-table-body');
 		var i, len;
@@ -1030,20 +1042,7 @@ Tidbits.Class.Editor = function(container) {
 	    jQuery.getJSON('kinds.json', populateKinds);
 	    
 	    $('#add-new-kind-btn').click(handleAddNewKind);
-	    /*
-	    var handleModalFlip = function(event) {
-	    	// flip the card around
-	    	event.preventDefault();
-	    	var currTransform = flipper.css('transform');
-	    	if ( currTransform === 'none' ) {
-	    		flipper.css('transform', 'rotateY(180deg)');
-	    		bottom.addClass('alt');
-	    	} else {
-	    		bottom.removeClass('alt');
-	    		flipper.css('transform', '');
-	    	}
-	    };
-	    */
+
 	    $('#manage-categories-btn').click(function(e) {
 	    	e.preventDefault();
 	    	self.displayKinds();
@@ -1279,6 +1278,44 @@ Tidbits.Class.Kinds.prototype = {
 		for ( i = 0, len = data.length; i < len; i++ ) {
 			this.kindMap[data[i].id] = data[i].name;
 		}
+	},
+	
+	getKinds : function() {
+		return this.kinds;
+	},
+	
+	addKind : function(kind) {
+		// let's add it sorted by name
+		var i = 0, len = this.kinds.length;
+		while ( i < len && this.kinds[i].name < kind.name ) {
+			i++;
+		}
+		this.kinds.splice(i, 0, kind);
+		this.kindMap[kind.id] = kind.name;
+	},
+	
+	removeKind : function(kindId) {
+		if ( this.kindMap[kindId] !== undefined ) {
+			var i, len;
+			delete this.kindMap[kindId];
+			for ( i = 0, len = this.kinds.length; i < len; i++ ) {
+				if ( this.kinds[i].id === kindId ) {
+					this.kinds.splice(i, 1);
+				}
+			}
+		}
+	},
+	
+	updateKind : function(kind) {
+		if ( this.kindMap[kind.id] !== undefined ) {
+			this.kindMap[kind.id] = kind.name;
+			var i, len;
+			for ( i = 0, len = this.kinds.length; i < len; i++ ) {
+				if ( this.kinds[i].id === kind.id ) {
+					this.kinds[i].name = kind.name;
+				}
+			}
+		}
 	}
 };
 
@@ -1288,6 +1325,7 @@ $(document).ready(function() {
 		Tidbits.Runtime.i18n.initJson(data);
 	});
 	
+	Tidbits.Runtime.kinds = new Tidbits.Class.Kinds();
 	Tidbits.Runtime.bits = new Tidbits.Class.Bits('#card-container',
 			{top:($('#navbar').height() + 20), left:20, right:20, bottom:20});
 	Tidbits.Runtime.editor = new Tidbits.Class.Editor('#tidbit-editor');
