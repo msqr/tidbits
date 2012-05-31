@@ -1074,31 +1074,6 @@ Tidbits.Class.Editor = function(container) {
 	    	self.displayForm();
 	    });
 	    
-	    /*
-	    var handleBottomFlip = function(event) {
-	    	// flip the card up
-	    	event.preventDefault();
-	    	var show = (bottom.css('display') === 'none');
-	    	var alt = bottom.hasClass('alt');
-	    	var newTransform = (show === true ? 'rotateX(-180deg)' : '');
-	    	var otherSide = back;
-	    	if ( alt == true ) {
-	    		newTransform = 'rotateY(180deg) ' +newTransform;
-	    		otherSide = front;
-	    	}
-    		flipper.css('transform', newTransform);
-	    	if ( show === true ) {
-	    		otherSide.css('display', 'none');
-	    		bottom.css('display', 'block');
-	    	} else {
-	    		self.matrix.animateListen(flipper.get(0), function() {
-		    		otherSide.css('display', 'block');
-		    		bottom.css('display', 'none');
-	    		});
-	    	}
-	    };
-		*/
-	    
 	    $('#tidbit-form').submit(function(event) {
 			event.preventDefault();
 			$(this).ajaxSubmit(function(data, statusText) {
