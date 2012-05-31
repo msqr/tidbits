@@ -960,15 +960,6 @@ Tidbits.Class.Editor = function(container) {
 					reassignSelect.append($('<option/>').attr({value:kinds[i].id}).text(kinds[i].name));
 				}
 			}
-			/*
-			$('#kind-table-body td').each(function() {
-				var td = $(this);
-				var cellId = td.attr('data-id');
-				if ( cellId !== id ) {
-					reassignSelect.append($('<option/>').attr({value:cellId}).text(td.text()));
-				}
-			});
-			*/
 			$('<form class="form-inline" method="post" action="deleteKind.do"/>')
 				.append($('<input type="hidden" name="id"/>').val(id))
 				.append($('<input type="hidden" name="name"/>').val(name))
