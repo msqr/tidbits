@@ -5,7 +5,7 @@ body {
 	position: relative;
 	font-family: "American Typewriter", Courier, monospace;
 	font-size: 13px;
-	font-weight: lighter;
+	/*font-weight: lighter;*/
 	line-height: 18px;
 	background: url("../img/whitey.png") repeat scroll 0% 0% #E1E6EF;
 }
@@ -321,6 +321,13 @@ div.tidbit.card dl dd + dd::before {
 
 #kind-table-body form button {
 	margin-left: 1em;
+}
+
+#bit-edit-listing div {
+	margin-bottom: 0.5em;
+	max-height: 18px;
+	overflow-y: hidden;
+	cursor: pointer;
 }
 
 @media (min-width: 481px) {

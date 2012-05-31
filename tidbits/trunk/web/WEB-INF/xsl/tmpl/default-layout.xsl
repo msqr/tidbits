@@ -161,7 +161,9 @@
 					</ul>
 					
 					<ul class="nav pull-right" id="nav-add">
-						<li><button class="btn btn-primary" id="add-new-tidbit-btn">+</button></li>
+						<li><button class="btn btn-primary" id="add-new-tidbit-btn">
+							<i class="icon-plus"><xsl:text> </xsl:text></i>
+						</button></li>
 					</ul>
 						
 	            </div>
