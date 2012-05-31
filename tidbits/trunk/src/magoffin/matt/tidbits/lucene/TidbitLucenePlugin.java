@@ -178,9 +178,16 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 		tidbit.setName(doc.get(IndexField.ITEM_NAME.getFieldName()));
 		tidbit.setCreatedBy(doc.get(IndexField.CREATED_BY.getFieldName()));
 		
-		TidbitKind kind = getDomainObjectFactory().newTidbitKindInstance();
-		kind.setName(doc.get(IndexField.KIND_NAME.getFieldName()));
-		tidbit.setKind(kind);
+		String f = doc.get(IndexField.KIND_NAME.getFieldName());
+		if ( f != null ) {
+			TidbitKind kind = getDomainObjectFactory().newTidbitKindInstance();
+			kind.setName(f);	
+			f = doc.get(IndexField.KIND_ID.getFieldName());
+			if ( f != null ) {
+				kind.setId(Long.valueOf(f));
+			}
+			tidbit.setKind(kind);
+		}
 		
 		String dateStr = doc.get(IndexField.CREATED_DATE.getFieldName());
 		if ( dateStr != null ) {
@@ -281,6 +288,8 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 		if ( tidbit.getKind() != null ) {
 			doc.add(new Field(IndexField.KIND_NAME.getFieldName(), tidbit.getKind().getName(), 
 					Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field(IndexField.KIND_ID.getFieldName(), tidbit.getKind().getId().toString(),
+					Field.Store.YES, Field.Index.NOT_ANALYZED));
 			generalText.append(tidbit.getKind().getName()).append(" ");
 		}
 		

@@ -58,6 +58,10 @@
 		<xsl:call-template name="json-string">
 			<xsl:with-param name="str" select="t:kind/@name"/>
 		</xsl:call-template>
+		<xsl:if test="string-length(t:kind/@kind-id) &gt; 0">
+			<xsl:text>, "kindId":</xsl:text>
+			<xsl:value-of select="t:kind/@kind-id"/>
+		</xsl:if>
 
 		<!-- value -->
 		<xsl:text>, "value":</xsl:text>

@@ -50,6 +50,9 @@ public enum IndexField {
 	/** The Tidbit kind. */
 	KIND_NAME,
 
+	/** The Tidbit kind ID. */
+	KIND_ID,
+
 	/** The index field for an item's creation date. */
 	CREATED_DATE,
 	
@@ -78,6 +81,8 @@ public enum IndexField {
 			case ITEM_INDEX_KEY: return "idx";
 			case ITEM_NAME: return "name";
 			case KIND_NAME: return "kname";
+			case KIND_ID:
+				return "kid";
 			case MODIFIED_DATE: return "mdate";
 		}
 		throw new AssertionError(this);
@@ -99,6 +104,8 @@ public enum IndexField {
 		if ( "id".equals(field) ) return ITEM_ID;
 		if ( "idx".equals(field) ) return ITEM_INDEX_KEY;
 		if ( "kname".equals(field) ) return KIND_NAME;
+		if ( "kid".equals(field) )
+			return KIND_ID;
 		if ( "name".equals(field) ) return ITEM_NAME;
 		if ( "mdate".equals(field) ) return MODIFIED_DATE;
 		throw new IllegalArgumentException(field);
