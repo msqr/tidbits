@@ -98,7 +98,6 @@ Tidbits.touchEventNames = (function() {
  * @returns {Tidbits.Class.Matrix}
  */
 Tidbits.Class.Matrix = function() {
-	// TODO: cross-browser test for -o, -moz -ie prefix
 	var supportFloat32Array = "Float32Array" in window;
 	this.matrix = (function() {
 			var result;
@@ -111,225 +110,230 @@ Tidbits.Class.Matrix = function() {
 			}
 			return result;
 		})();
-};
-
-/**
- * Cross-browser support for various matrix properties.
- */
-Tidbits.Class.Matrix.prototype.support = (function() {
-	// adapted from jquery.transform2d.js
-	var divStyle = document.createElement("div").style;
-	var suffix = "Transform";
-	var testProperties = [
-		"O" + suffix,
-		"ms" + suffix,
-		"Webkit" + suffix,
-		"Moz" + suffix
-	];
-	var eventProperties = ["oTransitionEnd","MSTransitionEnd","webkitTransitionEnd","transitionend"];
-	var transitionProperties = ["OTransition","MSTransition","WebkitTransition","MozTransition"];
-	var transitionTransform = ["-o-transform", "-ms-transform", "-webkit-transform", "-moz-transform"];
-	var tProp = "Transform", 
-		trProp = "Transition",
-		trTransform = "transform",
-		trEndEvent = "transitionEnd";
-	var i = testProperties.length;
-	while ( i-- ) {
-		if ( testProperties[i] in divStyle ) {
-			tProp = testProperties[i];
-			trProp = transitionProperties[i];
-			trTransform = transitionTransform[i];
-			trEndEvent = eventProperties[i];
-			break;
-		}
-	}
 	
-	return {
-		use3d : (window.devicePixelRatio !== undefined && window.devicePixelRatio > 1 ? true : false),
-		tProp : tProp,
-		trProp : trProp,
-		trTransform : trTransform,
-		trEndEvent : trEndEvent
-	};
-})();
-
-/**
- * Generate a CSS matrix3d() function string from the current matrix.
- * 
- * @returns {String} the CSS matrix3d() function
- */
-Tidbits.Class.Matrix.prototype.toMatrix3D = function() {
-	return "matrix3d(" 
-			+ this.matrix[0] +"," +this.matrix[1] +",0,0,"
-			+ this.matrix[2] +',' +this.matrix[3] +",0,0,"
-			+ "0,0,1,0,"
-			+ this.matrix[4] +',' +this.matrix[5] +",0,1)";
-};
-
-/**
- * Generate a CSS matrix() function string from the current matrix.
- * 
- * @returns {String} the CSS matrix() function
- */
-Tidbits.Class.Matrix.prototype.toMatrix2D = function() {
-	return "matrix(" 
-			+ this.matrix[0] +"," +this.matrix[1] +","
-			+ this.matrix[2] +',' +this.matrix[3] +","
-			+ this.matrix[4] +',' +this.matrix[5] 
-			+")";
-};
-
-/**
- * Set the z-axis rotation of the matrix.
- * 
- * @param {Number} angle the rotation angle, in radians
- */
-Tidbits.Class.Matrix.prototype.setRotation = function(angle) {
-	// TODO this clears any scale, should we care?
-	var a = Math.cos(angle);
-	var b = Math.sin(angle);
-	this.matrix[0] = this.matrix[3] = a;
-	this.matrix[1] = (0-b);
-	this.matrix[2] = b;
-};
-
-/**
- * Set a uniform x,y scaling factor of the matrix.
- * @param {Number} s the scale factor
- */
-Tidbits.Class.Matrix.prototype.setScale = function(s) {
-	// TODO this clears any rotation, should we care?
-	this.matrix[0] = s;
-	this.matrix[3] = s;
-};
-
-/**
- * Set the current 2D translate of the matrix.
- * 
- * @param {Number} x the x offset
- * @param {Number} y the y offset
- */
-Tidbits.Class.Matrix.prototype.setTranslation = function(x, y) {
-	this.matrix[4] = x;
-	this.matrix[5] = y;
-};
-
-/**
- * Append a 2D translate to the current matrix.
- * 
- * @param {Number} x the x offset
- * @param {Number} y the y offset
- */
-Tidbits.Class.Matrix.prototype.translate = function(x, y) {
-	this.matrix[4] += x;
-	this.matrix[5] += y;
-};
-
-/**
- * Get the current 2D translation value.
- * 
- * @returns {Object} object with x,y Number properties
- */
-Tidbits.Class.Matrix.prototype.getTranslation = function() {
-	return {x:this.matrix[4], y:this.matrix[5]};
-};
-
-/**
- * Get the 2D distance between a location and this matrix's translation.
- * 
- * @param location a location object, with x,y Number properties
- * @returns {Number} the calculated distance
- */
-Tidbits.Class.Matrix.prototype.getDistanceFrom = function(location) {
-	return Math.sqrt(Math.pow((location.x - this.matrix[4]), 2), 
-			Math.pow((location.y - this.matrix[5]), 2));
-};
-
-/**
- * Apply the matrix transform to an element.
- * 
- * <p>Hi hi-res displays, the {@link #toMatrix3D()} transform is used,
- * otherwise {@link #toMatrix2D()} is used. Found that legibility of 
- * text was too blurry on older displays when 3D transform was applied,
- * but 3D transform provide better performance.</p>
- * 
- * @param {Element} elm the element to apply the transform to
- */
-Tidbits.Class.Matrix.prototype.apply = function(elm) {
-	var m = (this.support.use3d === true ? this.toMatrix3D() : this.toMatrix2D());
-	elm.style[this.support.tProp] = m;
-};
-
-/**
- * Apply a one-time animation callback listener.
- * 
- * @param elm the element to add the one-time listener to
- * @param finished
- */
-Tidbits.Class.Matrix.prototype.animateListen = function(elm, finished) {
-	var listener = undefined;
-	var self = this;
-	listener = function(event) {
-		if ( event.target === elm ) {
-			elm.removeEventListener(self.support.trEndEvent, listener, false);
-			finished.apply(self);
+	/**
+	 * Cross-browser support for various matrix properties.
+	 */
+	this.support = (function() {
+		// adapted from jquery.transform2d.js
+		var divStyle = document.createElement("div").style;
+		var suffix = "Transform";
+		var testProperties = [
+			"O" + suffix,
+			"ms" + suffix,
+			"Webkit" + suffix,
+			"Moz" + suffix
+		];
+		var eventProperties = ["oTransitionEnd","MSTransitionEnd","webkitTransitionEnd","transitionend"];
+		var transitionProperties = ["OTransition","MSTransition","WebkitTransition","MozTransition"];
+		var transitionTransform = ["-o-transform", "-ms-transform", "-webkit-transform", "-moz-transform"];
+		var tProp = "Transform", 
+			trProp = "Transition",
+			trTransform = "transform",
+			trEndEvent = "transitionEnd";
+		var i = testProperties.length;
+		while ( i-- ) {
+			if ( testProperties[i] in divStyle ) {
+				tProp = testProperties[i];
+				trProp = transitionProperties[i];
+				trTransform = transitionTransform[i];
+				trEndEvent = eventProperties[i];
+				break;
+			}
 		}
-	};
-	elm.addEventListener(self.support.trEndEvent, listener, false);
+		
+		return {
+			use3d : (window.devicePixelRatio !== undefined && window.devicePixelRatio > 1 ? true : false),
+			tProp : tProp,
+			trProp : trProp,
+			trTransform : trTransform,
+			trEndEvent : trEndEvent
+		};
+	})();
 };
 
-/**
- * Apply the matrix transform to an element, with an "ease out" transition.
- * 
- * <p>Calls {@link #apply(elm)} internally.</p>
- * 
- * @param {Element} elm the element to apply the transform to
- * @param {String} timing the CSS timing function to use
- * @param {String} duration the CSS duration to use
- * @param {Function} finished an optional callback function to execute when 
- * the animation completes
- * 
- */
-Tidbits.Class.Matrix.prototype.animate = function(elm, timing, duration, finished) {
-	var self = this;
-	this.animateListen(elm, function() {
-		elm.style[self.support.trProp] = '';
-		if ( finished !== undefined ) {
-			finished.apply(self);
-		}
-	});
-	var cssValue = this.support.trTransform 
-		+' ' 
-		+(duration !== undefined ? duration : '0.3s')
-		+' ' 
-		+(timing !== undefined ? timing : 'ease-out');
-	elm.style[this.support.trProp] = cssValue;
-	this.apply(elm);
-};
+Tidbits.Class.Matrix.prototype = {
+		
+	constructor : Tidbits.Class.Matrix,
+	
+	/**
+	 * Generate a CSS matrix3d() function string from the current matrix.
+	 * 
+	 * @returns {String} the CSS matrix3d() function
+	 */
+	toMatrix3D : function() {
+		return "matrix3d(" 
+				+ this.matrix[0] +"," +this.matrix[1] +",0,0,"
+				+ this.matrix[2] +',' +this.matrix[3] +",0,0,"
+				+ "0,0,1,0,"
+				+ this.matrix[4] +',' +this.matrix[5] +",0,1)";
+	},
+	
+	/**
+	 * Generate a CSS matrix() function string from the current matrix.
+	 * 
+	 * @returns {String} the CSS matrix() function
+	 */
+	toMatrix2D : function() {
+		return "matrix(" 
+				+ this.matrix[0] +"," +this.matrix[1] +","
+				+ this.matrix[2] +',' +this.matrix[3] +","
+				+ this.matrix[4] +',' +this.matrix[5] 
+				+")";
+	},
 
-
-/**
- * Apply the matrix transform to an element, with an "ease out" transition.
- * 
- * <p>Calls {@link #animate(elm)} internally.</p>
- * 
- * @param {Element} elm the element to apply the transform to
- * @param {Function} finished an optional callback function to execute when 
- */
-Tidbits.Class.Matrix.prototype.easeOut = function(elm, finished) {
-	this.animate(elm, 'ease-out', undefined, finished);
-};
-
-/**
- * Apply the matrix transform to an element, with an "ease in" transition.
- * 
- * <p>Calls {@link #animate(elm)} internally.</p>
- * 
- * @param {Element} elm the element to apply the transform to
- * @param {Function} finished an optional callback function to execute when 
- */
-Tidbits.Class.Matrix.prototype.easeIn = function(elm, finished) {
-	this.animate(elm, 'ease-in', undefined, finished);
+	/**
+	 * Set the z-axis rotation of the matrix.
+	 * 
+	 * @param {Number} angle the rotation angle, in radians
+	 */
+	setRotation : function(angle) {
+		// TODO this clears any scale, should we care?
+		var a = Math.cos(angle);
+		var b = Math.sin(angle);
+		this.matrix[0] = this.matrix[3] = a;
+		this.matrix[1] = (0-b);
+		this.matrix[2] = b;
+	},
+	
+	/**
+	 * Set a uniform x,y scaling factor of the matrix.
+	 * @param {Number} s the scale factor
+	 */
+	setScale : function(s) {
+		// TODO this clears any rotation, should we care?
+		this.matrix[0] = s;
+		this.matrix[3] = s;
+	},
+	
+	/**
+	 * Set the current 2D translate of the matrix.
+	 * 
+	 * @param {Number} x the x offset
+	 * @param {Number} y the y offset
+	 */
+	setTranslation : function(x, y) {
+		this.matrix[4] = x;
+		this.matrix[5] = y;
+	},
+	
+	/**
+	 * Append a 2D translate to the current matrix.
+	 * 
+	 * @param {Number} x the x offset
+	 * @param {Number} y the y offset
+	 */
+	translate : function(x, y) {
+		this.matrix[4] += x;
+		this.matrix[5] += y;
+	},
+	
+	/**
+	 * Get the current 2D translation value.
+	 * 
+	 * @returns {Object} object with x,y Number properties
+	 */
+	getTranslation : function() {
+		return {x:this.matrix[4], y:this.matrix[5]};
+	},
+	
+	/**
+	 * Get the 2D distance between a location and this matrix's translation.
+	 * 
+	 * @param location a location object, with x,y Number properties
+	 * @returns {Number} the calculated distance
+	 */
+	getDistanceFrom : function(location) {
+		return Math.sqrt(Math.pow((location.x - this.matrix[4]), 2), 
+				Math.pow((location.y - this.matrix[5]), 2));
+	},
+	
+	/**
+	 * Apply the matrix transform to an element.
+	 * 
+	 * <p>Hi hi-res displays, the {@link #toMatrix3D()} transform is used,
+	 * otherwise {@link #toMatrix2D()} is used. Found that legibility of 
+	 * text was too blurry on older displays when 3D transform was applied,
+	 * but 3D transform provide better performance.</p>
+	 * 
+	 * @param {Element} elm the element to apply the transform to
+	 */
+	apply : function(elm) {
+		var m = (this.support.use3d === true ? this.toMatrix3D() : this.toMatrix2D());
+		elm.style[this.support.tProp] = m;
+	},
+	
+	/**
+	 * Apply a one-time animation callback listener.
+	 * 
+	 * @param elm the element to add the one-time listener to
+	 * @param finished
+	 */
+	animateListen : function(elm, finished) {
+		var listener = undefined;
+		var self = this;
+		listener = function(event) {
+			if ( event.target === elm ) {
+				elm.removeEventListener(self.support.trEndEvent, listener, false);
+				finished.apply(self);
+			}
+		};
+		elm.addEventListener(self.support.trEndEvent, listener, false);
+	},
+	
+	/**
+	 * Apply the matrix transform to an element, with an "ease out" transition.
+	 * 
+	 * <p>Calls {@link #apply(elm)} internally.</p>
+	 * 
+	 * @param {Element} elm the element to apply the transform to
+	 * @param {String} timing the CSS timing function to use
+	 * @param {String} duration the CSS duration to use
+	 * @param {Function} finished an optional callback function to execute when 
+	 * the animation completes
+	 * 
+	 */
+	animate : function(elm, timing, duration, finished) {
+		var self = this;
+		this.animateListen(elm, function() {
+			elm.style[self.support.trProp] = '';
+			if ( finished !== undefined ) {
+				finished.apply(self);
+			}
+		});
+		var cssValue = this.support.trTransform 
+			+' ' 
+			+(duration !== undefined ? duration : '0.3s')
+			+' ' 
+			+(timing !== undefined ? timing : 'ease-out');
+		elm.style[this.support.trProp] = cssValue;
+		this.apply(elm);
+	},
+	
+	
+	/**
+	 * Apply the matrix transform to an element, with an "ease out" transition.
+	 * 
+	 * <p>Calls {@link #animate(elm)} internally.</p>
+	 * 
+	 * @param {Element} elm the element to apply the transform to
+	 * @param {Function} finished an optional callback function to execute when 
+	 */
+	easeOut : function(elm, finished) {
+		this.animate(elm, 'ease-out', undefined, finished);
+	},
+	
+	/**
+	 * Apply the matrix transform to an element, with an "ease in" transition.
+	 * 
+	 * <p>Calls {@link #animate(elm)} internally.</p>
+	 * 
+	 * @param {Element} elm the element to apply the transform to
+	 * @param {Function} finished an optional callback function to execute when 
+	 */
+	easeIn : function(elm, finished) {
+		this.animate(elm, 'ease-in', undefined, finished);
+	}
 };
 
 /**
@@ -387,85 +391,87 @@ Tidbits.Class.Bit = function(data, bits, container) {
 	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
 };
 
-Tidbits.Class.Bit.prototype.getName = function() {
-	return this.name;
-};
-
-/**
- * Add info details to the info model.
- * 
- * @param {Object} data the info data to insert
- */
-Tidbits.Class.Bit.prototype.addDetails = function(data) {
-	if ( data === undefined || data.kind === undefined ) {
-		return;
-	}
-	// {id:1, kind:"Foo", kindId:2, name:"Bar",...}
-	var info = this.info[data.kindId];
-	if ( info === undefined ) {
-		this.info[data.kindId] = [];
-		info = this.info[data.kindId];
-	}
-	var i, len;
-	for ( i = 0, len = info.length; i < len; i++ ) {
-		if ( info[i].id === data.id ) {
-			// update existing value
-			info[i].value = data.value;
+Tidbits.Class.Bit.prototype = {
+	getName : function() {
+		return this.name;
+	},
+	
+	/**
+	 * Add info details to the info model.
+	 * 
+	 * @param {Object} data the info data to insert
+	 */
+	addDetails : function(data) {
+		if ( data === undefined || data.kind === undefined ) {
 			return;
 		}
-	}
-	info.push({id:data.id, value:data.value});
-};
-
-/**
- * Call-back function for extending classes to implement.
- * 
- * <p>This method will be called by the {@link #insertIntoDocument(Element)}
- * function.</p>
- * 
- * @param {Element} container the DOM element this Bit will be inserted into
- */
-Tidbits.Class.Bit.prototype.willInsertIntoDocument = function(container) {};
-
-/**
- * Refresh own DOM structure and then insert into the container DOM element.
- * 
- * @param {Element} container the DOM element to insert this Bit into
- */
-Tidbits.Class.Bit.prototype.insertIntoDocument = function(container) {
-	// create list elements
-	this.refresh();
-	this.willInsertIntoDocument(container);
-	$(container).append(this.element);
-};
-
-/**
- * Refresh own DOM structure.
- * 
- * <p>This will delete all children elements of this Bit's container
- * element and re-create them using the current model info.</p>
- */
-Tidbits.Class.Bit.prototype.refresh = function() {
-	this.listElement.empty();
-	var kindId = undefined;
-	var i, len, details;
-	for ( kindId in this.info ) {
-		this.listElement.append($('<dt/>').text(
-				Tidbits.Runtime.kinds.getName(kindId)));
-		details = this.info[kindId];
-		for ( i = 0, len = details.length; i < len; i++ ) {
-			this.listElement.append($('<dd/>').text(details[i].value));
+		// {id:1, kind:"Foo", kindId:2, name:"Bar",...}
+		var info = this.info[data.kindId];
+		if ( info === undefined ) {
+			this.info[data.kindId] = [];
+			info = this.info[data.kindId];
 		}
+		var i, len;
+		for ( i = 0, len = info.length; i < len; i++ ) {
+			if ( info[i].id === data.id ) {
+				// update existing value
+				info[i].value = data.value;
+				return;
+			}
+		}
+		info.push({id:data.id, value:data.value});
+	},
+	
+	/**
+	 * Call-back function for extending classes to implement.
+	 * 
+	 * <p>This method will be called by the {@link #insertIntoDocument(Element)}
+	 * function.</p>
+	 * 
+	 * @param {Element} container the DOM element this Bit will be inserted into
+	 */
+	willInsertIntoDocument : function(container) {},
+	
+	/**
+	 * Refresh own DOM structure and then insert into the container DOM element.
+	 * 
+	 * @param {Element} container the DOM element to insert this Bit into
+	 */
+	insertIntoDocument : function(container) {
+		// create list elements
+		this.refresh();
+		this.willInsertIntoDocument(container);
+		$(container).append(this.element);
+	},
+	
+	/**
+	 * Refresh own DOM structure.
+	 * 
+	 * <p>This will delete all children elements of this Bit's container
+	 * element and re-create them using the current model info.</p>
+	 */
+	refresh : function() {
+		this.listElement.empty();
+		var kindId = undefined;
+		var i, len, details;
+		for ( kindId in this.info ) {
+			this.listElement.append($('<dt/>').text(
+					Tidbits.Runtime.kinds.getName(kindId)));
+			details = this.info[kindId];
+			for ( i = 0, len = details.length; i < len; i++ ) {
+				this.listElement.append($('<dd/>').text(details[i].value));
+			}
+		}
+	},
+	
+	/**
+	 * Get the info model object.
+	 * 
+	 * @returns {Object} the bit info
+	 */
+	getInfo : function() {
+		return this.info;
 	}
-};
-
-/**
- * Get the info model object.
- * 
- * @returns {Object} the bit info
- */
-Tidbits.Class.Bit.prototype.getInfo = function() {
-	return this.info;
 };
 
 /**
@@ -1095,11 +1101,9 @@ Tidbits.Class.Editor = function(container) {
 	    
 	    $('#tidbit-form').submit(function(event) {
 			event.preventDefault();
-			//Tidbits.Runtime.editor.hide();
 			$(this).ajaxSubmit(function(data, statusText) {
 				if ( 'success' === statusText ) {
-					populateTidbits(data, true);
-					// TODO: handleBottomFlip();
+					self.postedForm(data);
 				} else {
 					Tidbits.errorAlert('<h4 class="alert-heading">' 
 							+Tidbits.i18n('tidbit.save.error.title') 
@@ -1113,6 +1117,17 @@ Tidbits.Class.Editor = function(container) {
 };
 
 Tidbits.Class.Editor.prototype = {
+		
+	postedForm : function(data) {
+		if ( this.bit !== undefined ) {
+			// TODO this.bit.;
+			this.bit.addDetails(data);
+		} else {
+			Tidbits.Runtime.bits.addBit(data);
+			//Tidbits.Runtime.bits.refreshData(data, true);
+		}
+		// TODO: handleBottomFlip();
+	},
 		
 	toggleFormAndKinds : function() {
 		if ( this.flipper.hasClass('alt') ) {
