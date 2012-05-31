@@ -396,10 +396,11 @@ Tidbits.Class.Bit.prototype.addDetails = function(data) {
 	if ( data === undefined || data.kind === undefined ) {
 		return;
 	}
-	var info = this.info[data.kind];
+	// {id:1, kind:"Foo", kindId:2, name:"Bar",...}
+	var info = this.info[data.kindId];
 	if ( info === undefined ) {
-		this.info[data.kind] = [];
-		info = this.info[data.kind];
+		this.info[data.kindId] = [];
+		info = this.info[data.kindId];
 	}
 	var i, len;
 	for ( i = 0, len = info.length; i < len; i++ ) {
@@ -442,11 +443,12 @@ Tidbits.Class.Bit.prototype.insertIntoDocument = function(container) {
  */
 Tidbits.Class.Bit.prototype.refresh = function() {
 	this.listElement.empty();
-	var prop = undefined;
+	var kindId = undefined;
 	var i, len, details;
-	for ( prop in this.info ) {
-		this.listElement.append($('<dt/>').text(prop));
-		details = this.info[prop];
+	for ( kindId in this.info ) {
+		this.listElement.append($('<dt/>').text(
+				Tidbits.Runtime.kinds.getName(kindId)));
+		details = this.info[kindId];
 		for ( i = 0, len = details.length; i < len; i++ ) {
 			this.listElement.append($('<dd/>').text(details[i].value));
 		}
@@ -620,8 +622,7 @@ Tidbits.Class.Card = function(data, bits) {
 
 	longTouch = function() {
 		touchCancel();
-		console.log("long touch");
-		Tidbits.Runtime.editor.edit(self);
+		// not using this for the moment... console.log("long touch");
 	};
 	
 	elm.addEventListener(Tidbits.touchEventNames.start, touchStart, false);
@@ -1296,6 +1297,10 @@ Tidbits.Class.Kinds.prototype = {
 	
 	getKinds : function() {
 		return this.kinds;
+	},
+	
+	getName : function(kindId) {
+		return this.kindMap[Number(kindId)];
 	},
 	
 	/**
