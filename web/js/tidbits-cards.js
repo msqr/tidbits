@@ -347,7 +347,7 @@ Tidbits.Class.Bit = function(data, bits, container) {
 	this.name = data.name;
 	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
 	this.refreshElement = $('<button class="action"><i class="action ticon icon-refresh-t">\uf021</i></button>');
-	this.addElement = $('<button class="action"><i class="action icon-plus"></i></button>');
+	this.addElement = $('<button class="action"><i class="action icon-edit"></i></button>');
 	this.element = $(container)
 		.append(this.addElement)
 		.append(this.refreshElement)
@@ -379,11 +379,10 @@ Tidbits.Class.Bit = function(data, bits, container) {
 	var handleAdd = function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		$('#add-tidbit-name').val(self.name);
-		Tidbits.Runtime.editor.show();
-		$('#add-tidbit-kind').focus();
+		Tidbits.Runtime.editor.edit(self);
 	};
 
+	// use 'start' event here because 'click' never captured with card handling events
 	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
 	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
 };
@@ -622,6 +621,7 @@ Tidbits.Class.Card = function(data, bits) {
 	longTouch = function() {
 		touchCancel();
 		console.log("long touch");
+		Tidbits.Runtime.editor.edit(self);
 	};
 	
 	elm.addEventListener(Tidbits.touchEventNames.start, touchStart, false);
@@ -852,16 +852,20 @@ Tidbits.Class.Bits = function(container, margins) {
  * @param {Element} container the editor container
  * @returns {Tidbits.Class.Editor}
  */
-Tidbits.Class.Editor = function(container, toggle) {
+Tidbits.Class.Editor = function(container) {
 	this.element = $(container);
 	this.elm = this.element.get(0);
 	this.matrix = new Tidbits.Class.Matrix();
+	this.bit = undefined;
+	this.editModel = {};
+	this.kinds = {};
 	
 	var self = this;
-	var flipper = this.element.find('.flipper');
-	var front = this.element.find('.front');
-	var back = this.element.find('.back');
-	var bottom = this.element.find('.bottom');
+	
+	this.flipper = this.element.find('.flipper');
+	this.front = this.element.find('.front');
+	this.back = this.element.find('.back');
+	this.bottom = this.element.find('.bottom');
 	
 	var handleKindEditClick = undefined;
 	
@@ -1007,6 +1011,7 @@ Tidbits.Class.Editor = function(container, toggle) {
 		if ( data === undefined || !jQuery.isArray(data) ) {
 			return;
 		}
+		self.kinds = data;
 		var select = $('#add-tidbit-kind');
 		var tbody = $('#kind-table-body');
 		var i, len;
@@ -1018,33 +1023,14 @@ Tidbits.Class.Editor = function(container, toggle) {
 	
 	// private init
 	(function() {
-		/* TODO: re-add this
 		self.element.find('button[data-dismiss=editor]').click(function() {
 			self.hide();
-		});*/
-		$(toggle).click(function(e) {
-			e.preventDefault();
-			self.show();
 		});
 
 	    jQuery.getJSON('kinds.json', populateKinds);
 	    
-	    $('#tidbit-form').submit(function(event) {
-			event.preventDefault();
-			Tidbits.Runtime.editor.hide();
-			$(this).ajaxSubmit(function(data, statusText) {
-				if ( 'success' === statusText ) {
-					populateTidbits(data, true);
-				} else {
-					Tidbits.errorAlert('<h4 class="alert-heading">' 
-							+Tidbits.i18n('tidbit.save.error.title') 
-							+'</h4>' +statusText);
-				}
-			});
-		});
-	    
 	    $('#add-new-kind-btn').click(handleAddNewKind);
-	    
+	    /*
 	    var handleModalFlip = function(event) {
 	    	// flip the card around
 	    	event.preventDefault();
@@ -1057,9 +1043,17 @@ Tidbits.Class.Editor = function(container, toggle) {
 	    		flipper.css('transform', '');
 	    	}
 	    };
-	    $('#manage-categories-btn').click(handleModalFlip);
-	    $('#manage-tidbit-btn').click(handleModalFlip);
+	    */
+	    $('#manage-categories-btn').click(function(e) {
+	    	e.preventDefault();
+	    	self.displayKinds();
+	    });
+	    $('#manage-tidbit-btn').click(function(e) {
+	    	e.preventDefault();
+	    	self.displayForm();
+	    });
 	    
+	    /*
 	    var handleBottomFlip = function(event) {
 	    	// flip the card up
 	    	event.preventDefault();
@@ -1082,42 +1076,210 @@ Tidbits.Class.Editor = function(container, toggle) {
 	    		});
 	    	}
 	    };
-	    flipper.find('button[data-dismiss=editor]').click(handleBottomFlip);
-	    //$('#manage-categories-btn').click(handleModalFlip);
-	    //$('#manage-tidbit-btn').click(handleModalFlip);
+		*/
 	    
+	    $('#tidbit-form').submit(function(event) {
+			event.preventDefault();
+			//Tidbits.Runtime.editor.hide();
+			$(this).ajaxSubmit(function(data, statusText) {
+				if ( 'success' === statusText ) {
+					populateTidbits(data, true);
+					// TODO: handleBottomFlip();
+				} else {
+					Tidbits.errorAlert('<h4 class="alert-heading">' 
+							+Tidbits.i18n('tidbit.save.error.title') 
+							+'</h4>' +statusText);
+				}
+			});
+		});
+	    
+	    //flipper.find('button[data-dismiss=editor]').click(handleBottomFlip);
 	})();
 };
 
-Tidbits.Class.Editor.prototype.show = function() {
-	var win = $(window);
-	var halfWidth = this.element.width() / 2;
-	var halfHeight = this.element.height() / 2;
-	var centerX = Math.floor(win.width() / 2 - halfWidth);
-	var centerY = Math.floor(win.height() / 2 - halfHeight);
-	var self = this;
-	var move = function() {
-		self.matrix.setTranslation(centerX, centerY);
-		self.matrix.easeOut(self.elm, function() {
-	    	$('#add-tidbit-name').focus();
-		});;
-	};
-	if ( this.element.css('visibility') === 'hidden' ) {
-		this.matrix.setTranslation(centerX, halfHeight * -3);
-		this.matrix.apply(this.elm);
-		this.element.css('visibility', '');
-		setTimeout(move, 10);
-	} else {
-		move();
+Tidbits.Class.Editor.prototype = {
+		
+	toggleFormAndKinds : function() {
+		if ( this.flipper.hasClass('alt') ) {
+			this.flipper.removeClass('alt');
+			this.bottom.removeClass('alt');
+			this.flipper.css('transform', '');
+		} else {
+			this.flipper.addClass('alt');
+			this.flipper.css('transform', 'rotateY(180deg)');
+			this.bottom.addClass('alt');
+		}
+	},
+	
+	displayKinds : function() {
+		if ( !this.flipper.hasClass('alt') ) {
+			this.toggleFormAndKinds();
+		}
+	},
+	
+	displayForm : function() {
+		this.hideList();
+		if ( this.flipper.hasClass('alt') ) {
+			this.toggleFormAndKinds();
+		}
+	},
+	
+	toggleList : function() {
+		var show = (this.bottom.css('display') === 'none');
+		var alt = this.bottom.hasClass('alt');
+		var newTransform = (show === true ? 'rotateX(-180deg)' : '');
+		var otherSide = this.back;
+		if ( alt == true ) {
+			newTransform = 'rotateY(180deg) ' +newTransform;
+			otherSide = this.front;
+		}
+		this.flipper.css('transform', newTransform);
+		if ( show === true ) {
+			otherSide.css('display', 'none');
+			this.bottom.css('display', 'block');
+		} else {
+			var bottom = this.bottom;
+			this.matrix.animateListen(this.flipper.get(0), function() {
+	    		otherSide.css('display', 'block');
+	    		bottom.css('display', 'none');
+			});
+		}
+	},
+	
+	displayList : function() {
+		if ( this.bottom.css('display') === 'none' ) {
+			this.toggleList();
+		}
+	},
+	
+	hideList : function() {
+		if ( this.bottom.css('display') !== 'none' ) {
+			this.toggleList();
+		}
+	},
+	
+	editCrumb : function(id, kindName) {
+		
+		// try first via kindName, if available
+		if ( kindName !== undefined ) {
+			
+		}
+	},
+	
+	setBit : function(bit) {
+		this.bit = bit;
+		
+		// update view according to model
+		var info = (bit === undefined ? {} : bit.getInfo());
+		
+		// populate list
+		var table = $('#bit-edit-listing').empty();
+		var kindName = undefined;
+		var kindValues = undefined;
+		var i, len;
+		var self = this;
+		for ( kindName in info ) {
+			$('<h4/>').text(kindName).appendTo(table);
+			kindValues = info[kindName];
+			for ( i = 0, len = kindValues.length; i < len; i++ ) {
+				$('<div class="row"/>')
+					.attr({'data-id':kindValues[i].id})
+					.text(kindValues[i].value)
+					.click(function(e) {
+						e.preventDefault();
+						var id = this.attr('data-id');
+						self.editCrumb(id, kindName);
+					})
+					.appendTo(table);
+			}
+		};
+	},
+	
+	/**
+	 * Display the editor for a specific Bit.
+	 * 
+	 * @param {Tidbits.Class.Bit} bit the Bit to edit
+	 */
+	edit : function(bit) {
+		this.setBit(bit);
+		if ( bit === undefined ) {
+			// creating a new one from scratch
+			this.displayForm();
+		} else {
+			// editing existing bit
+			this.displayList();
+		}
+		this.show();
+	},
+	
+	/**
+	 * Display the editor for a new Bit.
+	 */
+	show : function() {
+		var win = $(window);
+		var halfWidth = this.element.width() / 2;
+		var halfHeight = this.element.height() / 2;
+		var centerX = Math.floor(win.width() / 2 - halfWidth);
+		var centerY = Math.floor(win.height() / 2 - halfHeight);
+		var self = this;
+		var move = function() {
+			self.matrix.setTranslation(centerX, centerY);
+			self.matrix.easeOut(self.elm, function() {
+		    	$('#add-tidbit-name').focus();
+			});
+		};
+		if ( this.element.css('visibility') === 'hidden' ) {
+			this.matrix.setTranslation(centerX, halfHeight * -3);
+			this.matrix.apply(this.elm);
+			this.element.css('visibility', '');
+			setTimeout(move, 10);
+		} else {
+			move();
+		}
+	},
+	
+	hide : function() {
+		var height = this.element.height();
+		this.matrix.setTranslation(
+				this.matrix.getTranslation().x, 
+				Math.ceil(height * -1.5));
+		this.matrix.easeIn(this.elm);
 	}
 };
 
-Tidbits.Class.Editor.prototype.hide = function() {
-	var height = this.element.height();
-	this.matrix.setTranslation(
-			this.matrix.getTranslation().x, 
-			Math.ceil(height * -1.5));
-	this.matrix.easeIn(this.elm);
+/**
+ * Manage the list of kinds.
+ * 
+ * @returns {Tidbits.Class.Kinds}
+ */
+Tidbits.Class.Kinds = function() {
+	this.kinds = []; 	// array of {id:1,name:"foo"}
+	this.kindMap = {};	// map of id -> name
+};
+
+Tidbits.Class.Kinds.prototype = {
+		
+	/**
+	 * Set the array of kind data.
+	 * 
+	 * <p>The data is expected to look like 
+	 * <pre>[{id:1,name:"foo"},...]</pre>.</p>
+	 * 
+	 * @param data the array of Kind objects
+	 */
+	setKinds : function(data) {
+		if ( !Array.isArray(data) ) {
+			this.kinds = [];
+			this.kindMap = {};
+			return;
+		}
+		this.kinds = data;
+		this.kindMap = {};
+		var i, len;
+		for ( i = 0, len = data.length; i < len; i++ ) {
+			this.kindMap[data[i].id] = data[i].name;
+		}
+	}
 };
 
 $(document).ready(function() {
@@ -1128,5 +1290,10 @@ $(document).ready(function() {
 	
 	Tidbits.Runtime.bits = new Tidbits.Class.Bits('#card-container',
 			{top:($('#navbar').height() + 20), left:20, right:20, bottom:20});
-	Tidbits.Runtime.editor = new Tidbits.Class.Editor('#tidbit-editor', '#add-new-tidbit-btn');
+	Tidbits.Runtime.editor = new Tidbits.Class.Editor('#tidbit-editor');
+	$('#add-new-tidbit-btn').click(function(e) {
+		e.preventDefault();
+		Tidbits.Runtime.editor.edit();
+	});
+
 });

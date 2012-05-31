@@ -75,9 +75,6 @@
 						<button type="button" class="btn pull-left" id="manage-categories-btn">
 							<i class="icon-list"><xsl:text> </xsl:text></i>
 						</button>
-						<button type="button" class="btn pull-left" id="manage-categories-btn">
-							<i class="icon-edit"><xsl:text> </xsl:text></i>
-						</button>
 						<button type="button" class="btn" data-dismiss="editor">
 							<xsl:value-of select="key('i18n','close')"/>
 						</button>
@@ -86,8 +83,12 @@
 						</button>
 					</div>
 				</form>
+				
 				<div class="face back form-horizontal">
 					<div class="header">
+						<button type="button" class="btn btn-mini btn-primary pull-right" id="add-new-kind-btn">
+							<i class="icon-plus"><xsl:text> </xsl:text></i>
+						</button>
 						<h3><xsl:value-of select="key('i18n', 'edit.kinds.title')"/></h3>
 					</div>
 					<fieldset class="body">
@@ -98,30 +99,39 @@
 						</table>
 					</fieldset>
 					<div class="footer modal-footer">
-						<button type="button" class="btn pull-left" id="manage-tidbit-btn">
-							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
-						</button>
 						<button type="button" class="btn" data-dismiss="editor">
 							<xsl:value-of select="key('i18n','close')"/>
 						</button>
-						<button type="submit" class="btn btn-primary" id="add-new-kind-btn">
-							<xsl:value-of select="key('i18n','link.add.tidbitkind')"/>
+						<button type="submit" class="btn btn-primary" id="manage-tidbit-btn">
+							<xsl:value-of select="key('i18n','done.displayName')"/>
 						</button>
 					</div>
 				</div>
+				
 				<div class="face bottom form-horizontal">
 					<div class="header">
-						<h3>Tidbit Listing</h3>
+						<button type="button" class="btn btn-mini btn-primary pull-right" id="add-tidbit-value-btn">
+							<i class="icon-plus"><xsl:text> </xsl:text></i>
+						</button>
+						<h3><xsl:value-of select="key('i18n','manage.tidbit.title')"/></h3>
+					</div>
+					<div class="body">
+						<div class="alert alert-info">
+							<button class="close btn btn-mini" type="button" data-dismiss="alert">
+								<i class="icon-remove"><xsl:text> </xsl:text></i>
+							</button>
+							<xsl:value-of select="key('i18n','manage.tidbit.info')"/>
+						</div>
+						<div id="bit-edit-listing">
+							<xsl:text> </xsl:text>
+						</div>
 					</div>
 					<div class="footer modal-footer">
-						<button type="button" class="btn pull-left" id="manage-tidbit-btn">
-							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
-						</button>
 						<button type="button" class="btn" data-dismiss="editor">
 							<xsl:value-of select="key('i18n','close')"/>
 						</button>
-						<button type="submit" class="btn btn-primary" id="add-new-kind-btn">
-							<xsl:value-of select="key('i18n','link.add.tidbit')"/>
+						<button type="submit" class="btn btn-primary" id="manage-tidbit-btn">
+							<xsl:value-of select="key('i18n','done.displayName')"/>
 						</button>
 					</div>
 				</div>
