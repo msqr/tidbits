@@ -1169,10 +1169,13 @@ Tidbits.Class.Editor.prototype = {
 	},
 	
 	editCrumb : function(id, kindName) {
+		var group = undefined;
+		var crumb = undefined;
+		var info = this.bit.getInfo();
 		
 		// try first via kindName, if available
 		if ( kindName !== undefined ) {
-			
+			group = info[kindName];
 		}
 	},
 	
@@ -1197,7 +1200,7 @@ Tidbits.Class.Editor.prototype = {
 					.text(kindValues[i].value)
 					.click(function(e) {
 						e.preventDefault();
-						var id = this.attr('data-id');
+						var id = $(this).attr('data-id');
 						self.editCrumb(id, kindName);
 					})
 					.appendTo(table);
