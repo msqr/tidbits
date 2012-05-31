@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-	Convert search results into JSON data.
+	Convert search results, or just tidbit results, into JSON data.
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:t="http://msqr.us/xsd/TidBits" xmlns:x="http://msqr.us/xsd/jaxb-web"
@@ -14,6 +14,9 @@
 	<xsl:template match="x:x-data">
 		<xsl:text>{&#xa;</xsl:text>
 		<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results"/>
+		<xsl:text>"tidbits": [</xsl:text>
+		<xsl:apply-templates select="//t:tidbit"/>
+		<xsl:text>&#xa;]</xsl:text>
 		<xsl:text>&#xa;}</xsl:text>
 	</xsl:template>
 
@@ -35,9 +38,7 @@
 				<xsl:text>0,&#xa;"pageSize": 0</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-		<xsl:text>,&#xa;"tidbits": [</xsl:text>
-		<xsl:apply-templates select="t:tidbit"/>
-		<xsl:text>&#xa;]</xsl:text>
+		<xsl:text>,&#xa;</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="t:tidbit">
