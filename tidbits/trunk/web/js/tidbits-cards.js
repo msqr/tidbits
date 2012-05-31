@@ -716,6 +716,8 @@ Tidbits.Class.Card.prototype.willInsertIntoDocument = function(container) {
  * @returns {Tidbits.Class.Bits}
  */
 Tidbits.Class.Bits = function(container, margins) {
+	this.margins = margins;
+
 	var bits = {};
 	var bitz = [];
 	var cardsContainer = $(container);
@@ -723,7 +725,7 @@ Tidbits.Class.Bits = function(container, margins) {
 	var cardMode = false;
 	
 	var populateTidbits = function(data, ascending) {
-		if ( data === undefined || !jQuery.isArray(data.tidbits) ) {
+		if ( data === undefined || !Array.isArray(data.tidbits) ) {
 			return;
 		}
 		var i, len;
@@ -854,7 +856,32 @@ Tidbits.Class.Bits = function(container, margins) {
 		populateTidbits(data, ascending);
 	};
 	
-	this.margins = margins;
+	/**
+	 * Get a Bit by it's name.
+	 * 
+	 * @param {String} name the name of the Bit to get
+	 * @returns the Bit, or undefined
+	 */
+	this.getBitByName = function(name) {
+		return bits[name];
+	};
+	
+	/**
+	 * Add a Bit from a post result.
+	 * 
+	 * <p>The data should be in the form 
+	 * <pre>{tidbits:[{id:1,name:"Foo",...},...]}</pre></p>
+	 * 
+	 * @param {Object} data the Bit data
+	 * @param {Array} data.tidbits the array of tidbit data to add
+	 * @returns {Tidbits.Class.Bit} the added Bit
+	 */
+	this.addBit = function(data) {
+		if ( data !== undefined && Array.isArray(data.tidbits) && data.tidbits.length > 0 ) {
+			populateTidbits(data, true);
+			return this.getBitByName(data.tidbits[0].name);
+		}
+	};
 };
 
 /**
@@ -1042,7 +1069,7 @@ Tidbits.Class.Editor = function(container) {
 	
 	// [{id:1, name:Password},...]
 	var populateKinds = function(data) {
-		if ( data === undefined || !jQuery.isArray(data) ) {
+		if ( data === undefined || !Array.isArray(data) ) {
 			return;
 		}
 		Tidbits.Runtime.kinds.setKinds(data);
@@ -1095,13 +1122,14 @@ Tidbits.Class.Editor.prototype = {
 		
 	postedForm : function(data) {
 		if ( this.bit !== undefined ) {
-			// TODO this.bit.;
 			this.bit.addDetails(data);
+			
+			// TODO: implement updateBit method, instead of recreate entire list each time?
+			this.setBit(this.bit);
 		} else {
-			Tidbits.Runtime.bits.addBit(data);
-			//Tidbits.Runtime.bits.refreshData(data, true);
+			this.setBit(Tidbits.Runtime.bits.addBit(data));
 		}
-		// TODO: handleBottomFlip();
+		this.displayList();
 	},
 		
 	toggleFormAndKinds : function() {
@@ -1405,6 +1433,8 @@ $(document).ready(function() {
 	jQuery.getJSON('messages.json', function(data) {
 		Tidbits.Runtime.i18n.initJson(data);
 	});
+	
+	$('textarea').val(''); // from XSLT, remove whitespace
 	
 	Tidbits.Runtime.kinds = new Tidbits.Class.Kinds();
 	Tidbits.Runtime.bits = new Tidbits.Class.Bits('#card-container',
