@@ -876,23 +876,43 @@ Tidbits.Class.Editor = function(container) {
 		var name = me.find('input[name=name]').val();
 		me.ajaxSubmit(function(data, statusText) {
 			if ( 'success' === statusText && Array.isArray(data) && data.length > 0 ) {
-				// restore click to edit handler
-				me.parent().bind('click', handleKindEditClick);
+				var td = me.parent();
+				var newKind = data[0];
 				
 				// set @data-id, in case submitted new value
-				var newId = data[0].id;
-				me.parent().attr({'data-id':newId});
+				var newId = newKind.id;
+				td.attr({'data-id':newId});
 				
 				// replace form with text
 				me.replaceWith(name);
 				
+				var idx = 0;
+				var opt = undefined;
+				
 				if ( id !== '' ) {
 					// update existing category
-					$('option[value="'+id+'"]').text(name);
+					idx = Tidbits.Runtime.kinds.updateKind(newKind);
+					opt = $('option[value="'+id+'"]').text(name);
 				} else {
 					// add new category
-					$('#add-tidbit-kind').append($('<option/>').attr({value:newId}).text(name));
+					idx = Tidbits.Runtime.kinds.addKind(newKind);
+					opt = $('<option/>').attr({value:newId}).text(name);
 				}
+				
+				// re-order options and list
+				if ( idx === 0 ) {
+					td.parent().parent().prepend(td.parent());
+					$('#add-tidbit-kind').prepend(opt);
+				} else {
+					var table = td.parent().parent();
+					var tr = td.parent().remove();
+					table.find('tr').eq(idx-1).after(tr);
+					opt.remove();
+					$('#add-tidbit-kind option').eq(idx-1).after(opt);
+				}
+				
+				// restore click to edit handler
+				td.bind('click', handleKindEditClick);
 			} else {
 				Tidbits.errorAlert('<h4 class="alert-heading">' 
 						+Tidbits.i18n('kind.save.error.title') 
@@ -1275,6 +1295,12 @@ Tidbits.Class.Kinds.prototype = {
 		return this.kinds;
 	},
 	
+	/**
+	 * Add a new Kind object, and return it's position in the array of kinds.
+	 * 
+	 * @param kind the kind to add
+	 * @returns {Number} the index of the added kind
+	 */
 	addKind : function(kind) {
 		// let's add it sorted by name
 		var i = 0, len = this.kinds.length;
@@ -1283,30 +1309,44 @@ Tidbits.Class.Kinds.prototype = {
 		}
 		this.kinds.splice(i, 0, kind);
 		this.kindMap[kind.id] = kind.name;
+		return i;
 	},
 	
+	/**
+	 * Remove a kind.
+	 * 
+	 * @param kindId the ID of the kind to remove
+	 * @returns {Object} the removed kind
+	 */
 	removeKind : function(kindId) {
+		var removed = undefined;
 		if ( this.kindMap[kindId] !== undefined ) {
 			var i, len;
 			delete this.kindMap[kindId];
 			for ( i = 0, len = this.kinds.length; i < len; i++ ) {
 				if ( this.kinds[i].id === kindId ) {
+					removed = this.kinds[i];
 					this.kinds.splice(i, 1);
+					break;
 				}
 			}
 		}
+		return removed;
 	},
 	
+	/**
+	 * Update the name of a kind, and return the new index of the kind.
+	 * 
+	 * @param {Object} kind the kind to update
+	 * @return {Number} the index of the updated kind
+	 */
 	updateKind : function(kind) {
-		if ( this.kindMap[kind.id] !== undefined ) {
-			this.kindMap[kind.id] = kind.name;
-			var i, len;
-			for ( i = 0, len = this.kinds.length; i < len; i++ ) {
-				if ( this.kinds[i].id === kind.id ) {
-					this.kinds[i].name = kind.name;
-				}
-			}
+		var old = this.removeKind(kind.id);
+		var idx = 0;
+		if ( old !== undefined ) {
+			idx = this.addKind(kind);
 		}
+		return idx;
 	}
 };
 
