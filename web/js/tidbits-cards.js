@@ -387,6 +387,10 @@ Tidbits.Class.Bit = function(data, bits, container) {
 	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
 };
 
+Tidbits.Class.Bit.prototype.getName = function() {
+	return this.name;
+};
+
 /**
  * Add info details to the info model.
  * 
@@ -1128,7 +1132,22 @@ Tidbits.Class.Editor.prototype = {
 		}
 	},
 	
-	displayForm : function() {
+	displayForm : function(crumb, kindId) {
+		if ( crumb !== undefined ) {
+			$('#edit-tidbit-id').val(crumb.id);
+			$('#add-tidbit-data').val(crumb.value);
+		}
+		$('#add-tidbit-name').val((this.bit === undefined ? '' : this.bit.getName()));
+		
+		var kindOpt;
+		if ( kindId !== undefined ) {
+			kindOpt = $('#add-tidbit-kind option[value="'+kindId+'"]');
+		} else {
+			kindOpt = $('#add-tidbit-kind option:first-child');
+		}
+		if ( kindOpt.size() > 0 ) {
+			kindOpt.get(0).selected = true;
+		}
 		this.hideList();
 		if ( this.flipper.hasClass('alt') ) {
 			this.toggleFormAndKinds();
@@ -1144,7 +1163,6 @@ Tidbits.Class.Editor.prototype = {
 			newTransform = 'rotateY(180deg) ' +newTransform;
 			otherSide = this.front;
 		}
-		this.flipper.css('transform', newTransform);
 		if ( show === true ) {
 			otherSide.css('display', 'none');
 			this.bottom.css('display', 'block');
@@ -1155,6 +1173,7 @@ Tidbits.Class.Editor.prototype = {
 	    		bottom.css('display', 'none');
 			});
 		}
+		this.flipper.css('transform', newTransform);
 	},
 	
 	displayList : function() {
@@ -1169,15 +1188,44 @@ Tidbits.Class.Editor.prototype = {
 		}
 	},
 	
-	editCrumb : function(id, kindName) {
-		var group = undefined;
+	editCrumb : function(id, kindId) {
 		var crumb = undefined;
 		var info = this.bit.getInfo();
+		var i = 0, len = 0;
 		
-		// try first via kindName, if available
-		if ( kindName !== undefined ) {
-			group = info[kindName];
+		var findCrumb = function(kindId) {
+			var result = undefined;
+			var group = info[kindId];
+			if ( group !== undefined ) {
+				for ( len = group.length; i < len; i++ ) {
+					if ( group[i].id === id ) {
+						result = group[i];
+						break;
+					}
+				}
+			}
+			return result;
+		};
+		
+		// try first via kindId, if available
+		if ( kindId !== undefined ) {
+			crumb = findCrumb(kindId);
 		}
+		if ( crumb === undefined ) {
+			// global search
+			for ( kindId in info ) {
+				crumb = findCrumb(kindId);
+				if ( crumb !== undefined ) {
+					break;
+				}
+			}
+		}
+		if ( crumb === undefined ) {
+			// TODO: no crumb found... alert?
+			return;
+		}
+		console.log("Edit crumb: " +crumb);
+		this.displayForm(crumb, kindId);
 	},
 	
 	setBit : function(bit) {
@@ -1188,21 +1236,25 @@ Tidbits.Class.Editor.prototype = {
 		
 		// populate list
 		var table = $('#bit-edit-listing').empty();
-		var kindName = undefined;
+		var kindId = undefined;
 		var kindValues = undefined;
 		var i, len;
 		var self = this;
-		for ( kindName in info ) {
-			$('<h4/>').text(kindName).appendTo(table);
-			kindValues = info[kindName];
+		for ( kindId in info ) {
+			$('<h4/>').text(
+				Tidbits.Runtime.kinds.getName(kindId)).appendTo(table);
+			kindValues = info[kindId];
 			for ( i = 0, len = kindValues.length; i < len; i++ ) {
 				$('<div class="row"/>')
-					.attr({'data-id':kindValues[i].id})
+					.attr({
+						'data-id':kindValues[i].id,
+						'data-kindId':kindId
+						})
 					.text(kindValues[i].value)
 					.click(function(e) {
 						e.preventDefault();
-						var id = $(this).attr('data-id');
-						self.editCrumb(id, kindName);
+						var me = $(this);
+						self.editCrumb(Number(me.attr('data-id')), Number(me.attr('data-kindId')));
 					})
 					.appendTo(table);
 			}
@@ -1218,7 +1270,7 @@ Tidbits.Class.Editor.prototype = {
 		this.setBit(bit);
 		if ( bit === undefined ) {
 			// creating a new one from scratch
-			this.displayForm();
+			this.displayForm({id:'',value:''});
 		} else {
 			// editing existing bit
 			this.displayList();

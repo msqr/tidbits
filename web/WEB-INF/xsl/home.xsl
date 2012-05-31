@@ -29,6 +29,7 @@
 						<h3><xsl:value-of select="key('i18n', 'new.tidbit.title')"/></h3>
 					</div>
 					<fieldset class="body">
+						<input id="edit-tidbit-id" name="id" type="hidden" />
 						<div class="control-group">
 							<label for="add-tidbit-name" class="control-label">
 								<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
