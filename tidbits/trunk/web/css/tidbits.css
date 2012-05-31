@@ -316,11 +316,15 @@ div.tidbit.card dl dd + dd::before {
 
 #kind-table-body form {
 	cursor: auto;
-	margin: 0;
+	margin: 6px 0 6px 0;
 }
 
 #kind-table-body form button {
 	margin-left: 1em;
+}
+
+#kind-table-body div.alert {
+	margin-bottom: 0;
 }
 
 #bit-edit-listing div {
@@ -328,6 +332,10 @@ div.tidbit.card dl dd + dd::before {
 	max-height: 18px;
 	overflow-y: hidden;
 	cursor: pointer;
+}
+
+div.alert {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @media (min-width: 481px) {
