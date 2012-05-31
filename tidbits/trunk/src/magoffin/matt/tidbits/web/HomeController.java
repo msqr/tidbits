@@ -104,7 +104,7 @@ public class HomeController {
 		Tidbit result = tidbitsBiz.saveTidbit(form);
 		UiModel model = new UiModel();
 		model.setTidbit(Collections.singletonList(result));
-		return new ModelAndView("json-tidbit-result", XwebConstants.DEFALUT_MODEL_OBJECT,
+		return new ModelAndView("json-search-results", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
 	}
 	

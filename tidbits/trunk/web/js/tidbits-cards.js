@@ -65,7 +65,7 @@ var Tidbits = {
 	 */
 	errorAlert : function(contents) {
 		$('body').append(
-				$('<div class="alert alert-error"><button class="close" data-dismiss="alert">&times;</button></div>')
+				$('<div class="alert alert-error"><button class="close btn" data-dismiss="alert"><i class="icon-remove"></i></button></div>')
 				.append(contents));
 	},
 	
@@ -78,8 +78,26 @@ var Tidbits = {
 	 */
 	i18n : function() {
 		return Tidbits.Runtime.i18n.i18n.apply(Tidbits.Runtime.i18n, arguments);
-	}
+	},
 	
+	isLoginRequest : function(xhr) {
+		if ( xhr.getResponseHeader("X-Login-Required") === "true" ) {
+			return true;
+		}
+		return false;
+	},
+	
+	defaultAjaxErrorHandler : function(msgKey, xhr, statusText, error) {
+		if ( Tidbits.isLoginRequest(xhr) ) {
+			// redirect to logon page
+			setTimeout('window.location = "login.do"', 100);
+		} else {
+			Tidbits.errorAlert('<h4 class="alert-heading">' 
+					+Tidbits.i18n(msgKey) 
+					+'</h4>' 
+					+(error.message !== undefined ? error.message : Tidbits.i18n('error.unknown')));
+		}
+	}
 };
 
 Tidbits.touchEventNames = (function() {
@@ -817,14 +835,12 @@ Tidbits.Class.Bits = function(container, margins) {
 		
 	    $('#nav-search-tidbit-form').submit(function(event) {
 			event.preventDefault();
-			$(this).ajaxSubmit(function(data, statusText) {
-				if ( 'success' === statusText ) {
-					replaceAllTidbitsWithSearchResults(data);
-				} else {
-					Tidbits.errorAlert('<h4 class="alert-heading">' 
-							+Tidbits.i18n('tidbit.search.error.title') 
-							+'</h4>' +statusText);
-				}
+			$(this).ajaxSubmit({
+				dataType: 'json',
+				error : function(xhr, statusText, error) {
+					Tidbits.defaultAjaxErrorHandler('tidbit.search.error.title', xhr, statusText, error);
+				},
+				success : replaceAllTidbitsWithSearchResults
 			});
 	    });
 	    if ( cardMode === true ) {
@@ -912,8 +928,15 @@ Tidbits.Class.Editor = function(container) {
 		var me = $(this);
 		var id = me.find('input[name=id]').val();
 		var name = me.find('input[name=name]').val();
-		me.ajaxSubmit(function(data, statusText) {
-			if ( 'success' === statusText && Array.isArray(data) && data.length > 0 ) {
+		me.ajaxSubmit({
+			dataType: 'json',
+			error : function(xhr, statusText, error) {
+				Tidbits.defaultAjaxErrorHandler('kind.save.error.title', xhr, statusText, error);
+			},
+			success : function(data) {
+				if ( !Array.isArray(data) || data.length < 1 ) {
+					return;
+				}
 				var td = me.parent();
 				var newKind = data[0];
 				
@@ -951,10 +974,6 @@ Tidbits.Class.Editor = function(container) {
 				
 				// restore click to edit handler
 				td.bind('click', handleKindEditClick);
-			} else {
-				Tidbits.errorAlert('<h4 class="alert-heading">' 
-						+Tidbits.i18n('kind.save.error.title') 
-						+'</h4>' +statusText);
 			}
 		});
 	};
@@ -980,8 +999,12 @@ Tidbits.Class.Editor = function(container) {
 		event.stopPropagation();
 		var form = $(this);
 		var id = form.find('input[name=id]').val();
-		form.ajaxSubmit(function(data, statusText) {
-			if ( 'success' === statusText ) {
+		form.ajaxSubmit({
+			dataType: 'json',
+			error : function(xhr, statusText, error) {
+				Tidbits.defaultAjaxErrorHandler('kind.save.error.title', xhr, statusText, error);
+			},
+			success : function(data) {
 				// delete row
 				form.parent().parent().remove();
 				
@@ -990,10 +1013,6 @@ Tidbits.Class.Editor = function(container) {
 				
 				// update model
 				Tidbits.Runtime.kinds.removeKind(Number(id));
-			} else {
-				Tidbits.errorAlert('<h4 class="alert-heading">' 
-						+Tidbits.i18n('kind.save.error.title') 
-						+'</h4>' +statusText);
 			}
 		});
 	};
@@ -1101,16 +1120,19 @@ Tidbits.Class.Editor = function(container) {
 	    	self.displayForm();
 	    });
 	    
+	    $('#add-tidbit-value-btn').click(function(e) {
+	    	e.preventDefault();
+	    	self.displayForm({id:'',value:''});
+	    });
+	    
 	    $('#tidbit-form').submit(function(event) {
 			event.preventDefault();
-			$(this).ajaxSubmit(function(data, statusText) {
-				if ( 'success' === statusText ) {
-					self.postedForm(data);
-				} else {
-					Tidbits.errorAlert('<h4 class="alert-heading">' 
-							+Tidbits.i18n('tidbit.save.error.title') 
-							+'</h4>' +statusText);
-				}
+			$(this).ajaxSubmit({
+				dataType: 'json',
+				error : function(xhr, statusText, error) {
+					Tidbits.defaultAjaxErrorHandler('tidbit.save.error.title', xhr, statusText, error);
+				},
+				success : self.postedForm
 			});
 		});
 	    
