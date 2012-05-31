@@ -1132,7 +1132,9 @@ Tidbits.Class.Editor = function(container) {
 				error : function(xhr, statusText, error) {
 					Tidbits.defaultAjaxErrorHandler('tidbit.save.error.title', xhr, statusText, error);
 				},
-				success : self.postedForm
+				success : function(data) {
+					self.postedForm(data);
+				}
 			});
 		});
 	    
@@ -1144,7 +1146,7 @@ Tidbits.Class.Editor.prototype = {
 		
 	postedForm : function(data) {
 		if ( this.bit !== undefined ) {
-			this.bit.addDetails(data);
+			this.bit.addDetails(data.tidbits[0]);
 			
 			// TODO: implement updateBit method, instead of recreate entire list each time?
 			this.setBit(this.bit);
