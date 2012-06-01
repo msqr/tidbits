@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ctx="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/jee
+		http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<mvc:annotation-driven/>
+
+	<!-- Dispatches requests mapped to POJO @Controllers implementations -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+
+	<bean id="webHelper" class="magoffin.matt.xweb.util.BasicXwebHelper"/>
+	
+	<bean id="jaxbNamespacePrefixMapper" class="magoffin.matt.xweb.util.JAXBNamespacePrefixMapper">
+		<property name="namespaceMapping">
+			<map>
+				<entry key="http://msqr.us/xsd/jaxb-web" value="x"/>
+				<entry key="http://msqr.us/xsd/TidBits" value="t"/>
+			</map>
+		</property>
+		<property name="predeclareUriList">
+			<list>
+				<value>http://msqr.us/xsd/TidBits</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="xsltViewResolver" class="magoffin.matt.xweb.util.XwebJaxbXsltViewResolver">
+		<property name="contentType" value="text/html; charset=UTF-8"/>
+		<property name="order" value="1"/>
+		<property name="prefix" value="/WEB-INF/xsl/"/>
+		<property name="suffix" value=".xsl"/>
+		<property name="cacheTemplates" value="${xslt.cache}"/>
+		<property name="indent" value="false"/>
+		<property name="jaxbContext" value="magoffin.matt.tidbits.domain"/>
+		<property name="marshallerProperties">
+			<map>
+				<entry key="com.sun.xml.bind.namespacePrefixMapper">
+					<ref local="jaxbNamespacePrefixMapper"/>
+				</entry>
+			</map>
+		</property>
+		<property name="appSettingsCache">
+			<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"> 
+				<property name="cacheManager" ref="cacheManager"/> 
+				<property name="cacheName" value="magoffin.matt.xweb.app_settings_cache"/> 
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="jsonXsltViewResolver" parent="xsltViewResolver">
+		<property name="contentType" value="application/json; charset=UTF-8"/>
+		<property name="order" value="2"/>
+		<property name="prefix" value="/WEB-INF/xsl/json/"/>
+		<property name="suffix" value=".xsl"/>
+		<property name="messagesSource">
+				<bean id="messageSource" class="magoffin.matt.xweb.util.ResourceBundleMessagesSource">
+					<property name="basenames" value="client-messages"/>
+				</bean>	
+		</property>
+	</bean>
+
+	<!-- Finally, a view resolver for JSTL views. -->
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 
+		<property name="order" value="3"/>
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> 
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean> 
+
+</beans>

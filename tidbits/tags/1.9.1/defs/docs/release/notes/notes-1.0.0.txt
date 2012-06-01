@@ -1,0 +1,10 @@
+TidBits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+- Add client-side cache support and HTTP compression support, which can
+  dramatically improve perceived responsiveness.
+  
+- Update to latest Xweb and mmagoff JARs.
+
+- Clean up some documentation.
