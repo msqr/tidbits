@@ -364,10 +364,10 @@ Tidbits.Class.Matrix.prototype = {
  * @returns {Tidbits.Class.Bit}
  */
 Tidbits.Class.Bit = function(data, bits, container) {
-	// {"id":-6, "name":"Website", "kind":"URL", "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
+	// {"id":-6, "name":"Website", "kind":"URL", "kindId":-1, "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
 	this.bits = bits;
 	this.name = data.name;
-	this.info = {}; // {URL: [{id:-6, value:'http://my.web.site/'}]}
+	this.info = {}; // map of kindId to array of{id:-6, value:'http://my.web.site/'}
 	this.refreshElement = $('<button class="action"><i class="action ticon icon-refresh-t">\uf021</i></button>');
 	this.addElement = $('<button class="action"><i class="action icon-edit"></i></button>');
 	this.element = $(container)
@@ -401,6 +401,9 @@ Tidbits.Class.Bit = function(data, bits, container) {
 	var handleAdd = function(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		if ( bits.isCardMode() === false ) {
+			$('html,body').scrollTop(0);
+		}
 		Tidbits.Runtime.editor.edit(self);
 	};
 
@@ -414,30 +417,59 @@ Tidbits.Class.Bit.prototype = {
 		return this.name;
 	},
 	
+	removeDetail : function(id) {
+		
+	},
+	
 	/**
 	 * Add info details to the info model.
 	 * 
 	 * @param {Object} data the info data to insert
 	 */
 	addDetails : function(data) {
-		if ( data === undefined || data.kind === undefined ) {
+		if ( data === undefined || data.kindId === undefined ) {
 			return;
 		}
 		// {id:1, kind:"Foo", kindId:2, name:"Bar",...}
-		var info = this.info[data.kindId];
-		if ( info === undefined ) {
-			this.info[data.kindId] = [];
-			info = this.info[data.kindId];
-		}
+
+		// the kindId might have changed for this bit! so we search by id
+		var kindId = undefined;
+		var detail = undefined;
+		var details = undefined;
 		var i, len;
-		for ( i = 0, len = info.length; i < len; i++ ) {
-			if ( info[i].id === data.id ) {
-				// update existing value
-				info[i].value = data.value;
-				return;
+		for ( kindId in this.info ) {
+			kindId = Number(kindId);
+			details = this.info[kindId];
+			for ( i = 0, len = details.length; i < len; i++ ) {
+				if ( details[i].id === data.id ) {
+					detail = details[i];
+					break;
+				}
+			}
+			if ( detail !== undefined ) {
+				if ( kindId !== data.kindId ) {
+					// changed kindId, remove and add under new kindId
+					details.splice(i, 1);
+				} else {
+					// simple update existing value
+					detail.value = data.value;
+					return;
+				}
+				break;
 			}
 		}
-		info.push({id:data.id, value:data.value});
+		
+		if ( detail === undefined ) {
+			// wasn't found under different key, so add as new
+			detail = {id:data.id, value:data.value};
+		}
+
+		details = this.info[data.kindId];
+		if ( details === undefined ) {
+			this.info[data.kindId] = [];
+			details = this.info[data.kindId];
+		}
+		details.push(detail);
 	},
 	
 	/**
@@ -897,6 +929,15 @@ Tidbits.Class.Bits = function(container, margins) {
 			populateTidbits(data, true);
 			return this.getBitByName(data.tidbits[0].name);
 		}
+	};
+	
+	/**
+	 * Test if rendered Bit or Card objects.
+	 * 
+	 * @returns {Boolean} true if rendered bits as cards
+	 */
+	this.isCardMode = function() {
+		return cardMode === true;
 	};
 };
 

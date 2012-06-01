@@ -79,7 +79,7 @@
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap-responsive.css"/>
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/font-awesome.css" />
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/tidbits.css" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.7.1.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery.form.js"><xsl:text> </xsl:text></script>
