@@ -83,6 +83,9 @@
 		<dependency org="org.springframework.security" name="spring-security-core" rev="3.1.0.RELEASE">
     		<artifact name="spring-security-core" type="jar" />
 		</dependency>
+		<dependency org="org.springframework.security" name="spring-security-ldap" rev="3.1.0.RELEASE" conf="runtime">
+    		<artifact name="spring-security-ldap" type="jar" />
+		</dependency>
 		<dependency org="org.springframework.security" name="spring-security-web" rev="3.1.0.RELEASE">
     		<artifact name="spring-security-web" type="jar" />
 		</dependency>
