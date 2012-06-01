@@ -9,7 +9,7 @@
 	<Resource name="jdbc/tidbits" 
 		type="javax.sql.DataSource" scope="Shareable"
 		driverClassName="org.apache.derby.jdbc.EmbeddedDriver" 
-		url="jdbc:derby:tidbits"
+		url="jdbc:derby:tidbits;create=true;upgrade=true"
 		maxWait="5000"
 		maxActive="4" maxIdle="2" removeAbandoned="true"
 		removeAbandonedTimeout="60" logAbandoned="true"
