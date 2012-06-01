@@ -76,8 +76,8 @@
 						<button type="button" class="btn pull-left" id="manage-categories-btn">
 							<i class="icon-list"><xsl:text> </xsl:text></i>
 						</button>
-						<button type="button" class="btn" data-dismiss="editor">
-							<xsl:value-of select="key('i18n','close')"/>
+						<button type="button" class="btn cancel">
+							<xsl:value-of select="key('i18n','cancel')"/>
 						</button>
 						<button type="submit" class="btn btn-primary">
 							<xsl:value-of select="key('i18n','save.displayName')"/>
