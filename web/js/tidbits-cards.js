@@ -1144,7 +1144,18 @@ Tidbits.Class.Editor = function(container) {
 	
 	// private init
 	(function() {
-		self.element.find('button[data-dismiss=editor]').click(function() {
+		self.element.find('button.cancel').click(function(e) {
+			e.preventDefault();
+			if ( self.bit === undefined ) {
+				// dismiss the editor
+				self.hide();
+			} else {
+				// go to listing
+				self.displayList();
+			}
+		});
+		self.element.find('button[data-dismiss=editor]').click(function(e) {
+			e.preventDefault();
 			self.hide();
 		});
 
@@ -1328,7 +1339,7 @@ Tidbits.Class.Editor.prototype = {
 				Tidbits.Runtime.kinds.getName(kindId)).appendTo(table);
 			kindValues = info[kindId];
 			for ( i = 0, len = kindValues.length; i < len; i++ ) {
-				$('<div class="row"/>')
+				$('<div class="detail"/>')
 					.attr({
 						'data-id':kindValues[i].id,
 						'data-kindId':kindId
