@@ -156,7 +156,7 @@
 			<fileset dir="${dir.hyperjaxb3.schemas}" includes="**"/>
 		</copy>
 		<mkdir dir="${dir.build}/tmp"/>
-		<unjar src="${dir.web.lib}/mutil.jar" dest="${dir.hyperjaxb3.java}">
+		<unjar src="${dir.web.lib}/mutil2.jar" dest="${dir.hyperjaxb3.java}">
 			<patternset>
 				<include name="magoffin/matt/dao/Identity.java"/>
 				<include name="magoffin/matt/dao/Entity.java"/>
@@ -308,44 +308,6 @@
 		</zip>
 	</target>
 		
-	<!--
-		Generate database DDL for entity tables. Pass the hjb.db.type parameter
-		to change the exported DDL SQL syntax using one of the sub-directory names
-		within defs/sql, e.g.
-		
-		ant -Dhjb.db.type=mysql export.database.schema
-		
-		Will use the defs/sql/mysql/hibernate.properties environment properties
-		and generate the defs/sql/mysql/create.sql DDL script.
-	-->
-	<target name="export.database.schema" depends="compile" 
-		description="Generate RDBMS creation scripts via Hibernate">
-
-		<taskdef name="schemaexport"
-			classname="org.hibernate.tool.hbm2ddl.SchemaExportTask"
-			classpathref="schemaexport.lib.path"/>
-
-		<mkdir dir="${dir.database}"/>
-		
-		<delete dir="${dir.build}/schema-export" failonerror="no"/>
-		<mkdir dir="${dir.build}/schema-export"/>
-		<unjar src="${dir.web.lib}/${app.name}-xml.jar" 
-			dest="${dir.build}/schema-export"/>
-
-		<schemaexport
-			properties="${dir.database}/${hjb.db.type}/hibernate.properties"
-			quiet="no"
-			text="yes"
-			drop="no"
-			delimiter=";"
-			output="${dir.database}/${hjb.db.type}/create-tables.sql">
-			<fileset dir="${dir.build}/schema-export">
-				<include name="**/*.hbm.xml"/>
-			</fileset>
-		</schemaexport>
-
-	</target>
-
 	<target name="clean" description="Delete build files">
 		<delete dir="${dir.build}" />
 	</target>
