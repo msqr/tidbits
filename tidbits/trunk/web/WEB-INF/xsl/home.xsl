@@ -128,10 +128,7 @@
 						</div>
 					</div>
 					<div class="footer modal-footer">
-						<button type="button" class="btn" data-dismiss="editor">
-							<xsl:value-of select="key('i18n','close')"/>
-						</button>
-						<button type="submit" class="btn btn-primary" id="manage-tidbit-btn">
+						<button type="button" class="btn btn-primary" data-dismiss="editor">
 							<xsl:value-of select="key('i18n','done.displayName')"/>
 						</button>
 					</div>
