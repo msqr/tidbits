@@ -219,7 +219,7 @@
 
 	<!-- Prepare WAR structure -->
 	<target name="prepare" description="Prepare WAR build structure"
-		depends="prepare-env">
+		depends="prepare-env,ivy-init">
 		
 		<!-- copy non-environment and non-brand source properties -->
 		<mkdir dir="${dir.compile.dest}"/>
@@ -252,20 +252,12 @@
 			</filterset>
 		</copy>
 
-	</target>
-
-	<target name="compile-old" description="Compile source files">
-		<mkdir dir="${dir.compile.dest}"/>
-		<javac srcdir="${dir.source}"
-			destdir="${dir.compile.dest}"
-			debug="${compile.debug}" 
-			deprecation="${compile.deprecation}" 
-			optimize="${compile.optimize}" 
-			nowarn="${compile.nowarn}"
-			target="1.5"
-			source="1.5">
-			<classpath refid="compile.path" />
-		</javac>
+		<!-- Copy Ivy JAR files -->
+		<ivy:retrieve pattern="${dir.app.dest}/WEB-INF/lib/[artifact]-[revision].[ext]" conf="runtime" />
+		
+		<!-- The above might include some .txt license files and source jars, so remove them -->
+		<delete failonerror="false" dir="${dir.app.dest}/WEB-INF/lib" includes="*" excludes="*.jar"/>
+		<delete failonerror="false" dir="${dir.app.dest}/WEB-INF/lib" includes="*-sources*.jar"/>
 	</target>
 
 	<target name="prepare.compile">
@@ -613,7 +605,7 @@
 
 	</target>
 	
-	<target name="demo" description="Create the Live Demo">
+	<target name="demo" description="Create the Live Demo" depends="ivy-init">
 		
 		<antcall target="prepare" inheritall="true">
 			<param name="env.src" value="demo"/>
@@ -646,9 +638,8 @@
 		</chmod>
 		
 		<!-- add Derby, etc JARs to Tomcat classpath -->
-		<copy todir="${dir.build}/${app.name}-demo/apache-tomcat/common/lib">
-			<fileset dir="${dir.base}/lib/jdbc" includes="derby*.jar"/>
-		</copy>
+		<ivy:retrieve pattern="${dir.build}/${app.name}-demo/apache-tomcat/lib/[artifact]-[revision].[ext]" 
+			conf="demo-tomcat" />
 		
 		<!-- add tidbits.xml Tomcat configuration -->
 		<copy todir="${dir.build}/${app.name}-demo/apache-tomcat/conf/Catalina/localhost">
