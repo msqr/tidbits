@@ -1328,6 +1328,9 @@ Tidbits.Class.Editor.prototype = {
 		// update view according to model
 		var info = (bit === undefined ? {} : bit.getInfo());
 		
+		this.element.find('div.bottom h3').text(
+				bit === undefined ? Tidbits.i18n('manage.tidbit.title') : bit.getName());
+		
 		// populate list
 		var table = $('#bit-edit-listing').empty();
 		var kindId = undefined;
