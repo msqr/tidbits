@@ -6,7 +6,7 @@
 	exclude-result-prefixes="t x date xml">
 
 	<!-- imports -->
-	<xsl:import href="global.xsl"/>
+	<xsl:import href="global-variables.xsl"/>
 	
 	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes" media-type="text/html"/>
     
