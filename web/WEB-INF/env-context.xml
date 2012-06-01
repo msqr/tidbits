@@ -46,8 +46,8 @@
 		<property name="jpaPropertyMap">
 			<map>
 				<entry key="eclipselink.weaving" value="${jpa.eclipselink.weaving}"/>
-				<entry key="eclipselink.ddl-generation" value="create-tables"/>
-				<entry key="eclipselink.ddl-generation.output-mode" value="database"/>
+				<!--entry key="eclipselink.ddl-generation" value="create-tables"/>
+				<entry key="eclipselink.ddl-generation.output-mode" value="database"/-->
 				<entry key="eclipselink.logging.level" value="INFO"/>
 			</map>
 		</property>
