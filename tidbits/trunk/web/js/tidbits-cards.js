@@ -293,7 +293,7 @@ Tidbits.Class.Matrix.prototype = {
 		listener = function(event) {
 			if ( event.target === elm ) {
 				elm.removeEventListener(self.support.trEndEvent, listener, false);
-				finished.apply(self);
+				finished.apply(elm);
 			}
 		};
 		elm.addEventListener(self.support.trEndEvent, listener, false);
@@ -316,7 +316,7 @@ Tidbits.Class.Matrix.prototype = {
 		this.animateListen(elm, function() {
 			elm.style[self.support.trProp] = '';
 			if ( finished !== undefined ) {
-				finished.apply(self);
+				finished.apply(elm);
 			}
 		});
 		var cssValue = this.support.trTransform 
@@ -858,7 +858,7 @@ Tidbits.Class.Bits = function(container, margins) {
 			cardMode = true;
 			
 			// prevent elastic scrolling
-			document.body.addEventListener('touchmove', function(event) {
+			document.addEventListener('touchmove', function(event) {
 			  event.preventDefault();
 			}, false);
 		};
