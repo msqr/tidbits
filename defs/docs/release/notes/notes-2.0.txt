@@ -1,0 +1,28 @@
+Tidbits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+This is a major update that updates the core frameworks used internally
+by Tidbits to more modern versions and changes the UI into an "index 
+card" metaphore using HTML5 features.
+
+Tidbits now uses Spring Secrity 3.1 instead of Acegi Security for
+authentication and authorization services. This means the old
+securityContext.xml file required by Tidbits 1.2 or earlier will no
+longer work with Tidbits 2, and must be converted. The configuration
+is greatly simplified with Spring Security, however, so this conversion
+should be easy to do in most situations.
+
+Updates in this release:
+
+- Major UI overhaul, using HTML5.
+
+- Update to Spring Framework 3.1 from 1.2.
+
+- Update to Spring Security 3.1 from Acegi Security 1.0.
+
+- Update to HyperJAXB 3 from HyperJAXB 2.
+
+- Update to JPA 2 provided by EclipseLink from Hibernate.
+
+- Update build infrastructure to use Apache Ivy for dependency resolution.

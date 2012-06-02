@@ -493,7 +493,7 @@
 
 		<echo message="Creating README" />
 		<copy file="${svn.dir.build}/defs/docs/release/README.bin.txt" 
-			tofile="${release-dir}/README" filtering="true">
+			tofile="${release-dir}/README.txt" filtering="true">
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
@@ -502,7 +502,7 @@
 
 		<echo message="Creating LICENSE" />
 		<copy file="${svn.dir.build}/defs/docs/release/LICENSE.txt" 
-			tofile="${release-dir}/LICENSE" filtering="true">
+			tofile="${release-dir}/LICENSE.txt" filtering="true">
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
@@ -513,7 +513,7 @@
 		<copy filtering="true" todir="${release-dir}">
 			<fileset dir="${svn.dir.build}/defs/docs/release/notes"
 				includes="notes-${svn.tag}.txt"/>
-			<mapper type="merge" to="NOTES"/>
+			<mapper type="merge" to="NOTES.txt"/>
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
@@ -525,7 +525,7 @@
 		<copy filtering="true" todir="${release-dir}">
 			<fileset dir="${svn.dir.build}/defs/docs"
 				includes="README-*.txt"/>
-			<mapper type="glob" from="*.txt" to="*"/>
+			<!--mapper type="glob" from="*.txt" to="*"/-->
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
@@ -537,7 +537,7 @@
 		<mkdir dir="${release-dir}/licenses"/>
 		<copy todir="${release-dir}/licenses" flatten="true">
 			<fileset dir="${svn.dir.build}/defs/docs/licenses" includes="**/*.txt"/>
-			<mapper type="glob" from="*.txt" to="*"/>
+			<!--mapper type="glob" from="*.txt" to="*"/-->
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
