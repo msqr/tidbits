@@ -1,8 +1,8 @@
 TidBits includes unmodified packages governed by the GNU General Public 
 License. This license is included here.
 
-- mmagoff (unversioned)
-- xweb (unversioned)
+- mtil2 (unversioned)
+- xweb2 (unversioned)
 
 ---------------------------------------------------------------------
 This program is free software; you can redistribute it and/or 
