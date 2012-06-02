@@ -102,6 +102,12 @@
 		<mkdir dir="${dir.dist}"/>
 	</target>
 
+	<target name="env-local-cond">
+		<condition property="localEnv">
+			<equals arg1="${env.src}" arg2="local"/>
+		</condition>
+	</target>
+	
 	<!-- Ivy integration -->
 
 	<target name="ivy-init">
@@ -361,6 +367,10 @@
 	
 	<!-- Subversion build targets -->
 
+	<target name="svn-init">
+		<property name="app.archive.name" value="${app.name}-${svn.tag}"/>
+	</target>
+	
 	<target name="svn-checkout" description="Checkout sources from SVN">
 		<delete dir="${svn.dir.build}"/>
 		<mkdir dir="${svn.dir.build}"/>
@@ -383,26 +393,11 @@
 		</svn>
 	</target>
 	
-	<!-- Copy environment properties (to catch local env) -->
-	<target name="svn-prepare">
-		<!--mkdir dir="${svn.dir.build}/${dir.env}"/>
-		<copy todir="${svn.dir.build}/${dir.env}">
-			<fileset dir="${dir.base}/${dir.env}" includes="**" excludes="README*"/>
-		</copy-->
-	</target>
-	
-	<target name="env-local-cond">
-		<condition property="localEnv">
-			<equals arg1="${env.src}" arg2="local"/>
-		</condition>
-	</target>
-	
 	<target name="svn-env" depends="env-local-cond" if="localEnv">
 		<property name="svn.dir.env" value="${basedir}/${dir.env}"/>
 	</target>
 
-	<target name="svn-build" depends="clean,svn-prepare,svn-env" description="Build from SVN tag versions">
-		<property name="app.archive.name" value="${app.name}-${svn.tag}"/>
+	<target name="svn-build" depends="clean,svn-init,svn-env" description="Build from SVN tag versions">
 		<property name="svn.dir.env" value="${dir.env}"/>
 
 		<echo />
@@ -419,11 +414,17 @@
 		
 	</target>
 	
-	<target name="svn-src-release" 
+	<target name="svn-clean" depends="svn-init">
+		<echo>Delete ${dir.build}/${app.archive.name}</echo>
+		<delete dir="${dir.build}/${app.archive.name}" failonerror="no"/>
+	</target>
+	
+	<target name="svn-full-release" description="Build all release archives (demo, src, bin) from SVN" 
+		depends="svn-demo-release,svn-src-release,svn-bin-release,svn-clean"/>
+	
+	<target name="svn-src-release" depends="svn-init"
 		description="Build source release TAR from SVN tag versions">
 
-		<property name="app.archive.name" 
-			value="${app.name}-${svn.tag}"/>
 		<property name="release-source-dir-name"
 			value="${app.archive.name}-src"/>
 		<property name="release-source-dir" 
@@ -476,7 +477,7 @@
 	
 	<!-- create binary release -->
 	<target name="svn-bin-release" description="Build binary release TAR from SVN tag versions"
-		depends="svn-build">
+		depends="svn-build,ivy-init">
 		
 		<property name="release-dir-name"
 			value="${app.archive.name}"/>
@@ -553,10 +554,9 @@
 		<!-- copy JDBC drivers -->
 		<echo message="Copying JDBC drivers" />
 		<mkdir dir="${release-dir}/setup/lib"/>
-		<copy todir="${release-dir}/setup/lib">
-			<fileset dir="${svn.dir.build}/lib/jdbc" includes="**"/>
-		</copy>
-
+		<ivy:retrieve pattern="${release-dir}/setup/lib/[artifact]-[revision].[ext]" 
+			conf="jdbc" />
+		
 		<!-- copy war, removing version from name -->
 		<copy file="${dir.build}/${app.archive.name}.war" 
 			tofile="${release-dir}/${app.name}.war"/>
@@ -577,10 +577,9 @@
 	  Also note that dir.build and dir.build.svn should point to absolute paths.
 	 -->
 	<target name="svn-demo-release" description="Create the Live Demo from SVN sources"
-		depends="clean">
+		depends="clean,svn-init">
 		
 		<property name="demo.build.dir" value="${app.name}-${svn.tag}-livedemo"/>
-		<property name="app.archive.name" value="${app.name}-${svn.tag}"/>
 		
 		<!-- call the demo target on the code checked out from CVS -->
 		<ant dir="${svn.dir.build}" inheritall="true" target="demo">
