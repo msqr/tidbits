@@ -28,6 +28,10 @@ label {
 	font-weight: bold;
 }
 
+textarea + .label {
+	margin: 4px;
+}
+
 .help-block {
 	font-size: 10px;
 }
