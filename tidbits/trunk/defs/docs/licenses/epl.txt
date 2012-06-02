@@ -1,0 +1,7 @@
+TidBits includes unmodified packages governed by the Eclipse Public
+License. This license is available at
+
+http://www.eclipse.org/legal/epl-v10.html
+
+- AspectJ 1.6
+- EclipseLink 2.3
