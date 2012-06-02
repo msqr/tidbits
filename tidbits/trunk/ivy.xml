@@ -6,8 +6,9 @@
 		<conf name="runtime" visibility="public" description="Tidbits"/>
 		<conf name="test" visibility="private" description="unit testing" extends="compile"/>
 		<conf name="demo-tomcat" visibility="private" description="utilities needed for demo"/>
+		<conf name="jdbc" visibility="private" description="JDBC drivers for bin release"/>
 	</configurations>
-	<dependencies defaultconfmapping="demo-tomcat->runtime(default);test->runtime(default);runtime->runtime(default);compile->compile(default)">
+	<dependencies defaultconfmapping="jdbc->runtime(default);demo-tomcat->runtime(default);test->runtime(default);runtime->runtime(default);compile->compile(default)">
 		<dependency org="net.sf.ehcache" name="ehcache" rev="1.6.2" conf="runtime">
 			<artifact name="ehcache" type="jar" />
 		</dependency>
@@ -28,13 +29,13 @@
 		<dependency org="org.eclipse.persistence" name="eclipselink" rev="2.3.2" conf="compile,runtime">
 			<artifact name="eclipselink" type="jar"/>
 		</dependency>
-		<dependency org="org.apache.derby" name="derby" rev="10.8.2.2" conf="test,demo-tomcat">
+		<dependency org="org.apache.derby" name="derby" rev="10.8.2.2" conf="test,demo-tomcat,jdbc">
     		<artifact name="derby" type="jar" />
 		</dependency>
-		<dependency org="mysql" name="mysql-connector-java" rev="5.1.18" conf="test">
+		<dependency org="mysql" name="mysql-connector-java" rev="5.1.18" conf="test,jdbc">
     		<artifact name="mysql-connector-java" type="jar" />
 		</dependency>
-		<dependency org="postgresql" name="postgresql" rev="9.1-901-1.jdbc4" conf="test">
+		<dependency org="postgresql" name="postgresql" rev="9.1-901-1.jdbc4" conf="test,jdbc">
     		<artifact name="postgresql" type="jar" />
 		</dependency>
 		
