@@ -330,7 +330,8 @@ div.tidbit.card dl dd + dd::before {
 
 #bit-edit-listing div {
 	margin-bottom: 0.5em;
-	max-height: 18px;
+	max-height: 20px;
+	line-height: 20px;
 	overflow: hidden;
 	cursor: pointer;
 }
