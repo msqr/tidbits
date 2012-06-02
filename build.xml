@@ -29,10 +29,7 @@
 	<property name="dir.source.test" value="src-test"/>
 	<property name="dir.schema" value="defs/schema"/>
 	<property name="dir.build" value="build/ant" />
-	<property name="dir.build.cvs" value="build/cvs"/>
-	<property name="hibernate.properties" value="${dir.schema}/${hjb.db.type}/hibernate.properties"/>
 	<property name="dir.generated" value="${dir.build}/generated/src" />
-	<property name="dir.hibernate.mapping" value="${dir.generated}"/>
 	<property name="dir.database" value="defs/sql"/>
 	<property name="dir.dist" value="dist"/>
 	<property name="dir.lib" value="lib"/>
@@ -67,11 +64,6 @@
 	
 	<property name="env.src" value="local" />
 	<property name="dir.env" value="environment/${env.src}"/>
-	<property name="cvs.env.src" value="example"/>
-	<property name="cvs.dir.env" value="environment/${cvs.env.src}"/>
-	<property name="cvs.root" value="/data/cvs"/>
-	<property name="cvs.compressionlevel" value="6" />
-	<property name="cvs.module.name" value="tidbits"/>
 	
 	<path id="path.svn">
 		<fileset dir="${dir.lib}/svn" includes="*.jar"/>
@@ -98,17 +90,6 @@
 		<fileset dir="${dir.lib}" includes="**/*.jar"/>
 	</path>
 	
-	<path id="hibernatedoclet.lib.path">
-		<fileset dir="${dir.web.lib}" includes="*.jar"/>
-		<fileset dir="${dir.lib}" includes="**/*.jar"/>
-	</path>
-	
-	<path id="schemaexport.lib.path">
-		<pathelement location="${dir.build}/${app.name}/WEB-INF/classes"/>
-		<fileset dir="${dir.web.lib}" includes="*.jar"/>
-		<fileset dir="${dir.lib}" includes="**/*.jar"/>
-	</path>
-	
 	<path id="compile.path">
 		<pathelement location="${dir.build}/${app.name}/WEB-INF/classes"/>
 		<fileset dir="${dir.web.lib}" includes="*.jar"/>
@@ -117,7 +98,6 @@
 	
 	<target name="init">
 		<mkdir dir="${dir.build}" />
-		<mkdir dir="${dir.build.cvs}" />
 		<mkdir dir="${dir.generated}" />
 		<mkdir dir="${dir.dist}"/>
 	</target>
@@ -307,40 +287,6 @@
 		
 	<target name="clean" description="Delete build files">
 		<delete dir="${dir.build}" />
-	</target>
-
-	<!-- ======================================================= -->
-	<!-- Set the build version                                   -->
-	<!-- ======================================================= -->
-	<target name="set_ver_major" if="cvs.version.major">
-		<echo message="Setting to major version: ${cvs.version.major}" />
-		<propertyfile file="${version.properties}">
-			<entry key="app.version.major" type="string" operation="=" 
-				value="${cvs.version.major}" />
-		</propertyfile>
-	</target>
-	<target name="set_ver_minor" if="cvs.version.minor">
-		<echo message="Setting to minor version: ${cvs.version.minor}" />
-		<propertyfile file="${version.properties}">
-			<entry key="app.version.minor" type="string" operation="=" 
-				value="${cvs.version.minor}" />
-		</propertyfile>
-	</target>
-	<target name="set_ver_build" if="cvs.version.build">
-		<echo message="Setting to build version: ${cvs.version.build}" />
-		<propertyfile file="${version.properties}">
-			<entry key="app.version.build" type="string" operation="=" 
-				value="${cvs.version.build}" />
-		</propertyfile>
-	</target>
-	
-	<target name="set-version" depends="set_ver_major,set_ver_minor,set_ver_build">
-		<property file="${version.properties}" />
-		<property name="cvs.build.version" 
-			value="${app.version.major}.${app.version.minor}.${app.version.build}" />
-		<property name="cvs.tag" 
-			value="${app.name}-${app.version.major}-${app.version.minor}-${app.version.build}" />
-		<property name="app.archive.name" value="${app.name}-${cvs.build.version}"/>
 	</target>
 
 	<target name="demo" description="Create the Live Demo" depends="ivy-init">
@@ -617,8 +563,8 @@
 	<!--
 	  Create a Live Demo release tarball by checkout out a version of the code from CVS.
 	  
-	  Note you must call either cvs-checkout or cvs-update before calling this target.
-	  Also note that dir.build and dir.build.cvs should point to absolute paths.
+	  Note you must call either svn-checkout or svn-update before calling this target.
+	  Also note that dir.build and dir.build.svn should point to absolute paths.
 	 -->
 	<target name="svn-demo-release" description="Create the Live Demo from SVN sources"
 		depends="clean">
