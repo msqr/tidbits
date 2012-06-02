@@ -385,24 +385,34 @@
 	
 	<!-- Copy environment properties (to catch local env) -->
 	<target name="svn-prepare">
-		<mkdir dir="${svn.dir.build}/${dir.env}"/>
+		<!--mkdir dir="${svn.dir.build}/${dir.env}"/>
 		<copy todir="${svn.dir.build}/${dir.env}">
 			<fileset dir="${dir.base}/${dir.env}" includes="**" excludes="README*"/>
-		</copy>
+		</copy-->
+	</target>
+	
+	<target name="env-local-cond">
+		<condition property="localEnv">
+			<equals arg1="${env.src}" arg2="local"/>
+		</condition>
+	</target>
+	
+	<target name="svn-env" depends="env-local-cond" if="localEnv">
+		<property name="svn.dir.env" value="${basedir}/${dir.env}"/>
 	</target>
 
-	<target name="svn-build" depends="clean,svn-prepare" description="Build from SVN tag versions">
-		
+	<target name="svn-build" depends="clean,svn-prepare,svn-env" description="Build from SVN tag versions">
 		<property name="app.archive.name" value="${app.name}-${svn.tag}"/>
-		
+		<property name="svn.dir.env" value="${dir.env}"/>
+
 		<echo />
-		<echo message="Building application version ${svn.tag} (${svn.revision})..."/>
+		<echo message="Building application version ${svn.tag} (${svn.revision}) using environment ${svn.dir.env}..."/>
 
 		<ant dir="${svn.dir.build}" target="war" inheritall="no">
 			<property name="build.version" value="${svn.tag}"/>
 			<property name="dir.build" value="${dir.build}"/>
 			<property name="env.src" value="${env.src}"/>
-			<property name="dir.env" value="${dir.env}"/>
+			<property name="dir.env" value="${svn.dir.env}"/>
 			<property name="dir.dist" value="${dir.dist}"/>
 			<property name="app.name" value="${app.archive.name}"/>
 		</ant>
