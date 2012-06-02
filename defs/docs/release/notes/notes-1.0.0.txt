@@ -1,4 +1,4 @@
-TidBits Release Notes
+Tidbits Release Notes
 
 @VERSION@ @BUILD_DATE@
 

@@ -1,4 +1,4 @@
-TidBits includes unmodified packages governed by the Eclipse Public
+Tidbits includes unmodified packages governed by the Eclipse Public
 License. This license is available at
 
 http://www.eclipse.org/legal/epl-v10.html

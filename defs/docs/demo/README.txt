@@ -1,11 +1,11 @@
 =======================================================================
-TidBits: the web-based personal digital wallet
+Tidbits: the web-based personal digital wallet
 Live Demo @VERSION@ @BUILD_DATE@
 =======================================================================
 
-This is the Live Demo distribution of TidBits. This is a complete 
-stand-alone TidBits application pre-configured to run without any 
-modification so you can see how TidBits works. The only thing you need 
+This is the Live Demo distribution of Tidbits. This is a complete 
+stand-alone Tidbits application pre-configured to run without any 
+modification so you can see how Tidbits works. The only thing you need 
 besides the Live Demo (which you have if you're reading this) is 
 a Java 5 JDK (i.e. version 1.5) or higher. Note that a Java JRE is not 
 sufficient, you'll need the full JDK installed. You can get a JDK 
@@ -14,8 +14,8 @@ them should work as long as they are version 1.5 or higher.
 
 Starting the Live Demo  -----------------------------------------------
 
-To start TidBits simply run './start.sh' or '.\start.bat' script (as 
-appropriate for your operating system). This will start the TidBits 
+To start Tidbits simply run './start.sh' or '.\start.bat' script (as 
+appropriate for your operating system). This will start the Tidbits 
 application running with the included servlet container. After a brief 
 moment you should be able to go to the following URL in a browser:
 
@@ -36,7 +36,7 @@ For Windows users you can run
 
 Stopping the Live Demo  -----------------------------------------------
 
-To stop TidBits simply run './stop.sh' or '.\stop.bat' script (as 
+To stop Tidbits simply run './stop.sh' or '.\stop.bat' script (as 
 appropriate for your operating system).
 
 

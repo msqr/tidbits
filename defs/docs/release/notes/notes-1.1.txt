@@ -1,20 +1,20 @@
-TidBits Release Notes
+Tidbits Release Notes
 
 @VERSION@ @BUILD_DATE@
 
 This update is contains some UI changes to make the application more
 streamlined, as well as updates to some of the core frameworks used
-internally by TidBits.
+internally by Tidbits.
 
 *** NOTE **************************************************************
 
 The database schema has changed slightly in this release. You should
-not run this against an installation of TidBits 1.0. First make sure
-you back up your TidBits 1.0 database, shut down the TidBits server,
+not run this against an installation of Tidbits 1.0. First make sure
+you back up your Tidbits 1.0 database, shut down the Tidbits server,
 and then run the provided upgrade-1.0-1.1.sql SQL script (in the 
 setup/sql/<db> directory) against the 1.0 database. This script will
-update your TidBits 1.0 database to the new schema. Once upgraded, 
-bring the TidBits 1.1 application up.
+update your Tidbits 1.0 database to the new schema. Once upgraded, 
+bring the Tidbits 1.1 application up.
 
 ***********************************************************************
 
