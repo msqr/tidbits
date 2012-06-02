@@ -1,4 +1,4 @@
-TidBits Release Notes
+Tidbits Release Notes
 
 @VERSION@ @BUILD_DATE@
 
@@ -6,6 +6,6 @@ TidBits Release Notes
   
 - Tidbit deletions now get updated in search index.
 
-- Turn TidBits logo into clickable link to display all tidbits.
+- Turn Tidbits logo into clickable link to display all tidbits.
 
 - Documentation updates.

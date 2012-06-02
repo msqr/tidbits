@@ -1,9 +1,9 @@
 =======================================================================
-TidBits: the web-based personal digital wallet
+Tidbits: the web-based personal digital wallet
 Version @VERSION@ @BUILD_DATE@
 =======================================================================
 
-TidBits is released under the GPL, as noted below:
+Tidbits is released under the GPL, as noted below:
 
 ---------------------------------------------------------------------
 This program is free software; you can redistribute it and/or 

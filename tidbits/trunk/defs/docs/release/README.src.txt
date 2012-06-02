@@ -1,9 +1,9 @@
 =======================================================================
-TidBits: the web-based personal digital wallet
+Tidbits: the web-based personal digital wallet
 Version @VERSION@ @BUILD_DATE@
 =======================================================================
 
-This is the source distribution of TidBits.
+This is the source distribution of Tidbits.
 
 The source is structured as an Eclipse 3.2 project, using the Eclipse
 Web Tools Platform for support. You can import this directory into

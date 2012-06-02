@@ -1,4 +1,4 @@
-TidBits includes unmodified packages governed by the Common 
+Tidbits includes unmodified packages governed by the Common 
 Development and Distribution License, available at
 
 https://glassfish.dev.java.net/public/CDDLv1.0.html

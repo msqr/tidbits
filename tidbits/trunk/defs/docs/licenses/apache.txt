@@ -1,4 +1,4 @@
-TidBits includes unmodified packages governed by the Apache Software 
+Tidbits includes unmodified packages governed by the Apache Software 
 License. Some of these packages are governed by the Apache License 
 1.1, some by the Apache License 2.0. Both of these licenses are 
 included here.

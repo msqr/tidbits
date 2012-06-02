@@ -1,4 +1,4 @@
-TidBits includes unmodified packages governed by the GNU General Public 
+Tidbits includes unmodified packages governed by the GNU General Public 
 License. This license is included here.
 
 - mtil2 (unversioned)

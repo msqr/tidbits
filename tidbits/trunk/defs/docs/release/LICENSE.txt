@@ -1,7 +1,7 @@
 Tidbits @VERSION@
 
 @BUILD_DATE@
-Copyright (c) 2007 Matt Magoffin
+Copyright (c) 2007-12 Matt Magoffin
   
 Tidbits is released under the GPL license:
 -----------------------------------------------------------------------

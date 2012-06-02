@@ -1,25 +1,25 @@
 =======================================================================
-TidBits: the web-based personal digital wallet
+Tidbits: the web-based personal digital wallet
 Version @VERSION@ @BUILD_DATE@
 =======================================================================
 
-This is the binary distribution of TidBits. TidBits is a personal 
+This is the binary distribution of Tidbits. Tidbits is a personal 
 digital wallet. You can use it to store passwords, logins, URLs, or
 just about any small tidbit of data you might easily forget. You can
-then access all of this information by logging into TidBits with your
-single TidBits password. TidBits is a web-based application which means
+then access all of this information by logging into Tidbits with your
+single Tidbits password. Tidbits is a web-based application which means
 you need an Internet-accessible server machine you can deploy it to 
 (i.e. a hosting provider or your own personal server).
 
-TidBits includes special support for certain mobile devices, such as 
-the Palm Treo phones. If one of these devices is detected, TidBits
+Tidbits includes special support for certain mobile devices, such as 
+the Palm Treo phones. If one of these devices is detected, Tidbits
 will run with a slimmed-down interface better suited to these devices.
 
 INSTALLATION ==========================================================
 
-TidBits is a Java web application, and requires a J2EE servlet 
-container to run in, such as Tomcat or JBoss. TidBits also requires
-a relational database to store the data in. TidBits has been tested
+Tidbits is a Java web application, and requires a J2EE servlet 
+container to run in, such as Tomcat or JBoss. Tidbits also requires
+a relational database to store the data in. Tidbits has been tested
 with PostgreSQL, MySQL, and Apache Derby.
 
 FIRST-TIME DATABASE CREATION ==========================================
@@ -29,7 +29,7 @@ FIRST-TIME DATABASE CREATION ==========================================
   
   POSTGRES ------------------------------------------------------------
   
-  1) Create a database user for TidBits
+  1) Create a database user for Tidbits
     
     As a Postgres super-user, execute:
     
@@ -44,7 +44,7 @@ FIRST-TIME DATABASE CREATION ==========================================
     
     in which you may be prompted for the postgres user's password.
     
-  2) Create a database for TidBits
+  2) Create a database for Tidbits
   
     As a Postgres super-user, execute:
     
@@ -56,7 +56,7 @@ FIRST-TIME DATABASE CREATION ==========================================
     
   MYSQL ---------------------------------------------------------------
   
-  1) Create a database for TidBits
+  1) Create a database for Tidbits
   
     As a MySQL super-user, execute the following in the MySQL shell,
     i.e. enter 'mysql -u root mysql' to enter the MySQL shell as the 
@@ -64,7 +64,7 @@ FIRST-TIME DATABASE CREATION ==========================================
     
     mysql> create database tidbits character set utf8;
     
-  2) Grant privileges for an TidBits database user
+  2) Grant privileges for an Tidbits database user
   
     Still in the MySQL shell, execute:
     
@@ -74,7 +74,7 @@ FIRST-TIME DATABASE CREATION ==========================================
     Here the "identified by 'tidbits'" creates the user's password, 
     which you should set to whatever you please. Note this allows the 
     database user 'tidbits' to connect to the 'tidbits' database from 
-    any host. If you plan on running the TidBits application on the 
+    any host. If you plan on running the Tidbits application on the 
     same machine as MySLQ is running on, you could limit the tidbits 
     user to connect only from the local machine with
     
@@ -92,7 +92,7 @@ FIRST-TIME DATABASE CREATION ==========================================
 FIRST-TIME DATABASE SETUP =============================================
 
   After creating the database for the first time, you must run
-  some SQL scripts to create the TidBits database tables.
+  some SQL scripts to create the Tidbits database tables.
   
   POSTGRES ------------------------------------------------------------
   
@@ -122,9 +122,9 @@ FIRST-TIME DATABASE SETUP =============================================
 
 FIRST-TIME APPSERVER DATASOURCE SETUP =================================
 
-  TidBits depends on the application server it is running in to provide 
+  Tidbits depends on the application server it is running in to provide 
   a JDBC DataSource to connect to the database with. Thus you must 
-  configure the DataSource the first time you install TidBits.
+  configure the DataSource the first time you install Tidbits.
   
   For Tomcat 5.5, create the DataSource first by editing the 
   <TOMCAT HOME>/conf/server.xml file and add the following to the 
@@ -194,10 +194,10 @@ FIRST-TIME USE ========================================================
   
   http://<your server>:<port>/tidbits
   
-  where <your server> is the machine TidBits is running on (i.e. 
+  where <your server> is the machine Tidbits is running on (i.e. 
   localhost) and <port> is the port the applicaiton server is 
   listening on (i.e. for Tomcat this defaults to 8080).
   
-  You should see the TidBits Setup Wizard page. The Setup Wizard will 
-  guide you through configuring the remaining TidBits options.
+  You should see the Tidbits Setup Wizard page. The Setup Wizard will 
+  guide you through configuring the remaining Tidbits options.
 
