@@ -1198,10 +1198,10 @@ Tidbits.Class.Editor.prototype = {
 		
 	postedForm : function(data) {
 		if ( this.bit !== undefined ) {
-			this.bit.addDetails(data.tidbits[0]);
-			
+			this.bit.addDetails(data.tidbits[0]);			
 			// TODO: implement updateBit method, instead of recreate entire list each time?
 			this.setBit(this.bit);
+			this.bit.refresh();
 		} else {
 			this.setBit(Tidbits.Runtime.bits.addBit(data));
 		}
@@ -1318,7 +1318,6 @@ Tidbits.Class.Editor.prototype = {
 			// TODO: no crumb found... alert?
 			return;
 		}
-		console.log("Edit crumb: " +crumb);
 		this.displayForm(crumb, kindId);
 	},
 	
