@@ -1,6 +1,0 @@
-TidBits includes unmodified packages governed by the Mozilla Public 
-License. This license is included here.
-
-- HyperJAXB 2
-
----------------------------------------------------------------------
