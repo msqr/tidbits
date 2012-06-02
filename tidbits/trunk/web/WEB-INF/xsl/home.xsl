@@ -76,8 +76,13 @@
 						<button type="button" class="btn pull-left" id="manage-categories-btn">
 							<i class="icon-list"><xsl:text> </xsl:text></i>
 						</button>
+						<button type="button" class="btn pull-left btn-danger" id="delete-tidbit-btn">
+							<i class="icon-trash"><xsl:text> </xsl:text></i>
+							<xsl:text> </xsl:text>
+							<xsl:value-of select="key('i18n','delete.displayName')"/>
+						</button>
 						<button type="button" class="btn cancel">
-							<xsl:value-of select="key('i18n','cancel')"/>
+							<xsl:value-of select="key('i18n','cancel.displayName')"/>
 						</button>
 						<button type="submit" class="btn btn-primary">
 							<xsl:value-of select="key('i18n','save.displayName')"/>

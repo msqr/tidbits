@@ -418,7 +418,10 @@ Tidbits.Class.Bit.prototype = {
 	},
 	
 	removeDetail : function(id) {
-		
+		if ( id === undefined ) {
+			return;
+		}
+		// TODO: implement delete
 	},
 	
 	/**
@@ -1172,6 +1175,20 @@ Tidbits.Class.Editor = function(container) {
 	    	self.displayForm();
 	    });
 	    
+	    $('#delete-tidbit-btn').click(function(e) {
+	    	e.preventDefault();
+	    	var me = $(this);
+	    	if ( me.attr('data-really') === 'yes' ) {
+	    		me.removeAttr('data-really');
+	    		self.deleteTidbit($('#edit-tidbit-id').val());
+	    		me.html('<i class="icon-trash"></i> ' +Tidbits.i18n('delete.displayName'));
+	    	} else {
+	    		// confirm
+	    		me.attr('data-really', 'yes');
+	    		me.text(Tidbits.i18n('delete.confirm.displayName'));
+	    	}
+	    });
+	    
 	    $('#add-tidbit-value-btn').click(function(e) {
 	    	e.preventDefault();
 	    	self.displayForm({id:'',value:''});
@@ -1195,6 +1212,14 @@ Tidbits.Class.Editor = function(container) {
 };
 
 Tidbits.Class.Editor.prototype = {
+		
+	deleteTidbit : function(id) {
+		id = Number(id);
+		this.bit.removeDetail(id);
+		
+		// TODO: if no more details, this.hide();
+		this.displayList();
+	},
 		
 	postedForm : function(data) {
 		if ( this.bit !== undefined ) {
@@ -1230,6 +1255,11 @@ Tidbits.Class.Editor.prototype = {
 		if ( crumb !== undefined ) {
 			$('#edit-tidbit-id').val(crumb.id);
 			$('#add-tidbit-data').val(crumb.value);
+		}
+		if ( crumb !== undefined && crumb.id !== '' ) {
+			$('#delete-tidbit-btn').show();
+		} else {
+			$('#delete-tidbit-btn').hide();
 		}
 		$('#add-tidbit-name').val((this.bit === undefined ? '' : this.bit.getName()));
 		
