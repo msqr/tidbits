@@ -29,7 +29,6 @@ package magoffin.matt.tidbits.aop;
 import magoffin.matt.tidbits.biz.LuceneBiz;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,16 +46,15 @@ public class IndexDeleteInterceptor {
 	private LuceneBiz luceneBiz;
 
 	/**
-	 * Match TidbitsBiz methods deleting Tidbit.
+	 * Delete from the index when a Tidbit is deleted.
 	 * 
-	 * @param tidbitId
+	 * @param id
 	 *        the ID of the tidbit being deleted
 	 */
-	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.deleteTidbit(..)) && args(tidbitId)")
-	@AfterReturning("deleteTidbit(tidbitId)")
-	public void deleteTidbit(Long tidbitId) {
-		if ( tidbitId != null ) {
-			luceneBiz.deleteTidbit(tidbitId);
+	@AfterReturning(pointcut = "magoffin.matt.tidbits.aop.Business.deleteTidbit(id)")
+	public void deleteTidbit(Long id) {
+		if ( id != null ) {
+			luceneBiz.deleteTidbit(id);
 		}
 	}
 

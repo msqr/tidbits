@@ -108,6 +108,12 @@ public class HomeController {
 				domainObjectFactory.newRootElement(model));
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, value = "/deleteTidbit.do")
+	public ModelAndView deleteTidbit(Long id) {
+		tidbitsBiz.deleteTidbit(id);
+		return new ModelAndView("json-service-result");
+	}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/saveKind.do")
 	public ModelAndView saveTidbitKind(TidbitKind form) {
 		TidbitKind kind = tidbitsBiz.saveTidbitKind(form);

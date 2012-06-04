@@ -1238,12 +1238,26 @@ Tidbits.Class.Editor.prototype = {
 		
 	deleteTidbit : function(id) {
 		id = Number(id);
-		this.bit.removeDetail(id);
-		// TODO: implement updateBit method, instead of recreate entire list each time?
-		this.setBit(this.bit);
-		this.bit.refresh();		
-		// TODO: if no more details, should Bit be removed, and then hide editor?
-		this.displayList();
+		var self = this;
+		jQuery.ajax({
+			type: 'POST',
+			url: 'deleteTidbit.do', 
+			dataType: 'json',
+			data: {id:id}, 
+			success: function(data, statusText) {
+				if ( data.success === true ) {
+					self.bit.removeDetail(id);
+					// TODO: implement updateBit method, instead of recreate entire list each time?
+					self.setBit(self.bit);
+					self.bit.refresh();		
+					// TODO: if no more details, should Bit be removed, and then hide editor?
+					self.displayList();
+				}
+			},
+			error: function(xhr, statusText, error) {
+				Tidbits.defaultAjaxErrorHandler('tidbit.delete.error.title', xhr, statusText, error);
+			}
+		});
 	},
 		
 	postedForm : function(data) {

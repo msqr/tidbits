@@ -71,4 +71,14 @@ public class Business {
 	public void saveTidbitKind(TidbitKind kind) {
 	}
 
+	/**
+	 * Match TidbitsBiz methods deleting Tidbit.
+	 * 
+	 * @param id
+	 *        the tidbit ID being deleted
+	 */
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.deleteTidbit(..)) && args(id)")
+	public void deleteTidbit(Long id) {
+	}
+
 }
