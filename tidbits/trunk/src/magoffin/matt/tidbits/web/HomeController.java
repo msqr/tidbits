@@ -61,6 +61,11 @@ public class HomeController {
 	@Autowired
 	private DomainObjectFactory domainObjectFactory;
 
+	@RequestMapping(method = RequestMethod.GET, value = "/version.do")
+	public String version() {
+		return "version";
+	}
+
 	@RequestMapping(method = RequestMethod.GET, value = "/home.do")
 	public ModelAndView home() {
 		UiModel model = new UiModel();
