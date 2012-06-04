@@ -101,15 +101,10 @@
 			</jaxb:bindings>
 			
 			<jaxb:bindings node="xs:sequence/xs:element[@name='kind']">
-				<hj:many-to-one>
+				<hj:many-to-one merge="false"><!-- merge='false' allows us to override the orm:cascade below -->
 					<orm:join-column name="kindid" nullable="false"/>
+					<orm:cascade></orm:cascade>
 				</hj:many-to-one>
-				<!--hj:complexSingleProperty>
-					<hj:many-to-one foreign-key="tidbit_kind_fk"
-						not-null="true" insert="true" update="true" cascade="none">
-						<hj:column name="kindid"/>
-					</hj:many-to-one>
-				</hj:complexSingleProperty-->	
 			</jaxb:bindings>
 			
 		</jaxb:bindings>
