@@ -367,7 +367,7 @@ Tidbits.Class.Bit = function(data, bits, container) {
 	// {"id":-6, "name":"Website", "kind":"URL", "kindId":-1, "value":"http://my.web.site/", "createdBy":"test", "creationDate":"9 May 2012", "modifyDate":"9 May 2012"},
 	this.bits = bits;
 	this.name = data.name;
-	this.info = {}; // map of kindId to array of{id:-6, value:'http://my.web.site/'}
+	this.info = Object.create(null); // map of kindId to array of{id:-6, value:'http://my.web.site/'}
 	this.refreshElement = $('<button class="action"><i class="action ticon icon-refresh-t">\uf021</i></button>');
 	this.addElement = $('<button class="action"><i class="action icon-edit"></i></button>');
 	this.element = $(container)
@@ -421,7 +421,30 @@ Tidbits.Class.Bit.prototype = {
 		if ( id === undefined ) {
 			return;
 		}
+		id = Number(id);
 		// TODO: implement delete
+		var kindId = undefined;
+		var details = undefined;
+		var i, len;
+		for ( kindId in this.info ) {
+			kindId = Number(kindId);
+			details = this.info[kindId];
+			for ( i = 0, len = details.length; i < len; i++ ) {
+				if ( details[i].id === id ) {
+					details.splice(i, 1); // remove from the info
+					if ( details.length === 0 ) {
+						// remove entire details association
+						delete this.info[kindId];
+					}
+					break;
+				}
+			}
+		}
+		var keys = Object.keys(this.info);
+		if ( keys.length === 0 ) {
+			// no more props... should we delete ourself?
+			console.log("No more details on " +this.name);
+		}
 	},
 	
 	/**
@@ -1216,8 +1239,10 @@ Tidbits.Class.Editor.prototype = {
 	deleteTidbit : function(id) {
 		id = Number(id);
 		this.bit.removeDetail(id);
-		
-		// TODO: if no more details, this.hide();
+		// TODO: implement updateBit method, instead of recreate entire list each time?
+		this.setBit(this.bit);
+		this.bit.refresh();		
+		// TODO: if no more details, should Bit be removed, and then hide editor?
 		this.displayList();
 	},
 		
