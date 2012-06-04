@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:ctx="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<aop:aspectj-autoproxy/>
+	<ctx:annotation-config/>
+	<ctx:component-scan base-package="magoffin.matt.tidbits" use-default-filters="true" /> 
+
+	<bean id="settingDao" class="magoffin.matt.xweb.util.XwebJdbcParamDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+		<property name="keyPrefix" value="env:"/>
+	</bean>
+
+	<bean id="propertyConfigurer" class="magoffin.matt.xweb.util.XwebParamPropertiesPlaceholderConfigurer">
+		<property name="order" value="1"/>
+		<property name="locations">
+			<list>
+				<value>classpath:/env.properties</value>
+				<value>classpath:/jpa.properties</value>
+			</list>
+		</property>
+		<property name="settingDao" ref="settingDao"/>
+	</bean>
+	
+	<bean id="messageSource" class="magoffin.matt.xweb.util.ResourceBundleMessagesSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+				<value>client-messages</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!-- 
+	 cacheManager: the EHCache CacheManager to enable injecting caches into beans
+	 -->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+	
+	<!-- 
+	 jaxbContext: the JAXBContext instanced used as the entry point 
+	 for XML handling
+	<bean id="jaxbContext" class="javax.xml.bind.JAXBContext" 
+		factory-method="newInstance">
+		<constructor-arg index="0"  type="java.lang.String">
+			<value>magoffin.matt.tidbits.domain:magoffin.matt.xweb</value>
+		</constructor-arg>
+	</bean-->
+	
+	<!--  
+	 validatingDocumentBuilderFactory: a validating JAXP DocumentBuilderFactory
+	 >
+	<bean id="validatingDocumentBuilderFactory" 
+		class="javax.xml.parsers.DocumentBuilderFactory" 
+		factory-method="newInstance">
+		<property name="validating" value="true"/>
+	</bean-->
+	
+	<!--  
+	 nonValidatingDocumentBuilderFactory: a validating JAXP DocumentBuilderFactory
+	 >
+	<bean id="nonValidatingDocumentBuilderFactory" class="javax.xml.parsers.DocumentBuilderFactory" 
+		factory-method="newInstance">
+		<property name="namespaceAware" value="true"/>
+		<property name="validating" value="false"/>
+	</bean-->
+	
+	<!--  
+	 xpathFactory: a JAXP XPathFactory
+	 >
+	<bean id="xpathFactory" class="javax.xml.xpath.XPathFactory" 
+		factory-method="newInstance"/-->
+	
+	<!-- 
+	 transformerFactory: a default JAXP TranformerFactory
+	 >
+	<bean id="transformerFactory" class="javax.xml.transform.TransformerFactory"
+		factory-method="newInstance"/-->
+	
+	<bean id="tidbitLucenePlugin" class="magoffin.matt.tidbits.lucene.TidbitLucenePlugin">
+		<property name="config">
+			<bean class="magoffin.matt.lucene.BasicIndexConfig"/>
+		</property>
+		<property name="analyzer" ref="standardAnalyzer"/>
+		<property name="domainObjectFactory" ref="domainObjectFactory"/>
+		<property name="messages" ref="messageSource"/>
+	</bean>
+	
+	<bean id="standardAnalyzer" class="magoffin.matt.tidbits.lucene.StandardTidbitsAnalyzer">
+		<property name="snowballStemmerName" value="${lucene.snowball.stemmer.name}"/>
+		<property name="indexKeyLength" value="1"/>
+	</bean>
+	
+	<bean id="indexTimeZone" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg index="0" type="java.lang.String" value="${index.timezone.java}"/>
+	</bean>
+
+	<util:list id="luceneSearchServicePlugins" value-type="magoffin.matt.lucene.LucenePlugin">
+		<ref bean="tidbitLucenePlugin"/>
+	</util:list>
+	
+	<bean id="luceneService" class="magoffin.matt.lucene.LuceneSearchService" 
+		init-method="initialize" destroy-method="finish">
+		<property name="baseIndexDirectoryPath" value="${lucene.index.base.path}"/>
+		<property name="optimizeTriggerCount" value="${lucene.index.optimize.trigger}"/>
+		<property name="updateBufferSize" value="${lucene.update.buffer.size}"/>
+		<property name="updateBufferFlushMs" value="${lucene.update.buffer.flush}"/>
+		<property name="discardedIndexReaderMinCloseTime" value="60000"/>
+		<property name="discardedIndexReaderProcessorMs" value="120000"/>
+		<property name="neverOptimize" value="${lucene.index.optimize.never}"/>
+		<property name="indexTimeZone" ref="indexTimeZone"/>
+		<property name="plugins">
+			<ref bean="luceneSearchServicePlugins"/>
+		</property>
+	</bean>
+	
+</beans>
