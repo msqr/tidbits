@@ -266,6 +266,10 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				tidbit.setKind(tidbitKindDao.get(tidbit.getKind().getId()));
 			}
 		}
+		if ( tidbit.getComment() != null && tidbit.getComment().length() == 0 ) {
+			// set to NULL
+			tidbit.setComment(null);
+		}
 	}
 
 	@Override

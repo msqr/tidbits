@@ -97,6 +97,14 @@ var Tidbits = {
 					+'</h4>' 
 					+(error.message !== undefined ? error.message : Tidbits.i18n('error.unknown')));
 		}
+	},
+	
+	emptyCrumb : function() {
+		var o = Object.create(null);
+		o.id = '';
+		o.value = '';
+		o.comment = '';
+		return o;
 	}
 };
 
@@ -479,6 +487,7 @@ Tidbits.Class.Bit.prototype = {
 				} else {
 					// simple update existing value
 					detail.value = data.value;
+					detail.comment = data.comment;
 					return;
 				}
 				break;
@@ -487,7 +496,7 @@ Tidbits.Class.Bit.prototype = {
 		
 		if ( detail === undefined ) {
 			// wasn't found under different key, so add as new
-			detail = {id:data.id, value:data.value};
+			detail = {id:data.id, value:data.value, comment:data.comment};
 		}
 
 		details = this.info[data.kindId];
@@ -1214,7 +1223,7 @@ Tidbits.Class.Editor = function(container) {
 	    
 	    $('#add-tidbit-value-btn').click(function(e) {
 	    	e.preventDefault();
-	    	self.displayForm({id:'',value:''});
+	    	self.displayForm(Tidbits.emptyCrumb());
 	    });
 	    
 	    $('#tidbit-form').submit(function(event) {
@@ -1294,6 +1303,7 @@ Tidbits.Class.Editor.prototype = {
 		if ( crumb !== undefined ) {
 			$('#edit-tidbit-id').val(crumb.id);
 			$('#add-tidbit-data').val(crumb.value);
+			$('#add-tidbit-comments').val(crumb.comment);
 		}
 		if ( crumb !== undefined && crumb.id !== '' ) {
 			$('#delete-tidbit-btn').show();
@@ -1435,7 +1445,7 @@ Tidbits.Class.Editor.prototype = {
 		this.setBit(bit);
 		if ( bit === undefined ) {
 			// creating a new one from scratch
-			this.displayForm({id:'',value:''});
+			this.displayForm(Tidbits.emptyCrumb());
 		} else {
 			// editing existing bit
 			this.displayList();
