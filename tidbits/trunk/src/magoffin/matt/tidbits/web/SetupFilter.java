@@ -51,7 +51,7 @@ import org.springframework.web.filter.GenericFilterBean;
  */
 public class SetupFilter extends GenericFilterBean {
 	
-	private String setupPath = "/setupWizard.do";
+	private String setupPath = "/setup.do";
 	private boolean setupComplete = false;
 
 	@Override
