@@ -55,6 +55,7 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 	 */
 	public JpaTidbitKindDao() {
 		super(TidbitKind.class);
+		setRefreshOnPersist(true);
 	}
 
 	@Override

@@ -64,7 +64,7 @@
 			</bean>
 		</property>
 		<property name="jpaProperties">
-			<util:properties location="classpath:/jpa.properties"/>
+			<util:properties location="classpath:/ddl.properties"/>
 		</property>
 		<property name="jpaPropertyMap">
 			<map>
