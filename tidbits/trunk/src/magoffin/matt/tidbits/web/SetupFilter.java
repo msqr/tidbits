@@ -27,12 +27,16 @@
 package magoffin.matt.tidbits.web;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import magoffin.matt.xweb.XwebParameter;
 import magoffin.matt.xweb.util.XwebParamDao;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -94,6 +98,33 @@ public class SetupFilter extends GenericFilterBean {
 			}
 		} catch ( DataAccessException e ) {
 			logger.warn("Unable to check for setup completion: " + e.getMessage());
+
+			// attempt to create settings table
+			DataSource ds = BeanFactoryUtils.beanOfTypeIncludingAncestors(webApp, DataSource.class,
+					false, false);
+			if ( ds != null ) {
+				Connection conn = null;
+				PreparedStatement pstmt = null;
+				try {
+					conn = ds.getConnection();
+					pstmt = conn
+							.prepareStatement("create table settings (skey varchar(128) not null, svalue varchar(255), primary key (skey))");
+					pstmt.executeUpdate();
+				} catch ( SQLException e1 ) {
+					logger.warn("Unable to create Settings table: " + e.getMessage());
+				} finally {
+					try {
+						if ( pstmt != null ) {
+							pstmt.close();
+						}
+						if ( conn != null ) {
+							conn.close();
+						}
+					} catch ( SQLException e1 ) {
+						logger.debug("Error cleaning up SQL connection", e1);
+					}
+				}
+			}
 		}
 	}
 	
