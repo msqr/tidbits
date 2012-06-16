@@ -23,6 +23,15 @@
 		<property name="jdbcTemplate" ref="jdbcTemplate"/>
 		<property name="keyPrefix" value="env:"/>
 	</bean>
+	
+	<bean id="env" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:/env.properties</value>
+				<value>classpath:/jpa.properties</value>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="propertyConfigurer" class="magoffin.matt.xweb.util.XwebParamPropertiesPlaceholderConfigurer">
 		<property name="order" value="1"/>
