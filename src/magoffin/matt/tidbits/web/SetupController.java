@@ -29,7 +29,9 @@ package magoffin.matt.tidbits.web;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Resource;
+import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.dao.jpa.support.JPASupport;
+import magoffin.matt.xweb.XwebParameter;
 import magoffin.matt.xweb.util.XwebParamDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +60,9 @@ public class SetupController {
 	public static final String SETTING_KEY_SETUP_COMPLETE = "app.setup.complete";
 
 	@Autowired
+	private DomainObjectFactory domainObjectFactory;
+
+	@Autowired
 	private XwebParamDao settingDao;
 
 	@Value("${jpa.platform}")
@@ -67,13 +72,13 @@ public class SetupController {
 	private JPASupport jpaSupport;
 
 	@Resource
-	private Map<String, String> defaultSettings = new LinkedHashMap<String, String>();
+	private Map<String, String> env = new LinkedHashMap<String, String>();
 
 	@ModelAttribute("setupForm")
 	public SetupForm getFormBean() {
 		SetupForm form = new SetupForm();
 		// copy defaults properties into settings
-		form.getSettings().putAll(this.defaultSettings);
+		form.getSettings().putAll(this.env);
 		return form;
 	}
 
@@ -93,26 +98,56 @@ public class SetupController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=welcome")
-	public String welcome(SetupForm form) {
+	public String welcome(@SuppressWarnings("unused") SetupForm form) {
 		return "setup-welcome";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=db")
-	public String setupDatabase(SetupForm form) {
+	public String setupDatabase(@SuppressWarnings("unused") SetupForm form) {
 		return "setup-db";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=filesystem")
 	public String setupFilesystem(SetupForm form) {
+		if ( form.getSettings().containsKey("jpa.platform")
+				&& !originalJpaPlatform.equals(form.getSettings().get("jpa.platform")) ) {
+			form.setChangedJpaPlatform(true);
+		} else {
+			form.setChangedJpaPlatform(false);
+		}
 		return "setup-filesystem";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=confirm")
-	public String setupConfirm(@Validated SetupForm form, BindingResult bindingResult) {
+	public String setupConfirm(@SuppressWarnings("unused") @Validated SetupForm form,
+			BindingResult bindingResult) {
 		if ( bindingResult.hasErrors() ) {
 			return "setup-filesystem";
 		}
 		return "setup-confirm";
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = "_to=complete")
+	public String setupComplete(SetupForm form) {
+		for ( Map.Entry<String, String> me : form.getSettings().entrySet() ) {
+			String key = me.getKey();
+			if ( !env.containsKey(key) || !me.getValue().equals(env.get(key)) ) {
+				XwebParameter setting = domainObjectFactory.newXwebParameterInstance();
+				setting.setKey(key);
+				setting.setValue(me.getValue());
+				this.settingDao.updateParameter(setting);
+			} else {
+				this.settingDao.removeParameter(key);
+			}
+		}
+
+		// add the "we're setup" key into the database
+		XwebParameter setting = domainObjectFactory.newXwebParameterInstance();
+		setting.setKey(SETTING_KEY_SETUP_COMPLETE);
+		setting.setValue(Boolean.TRUE.toString());
+		this.settingDao.updateParameter(setting);
+
+		return "setup-complete";
 	}
 
 	public void setSettingDao(XwebParamDao settingDao) {
@@ -123,12 +158,16 @@ public class SetupController {
 		this.originalJpaPlatform = originalJpaPlatform;
 	}
 
-	public void setDefaultSettings(Map<String, String> defaultSettings) {
-		this.defaultSettings = defaultSettings;
+	public void setEnv(Map<String, String> defaultSettings) {
+		this.env = defaultSettings;
 	}
 
 	public void setJpaSupport(JPASupport jpaSupport) {
 		this.jpaSupport = jpaSupport;
+	}
+
+	public void setDomainObjectFactory(DomainObjectFactory domainObjectFactory) {
+		this.domainObjectFactory = domainObjectFactory;
 	}
 
 }

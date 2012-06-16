@@ -18,14 +18,14 @@
 			<fieldset class="control-group">
 				<div class="control-group">
 					<label class="control-label" for="jpa-platform">
-						<fmt:message key="setup.db.hibernate.dialect.displayName"/>
+						<fmt:message key="setup.db.jpa.platform.displayName"/>
 					</label>
 					<div class="controls">
 						<form:select path="settings['jpa.platform']" id="jpa-platform">
 							<form:options items="${jpaDrivers}"/>
 						</form:select>
 						<p class="help-block">
-							<fmt:message key="setup.db.hibernate.dialect.caption"/>
+							<fmt:message key="setup.db.jpa.platform.caption"/>
 						</p>
 					</div>
 				</div>
