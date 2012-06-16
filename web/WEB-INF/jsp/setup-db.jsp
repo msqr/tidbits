@@ -1,59 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title><fmt:message key="setup.db.title"/></title>
-    <link media="screen" href="<c:url value="/css/global-tidbits.css"/>" type="text/css" rel="stylesheet" />
-  </head>
-  <body>
-    <h1><fmt:message key="setup.db.title"/></h1>
-    <p><fmt:message key="setup.db.intro"/></p>
+	<head>
+		<title><fmt:message key="setup.db.title"/></title>
+		<%@ include file="setup-head.jspf" %>
+	</head>
+	<body>
+		<h1><fmt:message key="setup.db.title"/></h1>
+		<p><fmt:message key="setup.db.intro"/></p>
     
-	<form method="post" action="<c:url value="/setupWizard.do"/>">
-		
-		<dl class="menu">
-			
-			<dt><fmt:message key="setup.db.hibernate.dialect.displayName"/></dt>
-			<dd>
-				<spring:bind path="cmd.settings['hibernate.dialect']">
-					<select name="<c:out value="${status.expression}"/>">
-						<option value="org.hibernate.dialect.DB2Dialect" <c:if 
-							test="${status.value == 
-								'org.hibernate.dialect.DB2Dialect'}">selected="selected"</c:if>>DB2</option>
-						<option value="org.hibernate.dialect.DerbyDialect" <c:if 
-							test="${status.value == 
-								'org.hibernate.dialect.DerbyDialect'}">selected="selected"</c:if>>Derby</option>
-						<option value="org.hibernate.dialect.MySQLDialect" <c:if 
-							test="${status.value == 
-								'org.hibernate.dialect.MySQLDialect'}">selected="selected"</c:if>>MySQL</option>
-						<option value="org.hibernate.dialect.PostgreSQLDialect" <c:if 
-							test="${status.value == 
-								'org.hibernate.dialect.PostgreSQLDialect'}">selected="selected"</c:if>>PostgreSQL</option>
-						<option value="org.hibernate.dialect.OracleDialect" <c:if 
-							test="${status.value == 
-								'org.hibernate.dialect.OracleDialect'}">selected="selected"</c:if>>Oracle 8</option>
-						<option value="org.hibernate.dialect.Oracle9Dialect" <c:if 
-							test="${status.value == 
-								'org.hibernate.dialect.Oracle9Dialect'}">selected="selected"</c:if>>Oracle 9</option>
-						<option value="org.hibernate.dialect.SQLServerDialect" <c:if 
-							test="${status.value == 
-								'org.hibernate.dialect.SQLServerDialect'}">selected="selected"</c:if>>SQL Server</option>
-					</select> <br />
-				</spring:bind>
-				<fmt:message key="setup.db.hibernate.dialect.caption"/>
-			</dd>
-			
-			
-		</dl>
-		
-		<div>
-			<input type="submit" name="_target0" value="<fmt:message key="back.displayName"/>"/>
-			<input type="submit" name="_target2" value="<fmt:message key="continue.displayName"/>"/>
-		</div>
-	</form>
+		<form:form method="post" modelAttribute="setupForm" cssClass="form-horizontal">
+			<input type="hidden" name="page" value="db" />
+			<fieldset class="control-group">
+				<div class="control-group">
+					<label class="control-label" for="jpa-platform">
+						<fmt:message key="setup.db.hibernate.dialect.displayName"/>
+					</label>
+					<div class="controls">
+						<form:select path="settings['jpa.platform']" id="jpa-platform">
+							<form:options items="${jpaDrivers}"/>
+						</form:select>
+						<p class="help-block">
+							<fmt:message key="setup.db.hibernate.dialect.caption"/>
+						</p>
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" name="_to" class="btn btn-primary" value="filesystem">
+					<fmt:message key="continue.displayName"/>
+				</button>
+				<button type="submit" name="_to" class="btn" value="welcome">
+					<fmt:message key="back.displayName"/>
+				</button>
+			</div>
+		</form:form>
 
-  </body>
+	</body>
 </html>

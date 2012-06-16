@@ -5,6 +5,7 @@
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:jee="http://www.springframework.org/schema/jee"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -15,7 +16,9 @@
 		http://www.springframework.org/schema/jee
 		http://www.springframework.org/schema/jee/spring-jee.xsd
 		http://www.springframework.org/schema/tx
-		http://www.springframework.org/schema/tx/spring-tx.xsd">
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<mvc:annotation-driven/>
 
@@ -79,6 +82,11 @@
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> 
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
-	</bean> 
+	</bean>
+	
+	<util:map id="defaultSettings">
+		<entry key="jpa.platform" value="${jpa.platform}"/>
+		<entry key="lucene.index.base.path" value="${lucene.index.base.path}"/>
+	</util:map>
 
 </beans>
