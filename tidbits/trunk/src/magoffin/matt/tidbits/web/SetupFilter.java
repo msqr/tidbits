@@ -87,7 +87,8 @@ public class SetupFilter extends GenericFilterBean {
 				webApp, XwebParamDao.class, false, false);
 		Assert.notNull(settingDao, "XwebParamDao not available");
 		try {
-			XwebParameter setupParam = settingDao.getParameter(SetupWizard.SETTING_KEY_SETUP_COMPLETE);
+			XwebParameter setupParam = settingDao
+					.getParameter(SetupController.SETTING_KEY_SETUP_COMPLETE);
 			if ( setupParam != null ) {
 				setupComplete = Boolean.parseBoolean(setupParam.getValue());
 			}
