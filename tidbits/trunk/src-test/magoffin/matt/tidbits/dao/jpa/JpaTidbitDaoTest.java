@@ -24,13 +24,14 @@
  * ===================================================================
  */
 
-package magoffin.matt.tidbits;
+package magoffin.matt.tidbits.dao.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import magoffin.matt.tidbits.BaseTransactionalTest;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitDao;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitKindDao;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
