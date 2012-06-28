@@ -152,6 +152,11 @@
 							</a>
 							<ul class="dropdown-menu">
 								<li>
+									<a id="import-tidbits-btn" href="{$web-context}/import.do" title="{key('i18n','link.import.csv.title')}">
+										<xsl:value-of select="key('i18n','link.import.csv')"/>
+									</a>
+								</li>
+								<li>
 									<a class="link-logoff" href="{$web-context}/logoff.do">
 										<xsl:value-of select="key('i18n','link.logoff')"/>
 									</a>

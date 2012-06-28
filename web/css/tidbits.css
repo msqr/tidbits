@@ -218,15 +218,6 @@ div.tidbit.card dl dd + dd::before {
 	
 	background-color: transparent;
 	border: none;
-	
-	/*
-	-webkit-border-radius: none;
-	-moz-border-radius: none;
-	border-radius: none;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
-	box-shadow: none;
-	*/
 }
 
 .editor .header {
@@ -260,6 +251,43 @@ div.tidbit.card dl dd + dd::before {
 .footer .btn + .btn {
 	margin-left: 5px;
 	margin-bottom: 0;
+}
+
+.importer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1199;
+	background-color: transparent;
+	border: none;
+}
+
+.importer .header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 18px;
+	padding: 9px 15px;
+	border-bottom: 1px solid #eee;
+}
+
+.importer .body {
+	position: absolute;
+	top: 36px;
+	left: 0;
+	right: 0;
+	bottom: 58px;
+	padding: 9px 15px;
+	overflow-y: auto;
+}
+
+.importer .footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 28px;
 }
 
 .flipper {

@@ -1585,6 +1585,117 @@ Tidbits.Class.Kinds.prototype = {
 	}
 };
 
+/**
+ * The Tidbits importer.
+ */
+Tidbits.Class.ModalWidget = function(container) {
+	this.element = $(container);
+	this.elm = this.element.get(0);
+	this.matrix = new Tidbits.Class.Matrix();
+	this.flipper = this.element.find('.flipper');
+	this.front = this.element.find('.front');
+	this.back = this.element.find('.back');
+};
+
+Tidbits.Class.ModalWidget.prototype = {
+	didShow : function() {
+		// Extending classes can override
+	},
+	
+	show : function() {
+		var win = $(window);
+		var halfWidth = this.element.width() / 2;
+		var halfHeight = this.element.height() / 2;
+		var centerX = Math.floor(win.width() / 2 - halfWidth);
+		var centerY = Math.floor(win.height() / 2 - halfHeight);
+		var self = this;
+		var move = function() {
+			self.matrix.setTranslation(centerX, centerY);
+			self.matrix.easeOut(self.elm, function() {
+		    	self.didShow();
+			});
+		};
+		if ( this.element.css('visibility') === 'hidden' ) {
+			this.matrix.setTranslation(centerX, halfHeight * -3);
+			this.matrix.apply(this.elm);
+			this.element.css('visibility', '');
+			setTimeout(move, 10);
+		} else {
+			move();
+		}
+	},
+	
+	hide : function() {
+		var height = this.element.height();
+		this.matrix.setTranslation(
+				this.matrix.getTranslation().x, 
+				Math.ceil(height * -1.5));
+		this.matrix.easeIn(this.elm);
+	}
+};
+
+Tidbits.Class.Importer = function(container) {
+	var superclass = Tidbits.Class.ModalWidget;
+	superclass.call(this, container);
+
+	var self = this;
+	
+	// private init
+	(function() {
+		self.element.find('button[data-dismiss=importer]').click(function(e) {
+			e.preventDefault();
+			self.hide();
+		});
+	    
+	    $('#import-form').submit(function(event) {
+			event.preventDefault();
+			$(this).ajaxSubmit({
+				dataType: 'json',
+				error : function(xhr, statusText, error) {
+					Tidbits.defaultAjaxErrorHandler('tidbit.save.error.title', xhr, statusText, error);
+				},
+				success : function(data) {
+					self.postedForm(data);
+				}
+			});
+		});
+	    
+	})();
+};
+
+Tidbits.Class.Importer.prototype = Object.create(Tidbits.Class.ModalWidget.prototype);
+Tidbits.Class.Importer.prototype.constructor = Tidbits.Class.Importer;
+
+Tidbits.Class.Importer.prototype.import = function() {
+	 this.showForm();
+	 this.show();
+};
+
+
+Tidbits.Class.Importer.prototype.toggleForm = function() {
+	var show = (this.back.css('display') === 'none');
+	var newTransform = (show === true ? 'rotateX(-180deg)' : '');
+	var otherSide = this.back;
+	if ( show === true ) {
+		otherSide.css('display', 'none');
+	} else {
+		otherSide.css('display', 'block');
+	}
+	this.flipper.css('transform', newTransform);
+};
+
+Tidbits.Class.Importer.prototype.showForm = function() {
+	if ( this.back.css('display') === 'none' ) {
+		this.toggleForm();
+	}
+};
+
+Tidbits.Class.Importer.prototype.showVerify = function() {
+	if ( this.back.css('display') !== 'none' ) {
+		this.toggleForm();
+	}
+};
+
 $(document).ready(function() {
 	Tidbits.Runtime.i18n = new XwebLocaleClass();
 	jQuery.getJSON('messages.json', function(data) {
@@ -1601,5 +1712,11 @@ $(document).ready(function() {
 		e.preventDefault();
 		Tidbits.Runtime.editor.edit();
 	});
-
+	$('#import-tidbits-btn').click(function(e) {
+		e.preventDefault();
+		if ( Tidbits.Runtime.importer === undefined ) {
+			Tidbits.Runtime.importer = new Tidbits.Class.Importer('#tidbit-importer');
+		}
+		Tidbits.Runtime.importer.import();
+	});
 });

@@ -140,182 +140,64 @@
 				</div>
 			</div>
 		</div>
-		
-		<!--div id="content-pane" class="alt_pagination">
-			<xsl:if test="$err">
-				<xsl:apply-templates select="x:x-errors" mode="error-intro"/>
-			</xsl:if>
-			<xsl:choose>
-				<xsl:when test="$handheld = 'false'">
-					<div id="search-results-info">
-						<form id="page-form" action="{$web-context}{$ctx/x:path}" method="post">
-							<div>
-								<span class="header" id="matches-label">
-									<xsl:value-of select="key('i18n','search.result.query.matches')"/>
-									<xsl:text> </xsl:text>
-									<span class="query">.</span>
-								</span>
-								<span class="data" id="matches-data">0</span>
-								<span class="header" id="pages-label">
-									<xsl:value-of select="key('i18n','search.result.pages')"/>
-								</span>
-								<span class="data" id="pages-data">
-									<select name="page" id="page-form-page">
-										<option value="0">1</option>
-									</select>
-								</span>
-								<span class="header" id="page-size-label">
-									<xsl:value-of select="key('i18n','search.result.page.size')"/>
-								</span>
-								<span class="data-last" id="page-size-data">
-									<select size="1" name="pageSize" id="page-form-pagesize">
-										<option value="10">10</option>
-										<option value="25">25</option>
-										<option value="50">50</option>
-										<option value="100">100</option>
-									</select>
-								</span>
-							</div>
-						</form>
+
+		<div class="importer flipper-container" id="tidbit-importer" style="visibility: hidden;">
+			<div class="flipper">
+				<form class="face front form-horizontal" id="import-csv-form" action="{$web-context}/import.do" 
+					method="post" enctype="multipart/form-data">
+					<div class="header">
+						<h3><xsl:value-of select="key('i18n','import.csv.title')"/></h3>
 					</div>
-				</xsl:when>
-				<xsl:when test="string($search-results/@query) 
-					or $search-results/@is-partial-result = 'true'">
-					<div id="search-results-info">
-						<form id="page-form" action="{$web-context}{$ctx/x:path}" method="post">
-							<div>
-								<span class="header">
-									<xsl:choose>
-										<xsl:when test="string($search-results/@query)">							
-											<xsl:value-of select="key('i18n','search.result.query.matches')"/>
-											<xsl:text> </xsl:text>
-											<span class="query">
-												<xsl:value-of select="$search-results/@query"/>
-											</span>
-										</xsl:when>
-										<xsl:otherwise>	
-											<xsl:value-of select="key('i18n','search.result.total.tidbits')"/>
-										</xsl:otherwise>
-									</xsl:choose>
-								</span>
-								<span class="data">
-									<xsl:value-of select="$search-results/@total-results"/>
-								</span>
-								<xsl:if test="$search-results/@is-partial-result = 'true'">
-									<span class="header">
-										<xsl:value-of select="key('i18n','search.result.page.display')"/>
-									</span>
-									<span class="data">
-										<xsl:value-of select="$search-results/t:pagination/@page-offset + 1"/>
-										<xsl:choose>
-											<xsl:when test="$handheld = 'true'">
-												<xsl:text>/</xsl:text>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:text> </xsl:text>
-												<xsl:value-of select="key('i18n','of')"/>
-												<xsl:text> </xsl:text>
-											</xsl:otherwise>
-										</xsl:choose>
-										<xsl:value-of select="ceiling($search-results/@total-results 
-											div $search-results/t:pagination/@page-size)"/>
-									</span>
-									<xsl:if test="not($handheld = 'true')">
-										<span class="header">
-											<xsl:value-of select="key('i18n','search.result.pages')"/>
-										</span>
-									</xsl:if>
-									<span class="data-last">
-										<select name="page" id="page-form-page">
-											<xsl:call-template name="render.page.option"/>
-										</select>
-									</span>
-									<xsl:if test="$handheld = 'true'">
-										<input type="submit" value="{key('i18n','go.displayName')}"/>
-									</xsl:if>
-								</xsl:if>
+					<fieldset class="body">
+						<input type="hidden" name="page" value="import"/>
+						<p>
+							<xsl:value-of select="key('i18n','import.csv.intro')" disable-output-escaping="yes"/>
+						</p>
+						<div class="control-group">
+							<label for="import-file" class="control-label">
+								<xsl:value-of select="key('i18n','import.cvs.file.displayName')"/>
+							</label>
+							<div class="controls">
+								<input type="file" name="file" id="import-file"/>
 							</div>
-						</form>
+						</div>
+					</fieldset>
+					<div class="footer modal-footer">
+						<button type="button" class="btn pull-left" data-dismiss="importer">
+							<xsl:value-of select="key('i18n','close')"/>
+						</button>
+						<button type="submit" class="btn btn-primary" name="_to" value="verify">
+							<xsl:value-of select="key('i18n','import.displayName')"/>
+						</button>
 					</div>
-				</xsl:when>
-			</xsl:choose>
-			<xsl:choose>
-				<xsl:when test="$search-results/t:tidbit">
-					<div id="body-content">
-						<table class="table table-striped" id="datatable">
-							<thead>
-								<tr>
-									<th><xsl:text> </xsl:text></th>
-									<xsl:if test="$handheld != 'true'">
-										<th><xsl:text> </xsl:text></th>
-									</xsl:if>	
-									<th>
-										<xsl:value-of select="key('i18n','tidbit.name.displayName')"/>
-									</th>
-									<th>
-										<xsl:value-of select="key('i18n','tidbit.kind.displayName')"/>
-									</th>
-									<xsl:if test="$handheld != 'true'">
-										<th>
-											<xsl:value-of select="key('i18n','tidbit.data.displayName')"/>
-										</th>
-									</xsl:if>
-									<th>
-										<xsl:value-of select="key('i18n','tidbit.comment.displayName')"/>
-									</th>
-									<xsl:if test="$handheld != 'true'">
-										<th>
-											<xsl:value-of select="key('i18n','tidbit.created.displayName')"/>
-										</th>
-										<th>
-											<xsl:value-of select="key('i18n','tidbit.modified.displayName')"/>
-										</th>
-									</xsl:if>
-								</tr>
-							</thead>
-							<tbody>
-								<xsl:apply-templates select="x:x-model[1]/t:model[1]/t:search-results/t:tidbit"/>
+				</form>
+				
+				<form class="face back form-horizontal">
+					<div class="header">
+						<h3><xsl:value-of select="key('i18n', 'import.csv.verify.title')"/></h3>
+					</div>
+					<fieldset class="body">
+						<input type="hidden" name="page" value="verify"/>
+						<table class="table table-striped">
+							<tbody id="import-table-body">
+								<xsl:text> </xsl:text>
 							</tbody>
 						</table>
+					</fieldset>
+					<div class="footer modal-footer">
+						<button type="button" class="btn pull-left" data-dismiss="importer">
+							<xsl:value-of select="key('i18n','close')"/>
+						</button>
+						<button type="submit" class="btn" name="_to" value="import" data-dismiss="editor" id="import-verify-back">
+							<xsl:value-of select="key('i18n','back.displayName')"/>
+						</button>
+						<button type="submit" name="_to" value="save" class="btn btn-primary">
+							<xsl:value-of select="key('i18n','save.displayName')"/>
+						</button>
 					</div>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="key('i18n','no.tidbits.available')"/>
-				</xsl:otherwise>
-			</xsl:choose>
+				</form>
+			</div>
 		</div>
-		<xsl:if test="$handheld != 'true'">
-			<div id="ui-elements" class="ui-elements">
-				<xsl:apply-templates select="." mode="ui.elements"/>
-			</div>
-		</xsl:if-->
-	</xsl:template>
-	
-	<xsl:template match="x:x-data" mode="ui.elements">
-		<!-- TODO: add CSV import back
-		<form id="import-csv-form" action="{$web-context}/importCsv.do" method="post" 
-			enctype="multipart/form-data" class="simple-form">
-			<h3>
-				<xsl:value-of select="key('i18n','import.csv.title')"/>
-			</h3>
-			<div style="max-width: 300px;">
-				<xsl:value-of select="key('i18n','import.csv.intro')" disable-output-escaping="yes"/>
-			</div>
-			<div>
-				<label for="import-cvs-file">
-					<xsl:value-of select="key('i18n','import.cvs.file.displayName')"/>
-				</label>
-				<div>
-					<input type="file" name="file" id="import-cvs-file"/>
-				</div>
-			</div>
-			<div class="submit">
-				<input type="hidden" name="_target1" value=""/>
-				<input value="{key('i18n','import.displayName')}" type="submit" />
-			</div>
-			<div><xsl:comment>This is here to "clear" the floats.</xsl:comment></div>
-		</form>
-		-->
 	</xsl:template>
 	
 </xsl:stylesheet>
