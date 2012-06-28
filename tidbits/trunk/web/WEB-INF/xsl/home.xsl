@@ -143,13 +143,14 @@
 
 		<div class="importer flipper-container" id="tidbit-importer" style="visibility: hidden;">
 			<div class="flipper">
-				<form class="face front form-horizontal" id="import-csv-form" action="{$web-context}/import.do" 
+				<form class="face front form-horizontal" id="import-form" action="{$web-context}/import.do" 
 					method="post" enctype="multipart/form-data">
 					<div class="header">
 						<h3><xsl:value-of select="key('i18n','import.csv.title')"/></h3>
 					</div>
 					<fieldset class="body">
 						<input type="hidden" name="page" value="import"/>
+						<input type="hidden" name="_to" value="verify"/>
 						<p>
 							<xsl:value-of select="key('i18n','import.csv.intro')" disable-output-escaping="yes"/>
 						</p>
@@ -166,18 +167,23 @@
 						<button type="button" class="btn pull-left" data-dismiss="importer">
 							<xsl:value-of select="key('i18n','close')"/>
 						</button>
-						<button type="submit" class="btn btn-primary" name="_to" value="verify">
+						<button type="submit" class="btn btn-primary">
 							<xsl:value-of select="key('i18n','import.displayName')"/>
 						</button>
 					</div>
 				</form>
 				
-				<form class="face back form-horizontal">
+				<form class="face back form-horizontal" id="import-verify-form" 
+					action="{$web-context}/import.do" method="post">
 					<div class="header">
-						<h3><xsl:value-of select="key('i18n', 'import.csv.verify.title')"/></h3>
+						<h3><xsl:value-of select="key('i18n', 'import.verify.title')"/></h3>
 					</div>
 					<fieldset class="body">
 						<input type="hidden" name="page" value="verify"/>
+						<input type="hidden" name="_to" value="save"/>
+						<p>
+							<xsl:value-of select="key('i18n','import.verify.intro')" disable-output-escaping="yes"/>
+						</p>
 						<table class="table table-striped">
 							<tbody id="import-table-body">
 								<xsl:text> </xsl:text>
@@ -188,7 +194,7 @@
 						<button type="button" class="btn pull-left" data-dismiss="importer">
 							<xsl:value-of select="key('i18n','close')"/>
 						</button>
-						<button type="submit" class="btn" name="_to" value="import" data-dismiss="editor" id="import-verify-back">
+						<button type="button" class="btn" id="import-verify-back">
 							<xsl:value-of select="key('i18n','back.displayName')"/>
 						</button>
 						<button type="submit" name="_to" value="save" class="btn btn-primary">

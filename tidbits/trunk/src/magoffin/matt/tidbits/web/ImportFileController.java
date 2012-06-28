@@ -68,14 +68,18 @@ public class ImportFileController {
 	}
 
 	@InitBinder
-	protected void initBinder(WebDataBinder binder) {
+	protected void initBinderAll(WebDataBinder binder) {
 		// register our Multipart TemporaryFile binder and validator
 		binder.registerCustomEditor(TemporaryFile.class, new TemporaryFileMultipartFileEditor());
+	}
+
+	@InitBinder("importForm")
+	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(new ImportFileValidator());
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=verify")
-	public ModelAndView start(ImportFileForm form) throws IOException {
+	public ModelAndView verify(@ModelAttribute("importForm") ImportFileForm form) throws IOException {
 		List<Tidbit> tidbits = tidbitsBiz.parseCsvData(form.getFile().getInputStream());
 		form.setTidbits(tidbits);
 
@@ -84,6 +88,12 @@ public class ImportFileController {
 
 		return new ModelAndView("json-search-results", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = "_to=save")
+	public ModelAndView save(@ModelAttribute("importForm") ImportFileForm form) {
+		tidbitsBiz.saveTidbits(form.getTidbits());
+		return new ModelAndView("json-service-result");
 	}
 
 	public void setTidbitsBiz(TidbitsBiz tidbitsBiz) {

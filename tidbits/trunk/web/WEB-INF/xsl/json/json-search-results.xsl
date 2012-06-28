@@ -46,7 +46,17 @@
 			<xsl:text>,</xsl:text>
 		</xsl:if>
 		<xsl:text>&#xa;{</xsl:text>
-		<xsl:text>"id":</xsl:text><xsl:value-of select="@tidbit-id"/>
+		<xsl:text>"id":</xsl:text>
+		
+		<!--  The ID attribute might be null, in the case of importing tidbits -->
+		<xsl:choose>
+			<xsl:when test="@tidbit-id">
+					<xsl:value-of select="@tidbit-id"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>null</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 
 		<!-- name -->
 		<xsl:text>, "name":</xsl:text>

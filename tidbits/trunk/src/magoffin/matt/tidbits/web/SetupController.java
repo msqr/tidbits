@@ -87,7 +87,7 @@ public class SetupController {
 		return jpaSupport.availableDrivers();
 	}
 
-	@InitBinder
+	@InitBinder("setupForm")
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(new SetupFormValidator());
 	}
@@ -98,17 +98,17 @@ public class SetupController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=welcome")
-	public String welcome(@SuppressWarnings("unused") SetupForm form) {
+	public String welcome(@SuppressWarnings("unused") @ModelAttribute("setupForm") SetupForm form) {
 		return "setup-welcome";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=db")
-	public String setupDatabase(@SuppressWarnings("unused") SetupForm form) {
+	public String setupDatabase(@SuppressWarnings("unused") @ModelAttribute("setupForm") SetupForm form) {
 		return "setup-db";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=filesystem")
-	public String setupFilesystem(SetupForm form) {
+	public String setupFilesystem(@ModelAttribute("setupForm") SetupForm form) {
 		if ( form.getSettings().containsKey("jpa.platform")
 				&& !originalJpaPlatform.equals(form.getSettings().get("jpa.platform")) ) {
 			form.setChangedJpaPlatform(true);
@@ -119,7 +119,8 @@ public class SetupController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=confirm")
-	public String setupConfirm(@SuppressWarnings("unused") @Validated SetupForm form,
+	public String setupConfirm(
+			@SuppressWarnings("unused") @ModelAttribute("setupForm") @Validated SetupForm form,
 			BindingResult bindingResult) {
 		if ( bindingResult.hasErrors() ) {
 			return "setup-filesystem";

@@ -112,8 +112,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		}
 		CSVParser parser = new CSVParser(input);
 		// look for data in form:
-		// 0: tidbit kind name
-		// 1: tidbit name
+		// 0: tidbit name
+		// 1: tidbit kind name
 		// 2: tidbit data
 		// 3: tidbit create date (optional)
 		// 4: tidbit modify date (optional)
@@ -127,14 +127,13 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				if ( !StringUtils.hasText(line[1]) ) continue;
 				TidbitKind kind = tidbitKindDao.getTidbitKindByName(line[0]);
 				if ( kind == null ) {
-					List<TidbitKind> kinds = tidbitKindDao.findTidbitKindsByName(
-							line[0]);
+					List<TidbitKind> kinds = tidbitKindDao.findTidbitKindsByName(line[1]);
 					if ( kinds.size() > 0 ) {
 						kind = kinds.get(0);
 					} else {
 						// create new TidbitKind
 						kind = domainObjectFactory.newTidbitKindInstance();
-						kind.setName(line[0]);
+						kind.setName(line[1]);
 						if ( line.length > 6 && StringUtils.hasText(line[6]) ) {
 							kind.setComment(line[6]);
 						}
@@ -143,7 +142,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				
 				Tidbit tidbit = domainObjectFactory.newTidbitInstance();
 				tidbit.setKind(kind);
-				tidbit.setName(line[1]);
+				tidbit.setName(line[0]);
 				tidbit.setData(line[2]);
 				if ( line.length > 3 && StringUtils.hasText(line[3]) ) {
 					try {

@@ -149,6 +149,9 @@
 		<dependency org="commons-fileupload" name="commons-fileupload" rev="1.2.2" conf="runtime,test">
 			<artifact name="commons-fileupload" type="jar" />
 		</dependency>
+		<dependency org="commons-io" name="commons-io" rev="2.3" conf="runtime,test">
+			<artifact name="commons-io" type="jar" />
+		</dependency>
 		
 		<!-- Unit test support -->
 		<dependency org="org.testng" name="testng" rev="6.5.1" conf="test">

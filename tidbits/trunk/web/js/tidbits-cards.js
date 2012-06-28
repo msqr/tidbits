@@ -808,6 +808,7 @@ Tidbits.Class.Bits = function(container, margins) {
 	var cardsContainer = $(container);
 	var self = this;
 	var cardMode = false;
+	var searchForm = $('#nav-search-tidbit-form');
 	
 	var populateTidbits = function(data, ascending) {
 		if ( data === undefined || !Array.isArray(data.tidbits) ) {
@@ -900,7 +901,7 @@ Tidbits.Class.Bits = function(container, margins) {
 		
 		jQuery.getJSON('search.json', populateTidbits);
 		
-	    $('#nav-search-tidbit-form').submit(function(event) {
+		searchForm.submit(function(event) {
 			event.preventDefault();
 			$(this).ajaxSubmit({
 				dataType: 'json',
@@ -914,6 +915,14 @@ Tidbits.Class.Bits = function(container, margins) {
 		    $('#nav-search-tidbit-form input[type=text]').focus();
 	    }
 	})();
+	
+	this.refresh = function() {
+		// clear query
+		searchForm.find('input[name=query]').val('');
+		
+		// submit search
+		searchForm.submit();
+	};
 	
 	/**
 	 * Move a specific Bit so it appears above all other bits,
@@ -1639,6 +1648,26 @@ Tidbits.Class.Importer = function(container) {
 	superclass.call(this, container);
 
 	var self = this;
+
+	var addVerifyRow = function(tbody, data) {
+		$('<tr/>')
+			.append($('<td/>').text(data.name))
+			.append($('<td/>').text(data.kind))
+			.append($('<td/>').text(data.value))
+			.appendTo(tbody);
+	};
+
+	var showVerifyData = function(data) {
+		var i, len;
+		var tbody = $('#import-table-body');
+		tbody.empty();
+		if ( data.tidbits !== undefined ) {
+			for ( i = 0, len = data.tidbits.length; i < len; i++ ) {
+				addVerifyRow(tbody, data.tidbits[i]);
+			}
+		}
+		self.showVerify();
+	};
 	
 	// private init
 	(function() {
@@ -1646,19 +1675,40 @@ Tidbits.Class.Importer = function(container) {
 			e.preventDefault();
 			self.hide();
 		});
+		
+		$('#import-verify-back').click(function(event) {
+			event.preventDefault();
+			self.showForm();
+		});
 	    
 	    $('#import-form').submit(function(event) {
 			event.preventDefault();
 			$(this).ajaxSubmit({
 				dataType: 'json',
 				error : function(xhr, statusText, error) {
-					Tidbits.defaultAjaxErrorHandler('tidbit.save.error.title', xhr, statusText, error);
+					Tidbits.defaultAjaxErrorHandler('tidbit.import.error.title', xhr, statusText, error);
 				},
 				success : function(data) {
-					self.postedForm(data);
+					showVerifyData(data);
 				}
 			});
 		});
+	    
+	    $('#import-verify-form').submit(function(event) {
+			event.preventDefault();
+			$(this).ajaxSubmit({
+				dataType: 'json',
+				error : function(xhr, statusText, error) {
+					Tidbits.defaultAjaxErrorHandler('tidbit.import.error.title', xhr, statusText, error);
+					self.hide();
+				},
+				success : function(data) {
+					// refresh to display imported data
+					Tidbits.Runtime.bits.refresh();
+					self.hide();
+				}
+			});
+	    });
 	    
 	})();
 };
@@ -1672,27 +1722,25 @@ Tidbits.Class.Importer.prototype.import = function() {
 };
 
 
-Tidbits.Class.Importer.prototype.toggleForm = function() {
-	var show = (this.back.css('display') === 'none');
-	var newTransform = (show === true ? 'rotateX(-180deg)' : '');
-	var otherSide = this.back;
-	if ( show === true ) {
-		otherSide.css('display', 'none');
+Tidbits.Class.Importer.prototype.toggleFormAndVerify = function() {
+	if ( this.flipper.hasClass('alt') ) {
+		this.flipper.removeClass('alt');
+		this.flipper.css('transform', '');
 	} else {
-		otherSide.css('display', 'block');
+		this.flipper.addClass('alt');
+		this.flipper.css('transform', 'rotateY(180deg)');
 	}
-	this.flipper.css('transform', newTransform);
 };
 
 Tidbits.Class.Importer.prototype.showForm = function() {
-	if ( this.back.css('display') === 'none' ) {
-		this.toggleForm();
+	if (  this.flipper.hasClass('alt')  ) {
+		this.toggleFormAndVerify();
 	}
 };
 
 Tidbits.Class.Importer.prototype.showVerify = function() {
-	if ( this.back.css('display') !== 'none' ) {
-		this.toggleForm();
+	if ( !this.flipper.hasClass('alt') ) {
+		this.toggleFormAndVerify();
 	}
 };
 
