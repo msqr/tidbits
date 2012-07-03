@@ -58,6 +58,17 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 		setRefreshOnPersist(true);
 	}
 
+	/**
+	 * Construct with an {@link EntityManager}.
+	 * 
+	 * @param em
+	 *        the EntityManager
+	 */
+	public JpaTidbitKindDao(EntityManager em) {
+		this();
+		setEm(em);
+	}
+
 	@Override
 	protected final void prePersist(TidbitKind domainObject) {
 		if ( domainObject.getCreationDate() == null ) {
