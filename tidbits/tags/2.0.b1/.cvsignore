@@ -1,0 +1,6 @@
+build
+dist
+build.properties
+local
+.DS_Store
+version.properties

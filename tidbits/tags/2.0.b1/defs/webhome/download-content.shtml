@@ -1,0 +1,53 @@
+<h1>Download Tidbits</h1>
+
+<p>You can download Tidbits for free and run it on your own web server. Tidbits 
+has been tested extensively on Linux and Mac OS X. It also runs on Windows, and 
+should run on any platform with a Java 5 (or newer) runtime.</p>
+
+<h2><a name="requirements"></a>Requirements</h2>
+<p>Tidbits is a 100% Java web application that requires a relational database. Currently the requirements are as follows:</p>
+
+<dl>
+	<dt>Java 5 (or newer)</dt>
+	<dd>
+		<p>Get the appropriate Java JRE for your server platform. You can get this from 
+			<a title="Sun's Java" href="http://java.sun.com/">Sun</a>, 
+			<a title="IBM's Java" href="http://www-106.ibm.com/developerworks/java/jdk/">IBM</a>,
+			<a title="FreeBSD's Java" href="http://www.freebsd.org/java/">FreeBSD</a>, or
+			most Linux distributions provide a Java package.</p>
+	</dd>
+
+	<dt>Database</dt>
+	<dd>
+		<p>
+		Tidbits has a pretty simple database, and has been tested with Derby, MySQL, and PostgreSQL.
+		</p>
+		<p class="alert alert-info">
+		<strong>Note</strong> Tidbits can easily run in other databases. If you are familiar with JPA then you can
+		easily generate database creation scripts for other platforms supported by EclipseLink (the JPA
+		implementation Tidbits uses).
+		</p>
+	</dd>
+
+	<dt>Java servlet 2.5 container</dt>
+	<dd>
+		<p>Tidbits is distributed as a Java web application (WAR). To use this you'll need a servlet container to 
+		deploy it into. Tidbits has been extensively tested with the <a href="http://tomcat.apache.org/">Tomcat 6.0</a>
+		server. Any J2EE servlet container should work, however.</p>
+	</dd>
+
+</dl>
+
+<h2><a name="download"></a>Binary and source packages</h2>
+<p>You can <a href="https://sourceforge.net/projects/tidbits/files/Tidbits%202/">download Tidbits from
+SourceForge</a>. The binary package (named like <code>tidbits-2.x.y.tbz2</code>) contains the Tidbits WAR 
+along with instructions for getting your installation going for the first time. The source package 
+(named like <code>tidbits-2.x.y-src.tbz2</code>) contains all of the source code.</p>
+
+<p>For installation instructions look in the <code>README</code> file that comes in each distribution.</p>
+
+<h2><a name="live-demo"></a>Live Demo</h2>
+<p>Alternatively, if you just want to try out Tidbits, you can download Live Demo package that requires only you have
+a Java 5 JRE installed. The Live Demo uses an embedded database to store data, and acts as a 
+fully-functional deployment of Tidbits. Visit the <a href="https://sourceforge.net/projects/tidbits/files/Tidbits%202/">downloads</a> 
+page and select the package named <code>tidbits-2.x.y-livedemo.tbz2</code> to get it.</p>

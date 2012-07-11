@@ -1,0 +1,3 @@
+CREATE TABLE tidbit_kind (kindid BIGINT AUTO_INCREMENT NOT NULL, comment VARCHAR(2048), created_by VARCHAR(64) NOT NULL, creation_date DATETIME NOT NULL, modify_date DATETIME, name VARCHAR(128) NOT NULL, PRIMARY KEY (kindid)) engine=InnoDB;
+CREATE TABLE tidbit (tidbitid BIGINT AUTO_INCREMENT NOT NULL, comment VARCHAR(2048), created_by VARCHAR(64) NOT NULL, creation_date DATETIME NOT NULL, data VARCHAR(32672), modify_date DATETIME, name VARCHAR(128) NOT NULL, kindid BIGINT NOT NULL, PRIMARY KEY (tidbitid)) engine=InnoDB;
+ALTER TABLE tidbit ADD CONSTRAINT FK_tidbit_kindid FOREIGN KEY (kindid) REFERENCES tidbit_kind (kindid);

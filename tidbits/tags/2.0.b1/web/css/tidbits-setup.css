@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+
+body {
+	margin: 20px;
+	font-family: "American Typewriter", Courier, monospace;
+	font-size: 13px;
+	line-height: 18px;
+	background: url("../img/whitey.png") repeat scroll 0% 0% #E1E6EF;
+}
+
+p {
+	font-family: "American Typewriter", Courier, monospace;
+	font-size: 13px;
+	line-height: 18px;
+	max-width: 400pt;
+}
+
+label {
+	font-weight: bold;
+}
+
+.help-block {
+	font-size: 10px;
+}
+
