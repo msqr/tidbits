@@ -1,0 +1,13 @@
+<div class="hero-unit">
+	<h1>Tidbits is a friendly little note database.</h1>
+	<img src="img/tidbits-card.png" alt="A tidbit card" style="float:right; margin-top: -6px;"/>
+	<p>
+	It's like a stack of index cards. You can jot down small bits 
+	of info such as usernames, passwords, URLs, or anything you might easily forget.
+	You then only need to remember one password &mdash; your Tidbits password &mdash;
+	to access all your notes.
+	</p>
+	<p>
+	Tidbits has been designed to work in modern web browsers, including mobile browsers!
+	</p>
+</div>

@@ -1,10 +1,13 @@
 body {
 	background-color: #fff;
-    margin: 18px 15px 15px 190px;
     padding: 0px;
     border: 0px;
     font-size: 10pt;
 	font-family: Tohoma, Verdana, sans-serif;
+}
+
+#t1content {
+    margin: 18px 15px 15px 190px;
 }
 
 #nav-frame {
@@ -237,4 +240,38 @@ table.thumbs img {
     width: 11px;
     height: 11px;
     background: #FFF;
+}
+
+#t1content {
+	position: absolute;
+	top: 0;
+	left:0;
+	width: auto;
+	height: auto;
+	z-index: 2;
+}
+
+#t2peek {
+	display: block;
+	position: absolute;
+	z-index: 1;
+	bottom: 0;
+	right: 0;
+	width: 228px;
+	height: 228px;
+	margin: 0;
+	padding: 0;
+	background-image: url('img/t2-sneak-peek.png');
+	background-position: bottom right;
+	background-repeat: no-repeat;
+}
+
+#t2peek a {
+	display: block;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 100px;
+	height: 70px;
+	color: rgba(0,0,0,0);
 }
