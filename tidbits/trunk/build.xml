@@ -355,14 +355,14 @@
 		arguments (-D<prop>=<value>). For example, for version 1.2, 
 		build number 35, you could call ant like:
 		
-		ant -Dsvn.tag=1.2.35 svn-checkout svn-build
+		ant -Denv.src=example -Dsvn.tag=1.2.35 svn-checkout svn-build
 		
 		Version 1.2 of 'tidbits', build 35, would be tagged 'tidbits-1-2-35'.
 		
 		Once the SVN source it checked out, you can more easily update
 		to a different tag using the svn-switch command:
 		
-		ant -Dsvn.tag=1.3.0 svn-switch svn-build
+		ant -Denv.src=example -Dsvn.tag=1.3.0 svn-switch svn-build
 	-->
 	
 	<!-- Subversion build targets -->
@@ -640,11 +640,11 @@
 		<echo>TODO</echo>
 	</target>
 	
-	<target name="help-release">
+	<target name="help-release" description="Help on creating releases">
 		<echo>First time checkout: ant -Dsvn.tag=1.1 svn-checkout</echo>
 		<echo>Subsequent release:  ant -Dsvn.tag=1.2 svn-switch</echo>
 		<echo>Then to build release archives:</echo>
-		<echo>ant -Dsvn.tag=1.1 -Denv.src=example svn-src-release svn-bin-release svn-demo-release</echo>
+		<echo>ant -Denv.src=example -Dsvn.tag=1.1 svn-full-release</echo>
 	</target>
 	
 </project>
