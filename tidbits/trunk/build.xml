@@ -604,7 +604,6 @@
 		<mkdir dir="${dir.build}/${demo.build.dir}/licenses"/>
 		<copy todir="${dir.build}/${demo.build.dir}/licenses" flatten="true">
 			<fileset dir="${svn.dir.build}/defs/docs/licenses" includes="**/*.txt"/>
-			<mapper type="glob" from="*.txt" to="*"/>
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
