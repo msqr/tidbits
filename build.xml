@@ -72,8 +72,7 @@
 	<taskdef resource="svntask.properties" classpathref="path.svn"/>
 	<property name="svn.tag" value="1.0"/>
 	<property name="svn.path" value="/tags/${svn.tag}"/>
-	<property name="svn.url" 
-		value="https://tidbits.svn.sourceforge.net/svnroot/tidbits/tidbits${svn.path}"/>
+	<property name="svn.url" value="svn://svn.code.sf.net/p/tidbits/code/tidbits${svn.path}"/>
 	<property name="svn.username" value=""/>
 	<property name="svn.password" value=""/>
 	<property name="svn.revision" value="HEAD"/>
