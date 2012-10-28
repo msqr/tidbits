@@ -395,7 +395,42 @@ div.alert {
 	}
 }
 
-@media (max-width: 639px) {
+/*
+@media (max-width: 767px) {
+	#tidbit-editor .span5 {
+    	width: 380px;
+	}
+	#tidbit-editor input.span5, 
+	#tidbit-editor textarea.span5, 
+	#tidbit-editor .uneditable-input.span5 {
+    	width: 380px;
+	}
+}
+*/
+
+@media (min-width: 768px) and (max-width: 979px) {
+	#tidbit-editor .span5 {
+    	width: 380px;
+	}
+	#tidbit-editor input.span5, 
+	#tidbit-editor textarea.span5, 
+	#tidbit-editor .uneditable-input.span5 {
+    	width: 370px;
+	}
+}
+
+@media (min-width: 1200px) {
+	#tidbit-editor .span5 {
+    	width: 380px;
+	}
+	#tidbit-editor input.span5, 
+	#tidbit-editor textarea.span5, 
+	#tidbit-editor .uneditable-input.span5 {
+    	width: 370px;
+	}
+}
+
+@media (max-width: 767px) {
 	.flipper,
 	.flipper .face {
 		width: 300px;
