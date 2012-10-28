@@ -265,8 +265,8 @@
 				deprecation="${compile.deprecation}" 
 				optimize="${compile.optimize}" 
 				nowarn="${compile.nowarn}"
-				target="1.5"
-				source="1.5"
+				target="1.6"
+				source="1.6"
 				includeantruntime="no">
 			<classpath refid="compile.core.path" />
 		</javac>
