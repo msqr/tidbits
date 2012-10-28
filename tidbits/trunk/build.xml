@@ -37,7 +37,7 @@
 	<property name="dir.web.lib" value="${dir.web}/WEB-INF/lib"/>
 	
 	<property name="app.name" value="tidbits" />
-	<property name="build.name" value="TidBits"/>
+	<property name="build.name" value="Tidbits"/>
 	<property name="app.path" value="/${app.name}" />
 	<property name="app.home" value="${dir.build}/${app.name}/web"/>
 	<property name="app.home.backup" value="${app.home}.bak"/>
