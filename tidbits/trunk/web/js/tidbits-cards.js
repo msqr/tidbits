@@ -105,6 +105,18 @@ var Tidbits = {
 		o.value = '';
 		o.comment = '';
 		return o;
+	},
+	
+	clearTextSelection : function() {
+		// thank you http://stackoverflow.com/questions/3169786/clear-text-selection-with-javascript
+		var sel = (window.getSelection ? window.getSelection() : document.selection);
+		if ( sel ) {
+		    if ( sel.removeAllRanges ) {
+		        sel.removeAllRanges();
+		    } else if ( sel.empty ) {
+		        sel.empty();
+		    }
+		}
 	}
 };
 
@@ -762,6 +774,7 @@ Tidbits.Class.Card.prototype.awayWithYou = function() {
 	this.matrix.easeOut(this.element.get(0));
 	this.element.removeClass('fac');
 	this.fac = false;
+	Tidbits.clearTextSelection();
 };
 
 Tidbits.Class.Card.prototype.willInsertIntoDocument = function(container) {
