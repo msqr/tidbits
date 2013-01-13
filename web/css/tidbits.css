@@ -56,6 +56,7 @@ div.tidbit.card {
 	color: inherit;
 	max-width: 320px;
 	background: url("../img/lined_paper_light.png") repeat fixed 0% 0% #fafafa;
+	-webkit-font-smoothing: subpixel-antialiased;
 	overflow: hidden;
 	cursor: move;
 }
