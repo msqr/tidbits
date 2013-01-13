@@ -297,10 +297,10 @@ Tidbits.Class.Matrix.prototype = {
 	/**
 	 * Apply the matrix transform to an element.
 	 * 
-	 * <p>Hi hi-res displays, the {@link #toMatrix3D()} transform is used,
-	 * otherwise {@link #toMatrix2D()} is used. Found that legibility of 
+	 * <p>If {@code support.use3d} is <em>true</em>, the {@link #toMatrix3D()} transform 
+	 * is used, otherwise {@link #toMatrix2D()} is used. Found that legibility of 
 	 * text was too blurry on older displays when 3D transform was applied,
-	 * but 3D transform provide better performance.</p>
+	 * but 3D transform provide better performance on hi-res displays.</p>
 	 * 
 	 * @param {Element} elm the element to apply the transform to
 	 */
