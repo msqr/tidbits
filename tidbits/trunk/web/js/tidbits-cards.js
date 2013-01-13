@@ -153,7 +153,7 @@ Tidbits.Class.Matrix = function() {
 	 * Cross-browser support for various matrix properties.
 	 */
 	this.support = {
-			hiRes : this.supportDefaults.hiRes,
+			use3d : this.supportDefaults.use3d,
 			tProp : this.supportDefaults.tProp,
 			trProp : this.supportDefaults.trProp,
 			trTransform : this.supportDefaults.trTransform,
@@ -379,6 +379,26 @@ Tidbits.Class.Matrix.prototype = {
 	 */
 	easeIn : function(elm, finished) {
 		this.animate(elm, 'ease-in', undefined, finished);
+	},
+	
+	/**
+	 * Test if 3D matrix transforms are being used.
+	 * 
+	 * @returns {Boolean} <em>true</em> if 3D transformations matrix are being used, 
+	 *                    <em>false</em> if 2D transformations are being used
+	 */
+	isUse3d : function() {
+		return (this.support.use3d === true);
+	},
+	
+	/**
+	 * Set which transformation matrix style should be used: 3D or 2D.
+	 * 
+	 * @param {Boolean} value <em>true</em> if 3D transformations matrix should be used, 
+	 *                    <em>false</em> if 2D transformations should be used
+	 */
+	setUse3d : function(value) {
+		this.support.use3d = (value === true);
 	}
 };
 
