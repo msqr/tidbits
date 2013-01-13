@@ -152,7 +152,20 @@ Tidbits.Class.Matrix = function() {
 	/**
 	 * Cross-browser support for various matrix properties.
 	 */
-	this.support = (function() {
+	this.support = {
+			hiRes : this.supportDefaults.hiRes,
+			tProp : this.supportDefaults.tProp,
+			trProp : this.supportDefaults.trProp,
+			trTransform : this.supportDefaults.trTransform,
+			trEndEvent : this.supportDefaults.trEndEvent,
+	};
+};
+
+Tidbits.Class.Matrix.prototype = {
+		
+	constructor : Tidbits.Class.Matrix,
+	
+	supportDefaults : (function() {
 		// adapted from jquery.transform2d.js
 		var divStyle = document.createElement("div").style;
 		var suffix = "Transform";
@@ -181,18 +194,13 @@ Tidbits.Class.Matrix = function() {
 		}
 		
 		return {
-			use3d : (window.devicePixelRatio !== undefined && window.devicePixelRatio > 1 ? true : false),
+			use3d : Tidbits.hiRes,
 			tProp : tProp,
 			trProp : trProp,
 			trTransform : trTransform,
 			trEndEvent : trEndEvent
 		};
-	})();
-};
-
-Tidbits.Class.Matrix.prototype = {
-		
-	constructor : Tidbits.Class.Matrix,
+	})(),
 	
 	/**
 	 * Generate a CSS matrix3d() function string from the current matrix.
