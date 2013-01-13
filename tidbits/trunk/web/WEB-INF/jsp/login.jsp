@@ -34,7 +34,7 @@
 				<div class="control-group">
 					<label for="j_username" class="control-label"><fmt:message key="logon.username.displayName"/></label>
 					<div class="controls">
-						<input type="text" name="j_username" id="j_username" autocapitalize="off"/>
+						<input type="text" name="j_username" id="j_username" autocapitalize="off" autocorrect="off" autocomplete="off"/>
 					</div>
 				</div>
 				<div class="control-group">
