@@ -557,8 +557,7 @@
 			conf="jdbc" />
 		
 		<!-- copy war, removing version from name -->
-		<copy file="${dir.build}/${app.archive.name}.war" 
-			tofile="${release-dir}/${app.name}.war"/>
+		<copy file="${dir.build}/${app.archive.name}.war" todir="${release-dir}"/>
 
 		<!-- tar it all up -->
 		<tar tarfile="${release-name}" compression="bzip2" longfile="gnu">
