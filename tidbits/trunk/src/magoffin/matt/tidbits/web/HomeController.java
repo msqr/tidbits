@@ -26,7 +26,13 @@
 
 package magoffin.matt.tidbits.web;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
@@ -42,6 +48,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -140,6 +147,20 @@ public class HomeController {
 		UiModel model = new UiModel();
 		return new ModelAndView("json-messages", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/export.do")
+	@ResponseBody
+	public void exportTidbits(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHMM", request.getLocale());
+		response.setContentType("text/cvs; charset=utf-8");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=tidbits_" + sdf.format(new Date()) + ".csv");
+		OutputStream out = response.getOutputStream();
+		tidbitsBiz.exportCsvData(out);
+		out.flush();
+		out.close();
 	}
 
 }

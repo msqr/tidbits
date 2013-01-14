@@ -35,6 +35,7 @@ import javax.persistence.TypedQuery;
 import magoffin.matt.dao.BasicSortDescriptor;
 import magoffin.matt.dao.SortDescriptor;
 import magoffin.matt.dao.jpa.GenericJpaDao;
+import magoffin.matt.tidbits.dao.ExportCallback;
 import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
@@ -143,6 +144,28 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 		q.setParameter(2, original.getId());
 		int result = q.executeUpdate();
 		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	public void exportAllTidbits(ExportCallback callback) {
+		// make sure changes from native query are immediately picked up
+		getEm().flush();
+		getEm().clear();
+		TypedQuery<Object[]> q = getEm().createNamedQuery("TidbitsExport", Object[].class);
+		int offset = 0;
+		boolean keepGoing = true;
+		while ( keepGoing ) {
+			q.setFirstResult(offset);
+			q.setMaxResults(100);
+			List<Object[]> results = q.getResultList();
+			if ( results.size() < 1 ) {
+				break;
+			}
+			for ( Object[] row : results ) {
+				keepGoing = callback.handleRow(row, offset++);
+			}
+		}
 	}
 
 }
