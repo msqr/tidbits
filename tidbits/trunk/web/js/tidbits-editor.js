@@ -233,9 +233,8 @@ Tidbits.Class.Editor = function(container) {
 	    	e.preventDefault();
 	    	var me = $(this);
 	    	if ( me.attr('data-really') === 'yes' ) {
-	    		me.removeAttr('data-really');
+	    		self.resetDeleteButton(me);
 	    		self.deleteTidbit($('#edit-tidbit-id').val());
-	    		me.html('<i class="icon-trash"></i> ' +Tidbits.i18n('delete.displayName'));
 	    	} else {
 	    		// confirm
 	    		me.attr('data-really', 'yes');
@@ -315,11 +314,13 @@ Tidbits.Class.Editor.prototype.displayForm = function(crumb, kindId) {
 		$('#add-tidbit-comments').val(crumb.comment);
 	}
 	var header = this.element.find('.front .header h3');
+	var deleteBtn = $('#delete-tidbit-btn');
+	this.resetDeleteButton(deleteBtn);
 	if ( crumb !== undefined && crumb.id !== '' ) {
-		$('#delete-tidbit-btn').show();
+		deleteBtn.show();
 		header.text(Tidbits.i18n('edit.tidbit.title'));
 	} else {
-		$('#delete-tidbit-btn').hide();
+		deleteBtn.hide();
 		header.text(Tidbits.i18n('new.tidbit.title'));
 	}
 	$('#add-tidbit-name').val((this.bit === undefined ? '' : this.bit.getName()));
@@ -430,6 +431,12 @@ Tidbits.Class.Editor.prototype.edit = function(bit) {
 		this.displayList();
 	}
 	this.show();
+};
+
+Tidbits.Class.Editor.prototype.resetDeleteButton = function(elm) {
+	var btn = (elm === undefined ? $('#delete-tidbit-btn') : $(elm));
+	btn.removeAttr('data-really');
+	btn.html('<i class="icon-trash"></i> ' +Tidbits.i18n('delete.displayName'));
 };
 
 Tidbits.Class.Editor.prototype.didShow = function() {
