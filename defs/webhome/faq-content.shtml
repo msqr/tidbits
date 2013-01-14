@@ -85,7 +85,7 @@ users can see all information in Tidbits.</p>
 <p>Tidbits relies on the <a href="http://www.springsource.org/spring-security/">Spring Security</a> 
 framework to handle authentication and authorization. This means you have a great deal of flexibility in how you grant
 users access to Tidbits. The following sections detail various ways of configuring authentication, which
-refer to the Tidbits security configuration file <code>WEB-INF/classes/securityContext.xml</code>.</p>
+refer to the Tidbits security configuration file <code>WEB-INF/classes/security-context.xml</code>.</p>
 
 <p class="alert alert-info">No matter what authentication approach is taken, Tidbits only requires that users are granted
 a <strong>ROLE_USER</strong> authority to access the application.</p>
