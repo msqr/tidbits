@@ -1027,24 +1027,78 @@ Tidbits.Class.Bits = function(container, margins) {
 };
 
 /**
+ * The Tidbits base modal widget class, designed to be extended.
+ */
+Tidbits.Class.ModalWidget = function(container) {
+	this.element = $(container);
+	this.elm = this.element.get(0);
+	this.matrix = new Tidbits.Class.Matrix();
+	this.flipper = this.element.find('.flipper');
+	this.front = this.element.find('.front');
+	this.back = this.element.find('.back');
+	this.visibleFace = 'front';
+};
+
+Tidbits.Class.ModalWidget.prototype = {
+	didShow : function() {
+		// Extending classes can override
+	},
+	
+	displayFace : function(faceName) {
+		this.flipper.removeClass('show-'+this.visibleFace);
+        this.visibleFace = faceName;
+        this.flipper.addClass('show-'+faceName);
+	},
+	
+	show : function() {
+		var win = $(window);
+		var halfWidth = this.front.outerWidth() / 2;
+		var halfHeight = this.front.outerHeight() / 2;
+		var centerX = Math.floor(win.width() / 2 - halfWidth);
+		var centerY = Math.floor(win.height() / 2 - halfHeight);
+		var self = this;
+		var move = function() {
+			self.matrix.setTranslation(centerX, centerY);
+			self.matrix.easeOut(self.elm, function() {
+		    	self.didShow();
+			});
+		};
+		if ( this.element.css('visibility') === 'hidden' ) {
+			this.matrix.setTranslation(centerX, halfHeight * -3);
+			this.matrix.apply(this.elm);
+			this.element.css('visibility', '');
+			setTimeout(move, 10);
+		} else {
+			move();
+		}
+	},
+	
+	hide : function() {
+		var height = this.front.outerHeight();
+		this.matrix.setTranslation(
+				this.matrix.getTranslation().x, 
+				Math.ceil(height * -1.5));
+		this.matrix.easeIn(this.elm);
+	}
+};
+
+/**
  * The Tidbits editor.
  * 
  * @param {Element} container the editor container
  * @returns {Tidbits.Class.Editor}
  */
 Tidbits.Class.Editor = function(container) {
-	this.element = $(container);
-	this.elm = this.element.get(0);
-	this.matrix = new Tidbits.Class.Matrix();
+	var superclass = Tidbits.Class.ModalWidget;
+	superclass.call(this, container);
+
+	var self = this;
+
 	this.bit = undefined;
 	this.editModel = {};
-	
-	var self = this;
-	
-	this.flipper = this.element.find('.flipper');
-	this.front = this.element.find('.front');
-	this.back = this.element.find('.back');
+	this.left = this.element.find('.left');
 	this.bottom = this.element.find('.bottom');
+	this.visibleFace = 'front';
 	
 	var handleKindEditClick = undefined;
 	
@@ -1293,9 +1347,10 @@ Tidbits.Class.Editor = function(container) {
 	})();
 };
 
-Tidbits.Class.Editor.prototype = {
-		
-	deleteTidbit : function(id) {
+Tidbits.Class.Editor.prototype = Object.create(Tidbits.Class.ModalWidget.prototype);
+Tidbits.Class.Editor.prototype.constructor = Tidbits.Class.Editor;
+
+	Tidbits.Class.Editor.prototype.deleteTidbit = function(id) {
 		id = Number(id);
 		var self = this;
 		jQuery.ajax({
@@ -1317,9 +1372,9 @@ Tidbits.Class.Editor.prototype = {
 				Tidbits.defaultAjaxErrorHandler('tidbit.delete.error.title', xhr, statusText, error);
 			}
 		});
-	},
+	};
 		
-	postedForm : function(data) {
+	Tidbits.Class.Editor.prototype.postedForm = function(data) {
 		if ( this.bit !== undefined ) {
 			this.bit.addDetails(data.tidbits[0]);			
 			// TODO: implement updateBit method, instead of recreate entire list each time?
@@ -1329,27 +1384,13 @@ Tidbits.Class.Editor.prototype = {
 			this.setBit(Tidbits.Runtime.bits.addBit(data));
 		}
 		this.displayList();
-	},
-		
-	toggleFormAndKinds : function() {
-		if ( this.flipper.hasClass('alt') ) {
-			this.flipper.removeClass('alt');
-			this.bottom.removeClass('alt');
-			this.flipper.css('transform', '');
-		} else {
-			this.flipper.addClass('alt');
-			this.flipper.css('transform', 'rotateY(180deg)');
-			this.bottom.addClass('alt');
-		}
-	},
+	};
 	
-	displayKinds : function() {
-		if ( !this.flipper.hasClass('alt') ) {
-			this.toggleFormAndKinds();
-		}
-	},
+	Tidbits.Class.Editor.prototype.displayKinds = function() {
+		this.displayFace('bottom');
+	};
 	
-	displayForm : function(crumb, kindId) {
+	Tidbits.Class.Editor.prototype.displayForm = function(crumb, kindId) {
 		if ( crumb !== undefined ) {
 			$('#edit-tidbit-id').val(crumb.id);
 			$('#add-tidbit-data').val(crumb.value);
@@ -1371,47 +1412,14 @@ Tidbits.Class.Editor.prototype = {
 		if ( kindOpt.size() > 0 ) {
 			kindOpt.get(0).selected = true;
 		}
-		this.hideList();
-		if ( this.flipper.hasClass('alt') ) {
-			this.toggleFormAndKinds();
-		}
-	},
+		this.displayFace('front');
+	};
+
+	Tidbits.Class.Editor.prototype.displayList = function() {
+		this.displayFace('left');
+	};
 	
-	toggleList : function() {
-		var show = (this.bottom.css('display') === 'none');
-		var alt = this.bottom.hasClass('alt');
-		var newTransform = (show === true ? 'rotateX(-180deg)' : '');
-		var otherSide = this.back;
-		if ( alt == true ) {
-			newTransform = 'rotateY(180deg) ' +newTransform;
-			otherSide = this.front;
-		}
-		if ( show === true ) {
-			otherSide.css('display', 'none');
-			this.bottom.css('display', 'block');
-		} else {
-			var bottom = this.bottom;
-			this.matrix.animateListen(this.flipper.get(0), function() {
-	    		otherSide.css('display', 'block');
-	    		bottom.css('display', 'none');
-			});
-		}
-		this.flipper.css('transform', newTransform);
-	},
-	
-	displayList : function() {
-		if ( this.bottom.css('display') === 'none' ) {
-			this.toggleList();
-		}
-	},
-	
-	hideList : function() {
-		if ( this.bottom.css('display') !== 'none' ) {
-			this.toggleList();
-		}
-	},
-	
-	editCrumb : function(id, kindId) {
+	Tidbits.Class.Editor.prototype.editCrumb = function(id, kindId) {
 		var crumb = undefined;
 		var info = this.bit.getInfo();
 		var i = 0, len = 0;
@@ -1448,9 +1456,9 @@ Tidbits.Class.Editor.prototype = {
 			return;
 		}
 		this.displayForm(crumb, kindId);
-	},
+	};
 	
-	setBit : function(bit) {
+	Tidbits.Class.Editor.prototype.setBit = function(bit) {
 		this.bit = bit;
 		
 		// update view according to model
@@ -1484,14 +1492,14 @@ Tidbits.Class.Editor.prototype = {
 					.appendTo(table);
 			}
 		};
-	},
+	};
 	
 	/**
 	 * Display the editor for a specific Bit.
 	 * 
 	 * @param {Tidbits.Class.Bit} bit the Bit to edit
 	 */
-	edit : function(bit) {
+	Tidbits.Class.Editor.prototype.edit = function(bit) {
 		this.setBit(bit);
 		if ( bit === undefined ) {
 			// creating a new one from scratch
@@ -1501,43 +1509,12 @@ Tidbits.Class.Editor.prototype = {
 			this.displayList();
 		}
 		this.show();
-	},
+	};
 	
-	/**
-	 * Display the editor for a new Bit.
-	 */
-	show : function() {
-		var win = $(window);
-		var halfWidth = this.element.width() / 2;
-		var halfHeight = this.element.height() / 2;
-		var centerX = Math.floor(win.width() / 2 - halfWidth);
-		var centerY = Math.floor(win.height() / 2 - halfHeight);
-		var self = this;
-		var move = function() {
-			self.matrix.setTranslation(centerX, centerY);
-			self.matrix.easeOut(self.elm, function() {
-		    	$('#add-tidbit-name').focus();
-			});
-		};
-		if ( this.element.css('visibility') === 'hidden' ) {
-			this.matrix.setTranslation(centerX, halfHeight * -3);
-			this.matrix.apply(this.elm);
-			this.element.css('visibility', '');
-			setTimeout(move, 10);
-		} else {
-			move();
-		}
-	},
+	Tidbits.Class.Editor.prototype.didShow = function() {
+    	$('#add-tidbit-name').focus();
+	};
 	
-	hide : function() {
-		var height = this.element.height();
-		this.matrix.setTranslation(
-				this.matrix.getTranslation().x, 
-				Math.ceil(height * -1.5));
-		this.matrix.easeIn(this.elm);
-	}
-};
-
 /**
  * Manage the list of kinds.
  * 
@@ -1632,55 +1609,6 @@ Tidbits.Class.Kinds.prototype = {
 			idx = this.addKind(kind);
 		}
 		return idx;
-	}
-};
-
-/**
- * The Tidbits importer.
- */
-Tidbits.Class.ModalWidget = function(container) {
-	this.element = $(container);
-	this.elm = this.element.get(0);
-	this.matrix = new Tidbits.Class.Matrix();
-	this.flipper = this.element.find('.flipper');
-	this.front = this.element.find('.front');
-	this.back = this.element.find('.back');
-};
-
-Tidbits.Class.ModalWidget.prototype = {
-	didShow : function() {
-		// Extending classes can override
-	},
-	
-	show : function() {
-		var win = $(window);
-		var halfWidth = this.element.width() / 2;
-		var halfHeight = this.element.height() / 2;
-		var centerX = Math.floor(win.width() / 2 - halfWidth);
-		var centerY = Math.floor(win.height() / 2 - halfHeight);
-		var self = this;
-		var move = function() {
-			self.matrix.setTranslation(centerX, centerY);
-			self.matrix.easeOut(self.elm, function() {
-		    	self.didShow();
-			});
-		};
-		if ( this.element.css('visibility') === 'hidden' ) {
-			this.matrix.setTranslation(centerX, halfHeight * -3);
-			this.matrix.apply(this.elm);
-			this.element.css('visibility', '');
-			setTimeout(move, 10);
-		} else {
-			move();
-		}
-	},
-	
-	hide : function() {
-		var height = this.element.height();
-		this.matrix.setTranslation(
-				this.matrix.getTranslation().x, 
-				Math.ceil(height * -1.5));
-		this.matrix.easeIn(this.elm);
 	}
 };
 
