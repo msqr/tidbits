@@ -7,10 +7,9 @@ This is the Live Demo distribution of Tidbits. This is a complete
 stand-alone Tidbits application pre-configured to run without any 
 modification so you can see how Tidbits works. The only thing you need 
 besides the Live Demo (which you have if you're reading this) is 
-a Java 5 JDK (i.e. version 1.5) or higher. Note that a Java JRE is not 
-sufficient, you'll need the full JDK installed. You can get a JDK 
-from Sun at http://java.sun.com/. Other vendors make JDKs, any one of 
-them should work as long as they are version 1.5 or higher.
+a Java 5 runtime (JRE) or higher. You can get a JRE from Oracle at
+http://www.java.com/ or other operating system vendors make JREs, any 
+of them should work as long as they are version 5 or higher.
 
 Starting the Live Demo  -----------------------------------------------
 

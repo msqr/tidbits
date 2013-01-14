@@ -7,13 +7,17 @@ This is the binary distribution of Tidbits. Tidbits is a personal
 digital wallet. You can use it to store passwords, logins, URLs, or
 just about any small tidbit of data you might easily forget. You can
 then access all of this information by logging into Tidbits with your
-single Tidbits password. Tidbits is a web-based application which means
-you need an Internet-accessible server machine you can deploy it to 
-(i.e. a hosting provider or your own personal server).
+single Tidbits password.
 
-Tidbits includes special support for certain mobile devices, such as 
-the Palm Treo phones. If one of these devices is detected, Tidbits
-will run with a slimmed-down interface better suited to these devices.
+Tidbits is a web-based application which means you need an 
+Internet-accessible server machine you can deploy it to (i.e. a 
+hosting provider or your own personal server).
+
+Tidbits has been designed for use with modern web browsers, including 
+touch-based mobile browsers, and makes use of advanced HTML5 
+functionality. The UI scales from phone-sized devices to tablet-sized
+devices to full desktop browser sizes. It will not work properly in 
+older browsers.
 
 INSTALLATION ==========================================================
 
@@ -104,20 +108,20 @@ FIRST-TIME DATABASE SETUP =============================================
   the above command for the following SQL scripts (substitue 
   these paths for the -f argument):
   
-  - setup/sql/postgres/create-tables.sql
+  - setup/sql/postgres/create.sql
   
   MYSQL ---------------------------------------------------------------
   
   Execute:
   
-  $ mysql -f -u tidbits -p tidbits <setup/sql/mysql/create-tables.sql
+  $ mysql -f -u tidbits -p tidbits <setup/sql/mysql/create-system.sql
   
   Enter the tidbits user password if prompted. Ignore any warnings 
   about "table X doesn't exist". Then repeat the above command for the 
   following SQL scripts (substitute these paths for the 
-  'setup/sql/mysql/create-tables.sql' above):
+  'setup/sql/mysql/create.sql' above):
   
-  - setup/sql/mysql/create-tables.sql
+  - setup/sql/mysql/create.sql
   
 
 FIRST-TIME APPSERVER DATASOURCE SETUP =================================
