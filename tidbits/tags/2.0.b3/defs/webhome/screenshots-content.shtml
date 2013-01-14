@@ -1,0 +1,87 @@
+<h1>Screen shots and videos</h1>
+
+<p class="intro">Here are some screen shots and videos that showcase the main features 
+of Tidbits.</p>
+
+<ul class="thumbnails">
+	<li class="span12">
+		<div class="thumbnail">
+			<a class="fancybox-media" href="http://www.youtube.com/watch?v=sQqoii0G8H4" title="Tidbits demo video">
+				<img src="img/tidbits-demo-icon.png" />
+			</a>
+			<h4>Demo video</h4>
+			<p>Here's a brief demo of Tidbits in action.</p>
+		</div>
+	</li>
+	<li class="span4">
+		<div class="thumbnail">
+			<a class="fancybox" rel="ss" href="img/tidbits-home.jpg" title="Tidbits home screen">
+				<img src="img/tidbits-home-icon.png" />
+			</a>
+			<h4>Home screen</h4>
+			<p>Actually, this is the <em>only</em> screen in Tidbits! Everything is 
+			accomplished from this very simple UI, designed for quickly searching for
+			stuff and adding new stuff.</p>
+		</div>
+	</li>
+	<li class="span4">
+		<div class="thumbnail">
+			<img src="img/tidbits-search-bar.png" alt="Tidbits search bar" />
+			<h4>Search is king</h4>
+			<p>Tidbits in geared for searching. Just type in a word you're looking for
+			and Tidbits will show you anything that matches, pronto.</p>
+		</div>
+	</li>
+	<li class="span4">
+		<div class="thumbnail">
+			<a class="fancybox" rel="ss" href="img/tidbits-front-and-center.png" title="Tidbits front and center">
+				<img src="img/tidbits-front-and-center-icon.png" />
+			</a>
+			<h4>Front and center!</h4>
+			<p>Those pesky cards can fall into place somewhat randomly. Double-tap a card
+			to show it in an up close and personal style, perfect for copying and pasting
+			or taking it easy on your tired eyes.</p>
+		</div>
+	</li>
+	<li class="span4">
+		<div class="thumbnail">
+			<a class="fancybox" rel="ss" href="img/tidbits-add.png" title="Adding tidbits">
+				<img src="img/tidbits-add-icon.png" />
+			</a>
+			<h4>Simple to create</h4>
+			<p>Adding new tidbits is quick and easy. Just tap on the big "plus" button that
+			appears in the upper-right corner.</p>
+		</div>
+	</li>
+	<li class="span4">
+		<div class="thumbnail">
+			<a class="fancybox" rel="ss" href="img/tidbits-edit.png" title="Editing a tidbit">
+				<img src="img/tidbits-edit-icon.png" />
+			</a>
+			<h4>Easy editing</h4>
+			<p>Editing existing tidbits is quick and easy, too. Tap on the "pencil in 
+			the square" icon that appears in the upper-right corner of each card.</p>
+		</div>
+	</li>
+	<li class="span4">
+		<div class="thumbnail">
+			<a class="fancybox" rel="ss" href="img/tidbits-import.png" title="Import tidbits">
+				<img src="img/tidbits-import-icon.png" />
+			</a>
+			<h4>Quickly load tidbits</h4>
+			<p>You can even load data from someplace else. Just format the data 
+			as a CSV (spreadsheet style) text file and you can import it into Tidbits.</p>
+		</div>
+	</li>
+	<li class="span12">
+		<div class="thumbnail">
+			<a class="fancybox" rel="ss" href="img/tidbits-ipad.png" title="Tidbits on an iPad">
+				<img src="img/tidbits-ipad-icon.png" />
+			</a>
+			<h4>Touchtastic on an iPad</h4>
+			<p>Tidbits works great on iPads, too. It can run as a full-screen web app,
+			and responds beautifully to touches and taps.</p>
+		</div>
+	</li>
+</ul>
+

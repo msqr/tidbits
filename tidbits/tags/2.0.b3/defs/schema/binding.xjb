@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings jaxb:version="2.1" 
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:hj="http://hyperjaxb3.jvnet.org/ejb/schemas/customizations"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	xmlns:orm="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://java.sun.com/xml/ns/jaxb
+		http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
+		http://java.sun.com/xml/ns/persistence/orm
+		http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+	
+	<jaxb:bindings schemaLocation="core.xsd" node="/xs:schema">	
+
+		<jaxb:globalBindings choiceContentProperty="true">
+			<jaxb:javaType name="java.lang.Long" xmlType="xs:long"/>
+			<jaxb:javaType name="java.lang.Long" xmlType="xs:nonNegativeInteger" 
+				parseMethod="java.lang.Long.getLong" printMethod="java.lang.String.valueOf"/>
+			
+			<!--xjc:superClass name="magoffin.matt.tidbits.domain.BaseEntity"/-->
+			
+			<!-- The SerializeableUID value should be set the the date 
+				(yyyymmdd) plus version (1, 2, 3, etc) to signify the 
+				unique version of these objects. -->
+			<xjc:serializable uid="201205051"/>
+		</jaxb:globalBindings>
+		
+		<jaxb:schemaBindings>
+			<jaxb:package name="magoffin.matt.tidbits.domain"/>
+		</jaxb:schemaBindings>
+		
+		<jaxb:bindings node="xs:complexType[@name='pagination-index']">
+			<hj:ignored/>
+		</jaxb:bindings>
+		<jaxb:bindings node="xs:complexType[@name='pagination-index-section']">
+			<hj:ignored/>
+		</jaxb:bindings>
+		<jaxb:bindings node="xs:complexType[@name='pagination-criteria']">
+			<hj:ignored/>
+		</jaxb:bindings>
+		<jaxb:bindings node="xs:complexType[@name='search-results']">
+			<hj:ignored/>
+		</jaxb:bindings>
+		<jaxb:bindings node="xs:complexType[@name='user']">
+			<hj:ignored/>
+		</jaxb:bindings>	
+		
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="ui.xsd" node="/xs:schema">
+		
+		<jaxb:bindings node="xs:complexType[@name='ui-base']">
+			<hj:ignored/>
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="xs:complexType[@name='ui-model']">
+			<hj:ignored/>
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="xs:complexType[@name='ui-session']">
+			<hj:ignored/>
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+	
+	<jaxb:bindings schemaLocation="domain.xsd" node="/xs:schema">
+		
+		<jaxb:bindings node="xs:complexType[@name='tidbit']">
+			<hj:entity>
+				<orm:table name="tidbit" />
+				<orm:inheritance strategy="TABLE_PER_CLASS"/>
+			</hj:entity>
+			<inheritance:extends>magoffin.matt.dao.jpa.BaseEntityLong</inheritance:extends>
+			
+			<!-- Primay Key -->
+			
+			<jaxb:bindings node="xs:attribute[@name='tidbit-id']">
+				<hj:id>
+					<orm:column name="tidbitid"/>
+					<orm:generated-value strategy="SEQUENCE" generator="tidbit-sequence"/>
+					<orm:sequence-generator name="tidbit-sequence" sequence-name="TIDBIT_SEQUENCE" allocation-size="1" />
+				</hj:id>
+				<jaxb:property name="id"/>
+			</jaxb:bindings>
+			
+			<!-- Elements -->
+			
+			<jaxb:bindings node="xs:sequence/xs:element[@name='comment']">
+				<hj:basic>
+					<orm:column name="comment" length="2048"/>
+				</hj:basic>
+			</jaxb:bindings>
+			
+			<jaxb:bindings node="xs:sequence/xs:element[@name='data']">
+				<hj:basic>
+					<orm:column name="data" length="32672" /><!-- column-definition="text"-->
+				</hj:basic>
+			</jaxb:bindings>
+			
+			<jaxb:bindings node="xs:sequence/xs:element[@name='kind']">
+				<hj:many-to-one merge="false"><!-- merge='false' allows us to override the orm:cascade below -->
+					<orm:join-column name="kindid" nullable="false"/>
+					<orm:cascade></orm:cascade>
+				</hj:many-to-one>
+			</jaxb:bindings>
+			
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="xs:complexType[@name='tidbit-kind']">
+			<hj:entity>
+				<orm:table name="tidbit_kind" />
+				<orm:inheritance strategy="TABLE_PER_CLASS"/>
+			</hj:entity>
+			<inheritance:extends>magoffin.matt.dao.jpa.BaseEntityLong</inheritance:extends>
+			
+			<!-- Primay Key -->
+			
+			<jaxb:bindings node="xs:attribute[@name='kind-id']">
+				<hj:id>
+					<orm:column name="kindid"/>
+					<orm:generated-value strategy="SEQUENCE" generator="tidbit-sequence"/>
+				</hj:id>
+				<jaxb:property name="id"/>
+			</jaxb:bindings>
+			
+			<!-- Elements -->
+			
+			<jaxb:bindings node="xs:sequence/xs:element[@name='comment']">
+				<hj:basic>
+					<orm:column name="comment" length="2048" nullable="true"/>
+				</hj:basic>
+			</jaxb:bindings>
+			
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="xs:attributeGroup[@name='base-attributes']">
+			
+			<!-- Required Attributes -->
+			
+			<jaxb:bindings node="xs:attribute[@name='created-by']">
+				<hj:basic>
+					<orm:column name="created_by" length="64" nullable="false"/>
+				</hj:basic>
+			</jaxb:bindings>
+			
+			<jaxb:bindings node="xs:attribute[@name='creation-date']">
+				<hj:basic>
+					<orm:column name="creation_date" nullable="false"  insertable="true" updatable="false"/>
+					<orm:temporal>TIMESTAMP</orm:temporal>
+				</hj:basic>
+			</jaxb:bindings>
+			
+			<jaxb:bindings node="xs:attribute[@name='name']">
+				<hj:basic>
+					<orm:column name="name" nullable="false" length="128"/>
+				</hj:basic>
+			</jaxb:bindings>
+			
+			<!-- Optional Attributes -->
+			
+			<jaxb:bindings node="xs:attribute[@name='modify-date']">
+				<hj:basic>
+					<orm:column name="modify_date" nullable="true" insertable="false" updatable="true"/>
+					<orm:temporal>TIMESTAMP</orm:temporal>
+				</hj:basic>
+			</jaxb:bindings>
+			
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+	
+</jaxb:bindings>

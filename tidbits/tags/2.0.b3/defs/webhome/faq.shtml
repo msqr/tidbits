@@ -1,0 +1,3 @@
+<!--#set var="currPage" value="faq"-->
+<!--#set var="pageTitle" value="Tidbits: FAQ"-->
+<!--#include virtual="layout.shtml"-->
