@@ -470,9 +470,63 @@ div.alert {
 
 @media (max-width: 767px) {
 	.flipper,
-	.flipper .face {
+	.flipper-container {
 		width: 300px;
 		height: 360px;
+	}
+	.flipper .face {
+		width: 298px;
+		height: 358px;
+	}
+	.flipper .face.bottom {
+		height: 298px;
+	}
+
+	.flipper {
+	  -webkit-transform: translateZ(-150px);
+	     -moz-transform: translateZ(-150px);
+	       -o-transform: translateZ(-150px);
+	          transform: translateZ(-150px);
+	}
+	
+	.flipper .face.front {
+	  -webkit-transform: translateZ(150px);
+	     -moz-transform: translateZ(150px);
+	       -o-transform: translateZ(150px);
+	          transform: translateZ(150px);
+	}
+	
+	.flipper .face.left {
+	  -webkit-transform: rotateY(-90deg) translateZ(150px);
+	     -moz-transform: rotateY(-90deg) translateZ(150px);
+	       -o-transform: rotateY(-90deg) translateZ(150px);
+	          transform: rotateY(-90deg) translateZ(150px);
+	}
+	
+	.flipper .face.bottom {
+	  -webkit-transform: rotateX(-90deg) translateZ(180px);
+	     -moz-transform: rotateX(-90deg) translateZ(180px);
+	       -o-transform: rotateX(-90deg) translateZ(180px);
+	          transform: rotateX(-90deg) translateZ(180px);
+	}
+	
+	.flipper.show-front {
+	  -webkit-transform: translateZ(-150px);
+	     -moz-transform: translateZ(-150px);
+	       -o-transform: translateZ(-150px);
+	          transform: translateZ(-150px);
+	}
+	.flipper.show-left {
+	  -webkit-transform: translateZ(-150px) rotateY(90deg);
+	     -moz-transform: translateZ(-150px) rotateY(90deg);
+	       -o-transform: translateZ(-150px) rotateY(90deg);
+	          transform: translateZ(-150px) rotateY(90deg);
+	}
+	.flipper.show-bottom {
+	  -webkit-transform: translateZ(-180px) rotateX(90deg);
+	     -moz-transform: translateZ(-180px) rotateX(90deg);
+	       -o-transform: translateZ(-180px) rotateX(90deg);
+	          transform: translateZ(-180px) rotateX(90deg);
 	}
 }
 
