@@ -87,6 +87,7 @@
 		<script type="text/javascript" src="{$web-context}/js-lib/bootstrap.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js/xweb-locale.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js/tidbits-cards.js?lang={$ctx/x:user-locale}"><xsl:text> </xsl:text></script>
+		<script type="text/javascript" src="{$web-context}/js/tidbits-editor.js"><xsl:text> </xsl:text></script>
 	</xsl:template>
 	
 	<xsl:template match="x:x-errors" mode="error-intro">
