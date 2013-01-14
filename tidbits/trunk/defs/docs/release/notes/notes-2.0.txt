@@ -4,7 +4,9 @@ Tidbits Release Notes
 
 This is a major update that updates the core frameworks used internally
 by Tidbits to more modern versions and changes the UI into an "index 
-card" metaphore using HTML5 features.
+card" metaphore using HTML5 features. Tidbits has been designed for use 
+with modern web browsers, including mobile browsers, and makes use of 
+advanced HTML5 functionality. As such, it will not work in older browsers.
 
 Tidbits now uses Spring Secrity 3.1 instead of Acegi Security for
 authentication and authorization services. This means the old
