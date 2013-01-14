@@ -314,10 +314,13 @@ Tidbits.Class.Editor.prototype.displayForm = function(crumb, kindId) {
 		$('#add-tidbit-data').val(crumb.value);
 		$('#add-tidbit-comments').val(crumb.comment);
 	}
+	var header = this.element.find('.front .header h3');
 	if ( crumb !== undefined && crumb.id !== '' ) {
 		$('#delete-tidbit-btn').show();
+		header.text(Tidbits.i18n('edit.tidbit.title'));
 	} else {
 		$('#delete-tidbit-btn').hide();
+		header.text(Tidbits.i18n('new.tidbit.title'));
 	}
 	$('#add-tidbit-name').val((this.bit === undefined ? '' : this.bit.getName()));
 	
@@ -382,7 +385,7 @@ Tidbits.Class.Editor.prototype.setBit = function(bit) {
 	// update view according to model
 	var info = (bit === undefined ? {} : bit.getInfo());
 	
-	this.element.find('div.bottom h3').text(
+	this.element.find('.left .header h3').text(
 			bit === undefined ? Tidbits.i18n('manage.tidbit.title') : bit.getName());
 	
 	// populate list
