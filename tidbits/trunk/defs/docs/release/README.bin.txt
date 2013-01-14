@@ -130,14 +130,23 @@ FIRST-TIME APPSERVER DATASOURCE SETUP =================================
   a JDBC DataSource to connect to the database with. Thus you must 
   configure the DataSource the first time you install Tidbits.
   
-  For Tomcat 5.5, create the DataSource first by editing the 
-  <TOMCAT HOME>/conf/server.xml file and add the following to the 
-  <GlobalNamingResources> section (adjust the parameter values as 
-  necessary for your environment, but if you are following these 
-  directions from the start, these should work for you):
+  For Tomcat 5.5+, create the DataSource first by creating a deployment
+  context file named <TOMCAT HOME>/conf/Catalina/localhost/tidbits.xml.
+  Add the below XML (adjust the parameter values as necessary for your 
+  environment, but if you are following these directions from the start, 
+  these should work for you).
   
   POSTGRES ------------------------------------------------------------
   
+  <Context path="/tidbits" displayName="Tidbits" 
+    className="org.apache.catalina.core.StandardContext" 
+    crossContext="false" reloadable="false" 
+    mapperClass="org.apache.catalina.core.StandardContextMapper" 
+    useNaming="true" debug="0" swallowOutput="false" privileged="false" 
+    wrapperClass="org.apache.catalina.core.StandardWrapper" 
+    cookies="true" cachingAllowed="true" 
+    charsetMapperClass="org.apache.catalina.util.CharsetMapper">
+    
     <Resource name="jdbc/tidbits" 
       type="javax.sql.DataSource" scope="Shareable"
       driverClassName="org.postgresql.Driver" 
@@ -148,9 +157,11 @@ FIRST-TIME APPSERVER DATASOURCE SETUP =================================
       validationQuery="select CURRENT_TIMESTAMP"
       />
     
+  </Context>
+    
   Then, if you don't already have the Postgres JDBC driver added to 
-  Tomcat, copy the setup/lib/postgresql-8.1-407.jdbc3.jar to the 
-  <TOMCAT HOME>/common/lib directory.
+  Tomcat, copy the setup/lib/postgresql-9.1-901-1.jdbc4.jar to the 
+  <TOMCAT HOME>/lib directory (or /common/lib for Tomcat 5).
 
   MYSQL ---------------------------------------------------------------
   
@@ -160,8 +171,18 @@ FIRST-TIME APPSERVER DATASOURCE SETUP =================================
   jdbc:mysql://localhost:3306/tidbits
   com.mysql.jdbc.Driver
   
-  It should look similar to this:
+  The <TOMCAT HOME>/conf/Catalina/localhost/tidbits.xml file should 
+  look similar to this:
   
+  <Context path="/tidbits" displayName="Tidbits" 
+    className="org.apache.catalina.core.StandardContext" 
+    crossContext="false" reloadable="false" 
+    mapperClass="org.apache.catalina.core.StandardContextMapper" 
+    useNaming="true" debug="0" swallowOutput="false" privileged="false" 
+    wrapperClass="org.apache.catalina.core.StandardWrapper" 
+    cookies="true" cachingAllowed="true" 
+    charsetMapperClass="org.apache.catalina.util.CharsetMapper">
+    
     <Resource name="jdbc/tidbits" 
       type="javax.sql.DataSource" scope="Shareable"
       driverClassName="com.mysql.jdbc.Driver" 
@@ -172,9 +193,11 @@ FIRST-TIME APPSERVER DATASOURCE SETUP =================================
       validationQuery="select CURRENT_TIMESTAMP"
       />
     
+  </Context>
+    
   Then, if you don't already have the MySQL JDBC driver added to 
-  Tomcat, copy the setup/lib/mysql-connector-java-3.1.13-bin.jar
-  to the <TOMCAT HOME>/common/lib directory.
+  Tomcat, copy the setup/lib/mysql-connector-java-5.1.18.jar
+  to the <TOMCAT HOME>/lib directory (or /common/lib for Tomcat 5).
 
 
 APPLICATION SETUP =====================================================
