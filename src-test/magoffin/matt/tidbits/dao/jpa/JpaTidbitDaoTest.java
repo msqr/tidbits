@@ -31,9 +31,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import magoffin.matt.tidbits.BaseTransactionalTest;
-import magoffin.matt.tidbits.dao.jpa.JpaTidbitDao;
-import magoffin.matt.tidbits.dao.jpa.JpaTidbitKindDao;
+import magoffin.matt.tidbits.dao.ExportCallback;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
@@ -220,6 +223,45 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 		assertEquals(1, results.getTidbit().size());
 
 		assertEquals(id1, results.getTidbit().get(0).getId());
+	}
+
+	@Test
+	public void exportAllTidbits() {
+		storeEntity();
+		final Long id1 = this.id;
+		final List<Tidbit> tidbits = new ArrayList<Tidbit>(3);
+		tidbits.add(dao.get(id1));
+		storeEntity();
+		final Long id2 = this.id;
+		tidbits.add(dao.get(id2));
+		storeEntity();
+		final Long id3 = this.id;
+		tidbits.add(dao.get(id3));
+		final Set<Long> exportedIds = new HashSet<Long>();
+		dao.exportAllTidbits(new ExportCallback() {
+
+			@Override
+			public boolean handleRow(Object[] data, int row) {
+				Tidbit t = dao.get((Long) data[7]);
+				assertNotNull("Tidbit should be found", t);
+				assertEquals(t.getName(), data[0]);
+				assertEquals(t.getKind().getName(), data[1]);
+				assertEquals(t.getData(), data[2]);
+				assertEquals(t.getCreationDateItem(), data[3]);
+				assertEquals(t.getModifyDateItem(), data[4]);
+				assertEquals(t.getComment(), data[5]);
+				assertEquals(t.getKind().getComment(), data[6]);
+				assertEquals(t.getCreatedBy(), data[8]);
+				assertEquals(t.getKind().getId(), data[9]);
+
+				exportedIds.add(t.getId());
+				return true;
+			}
+		});
+		assertEquals(3, exportedIds.size());
+		assertTrue(id1.toString(), exportedIds.contains(id1));
+		assertTrue(id2.toString(), exportedIds.contains(id2));
+		assertTrue(id3.toString(), exportedIds.contains(id3));
 	}
 
 }

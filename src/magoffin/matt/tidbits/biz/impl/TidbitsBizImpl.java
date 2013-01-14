@@ -28,15 +28,21 @@ package magoffin.matt.tidbits.biz.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
+import magoffin.matt.tidbits.dao.ExportCallback;
 import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.dao.TidbitKindDao;
 import magoffin.matt.tidbits.domain.SearchResults;
@@ -53,6 +59,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.CSVPrinter;
 
 /**
  * Implementation of TidbtsBiz API.
@@ -173,6 +180,34 @@ public class TidbitsBizImpl implements TidbitsBiz {
 			throw new RuntimeException(e);
 		}
 		return results;
+	}
+
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+	public void exportCsvData(OutputStream out) throws IOException {
+		final CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(out, "UTF-8"));
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		tidbitDao.exportAllTidbits(new ExportCallback() {
+
+			@Override
+			public boolean handleRow(Object[] data, int row) {
+				printer.print((String) data[0]);
+				printer.print((String) data[1]);
+				printer.print((String) data[2]);
+				printer.print(sdf.format((Date) data[3]));
+				printer.print(data[4] == null ? "" : sdf.format((Date) data[4]));
+				printer.print((String) data[5]);
+				printer.print((String) data[6]);
+				printer.print(data[7].toString());
+				printer.print((String) data[8]);
+				printer.print(data[9].toString());
+				printer.println();
+				return true;
+			}
+		});
+		printer.flush();
+		printer.close();
 	}
 
 	@Override

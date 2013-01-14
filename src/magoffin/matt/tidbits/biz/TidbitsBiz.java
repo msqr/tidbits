@@ -26,9 +26,10 @@
 
 package magoffin.matt.tidbits.biz;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
-
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
@@ -111,4 +112,17 @@ public interface TidbitsBiz {
 	 */
 	List<Tidbit> parseCsvData(InputStream input);
 	
+	/**
+	 * Export all Tidbits as a CSV data file.
+	 * 
+	 * <p>
+	 * The UTF-8 character encoding will be used.
+	 * </p>
+	 * 
+	 * @param out
+	 *        the output stream to export to
+	 * @throws IOException
+	 *         if any IO error occurs
+	 */
+	void exportCsvData(OutputStream out) throws IOException;
 }

@@ -158,6 +158,11 @@
 									</a>
 								</li>
 								<li>
+									<a id="export-tidbits-btn" href="{$web-context}/export.do" title="{key('i18n','link.export.csv.title')}">
+										<xsl:value-of select="key('i18n','link.export.csv')"/>
+									</a>
+								</li>
+								<li>
 									<a class="link-logoff" href="{$web-context}/logoff.do">
 										<xsl:value-of select="key('i18n','link.logoff')"/>
 									</a>

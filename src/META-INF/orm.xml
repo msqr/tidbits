@@ -30,5 +30,12 @@
 		<named-native-query name="TidbitUpdateKindReassign">
 			<query>UPDATE tidbit SET kindid = ? WHERE kindid = ?</query>
 		</named-native-query>
+		<named-native-query name="TidbitsExport">
+			<query>SELECT t.name, k.name, t.data, t.creation_date, t.modify_date, t.comment, k.comment,
+						t.tidbitid, t.created_by, k.kindid
+					FROM tidbit t INNER JOIN tidbit_kind k ON k.kindid = t.kindid
+					ORDER BY t.creation_date</query>
+			<hint name="eclipselink.jdbc.fetch-size" value="100"/>
+		</named-native-query>
 	</entity>
 </entity-mappings>

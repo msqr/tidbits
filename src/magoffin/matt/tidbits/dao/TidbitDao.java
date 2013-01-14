@@ -57,4 +57,29 @@ public interface TidbitDao extends GenericDao<Tidbit, Long> {
 	 * @return the number of tidbits affected
 	 */
 	int reassignTidbitKinds(TidbitKind original, TidbitKind reassign);
+
+	/**
+	 * Export all Tidbits.
+	 * 
+	 * <p>
+	 * The returned data will be:
+	 * </p>
+	 * 
+	 * <ol>
+	 * <li>tidbit name</li>
+	 * <li>tidbit kind name</li>
+	 * <li>tidbit data</li>
+	 * <li>tidbit create date</li>
+	 * <li>tidbit modify date</li>
+	 * <li>tidbit comment</li>
+	 * <li>tidbit kind comment</li>
+	 * <li>tidbit ID</li>
+	 * <li>tidbit created by</li>
+	 * <li>tidbit kind ID</li>
+	 * </ol>
+	 * 
+	 * @param callback
+	 *        the callback
+	 */
+	void exportAllTidbits(ExportCallback callback);
 }
