@@ -439,7 +439,7 @@
 
 		<echo message="Creating source README" />
 		<copy file="${svn.dir.build}/defs/docs/release/README.src.txt" 
-			tofile="${release-source-dir}/README" filtering="true">
+			tofile="${release-source-dir}/README.txt" filtering="true">
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
@@ -448,7 +448,7 @@
 
 		<echo message="Creating LICENSE" />
 		<copy file="${svn.dir.build}/defs/docs/release/LICENSE.txt" 
-			tofile="${release-source-dir}/LICENSE" filtering="true">
+			tofile="${release-source-dir}/LICENSE.txt" filtering="true">
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
@@ -591,7 +591,7 @@
 		<copy filtering="true" todir="${dir.build}/${app.name}-demo">
 			<fileset dir="${dir.base}/defs/docs/demo"
 				includes="README*.txt"/>
-			<mapper type="glob" from="*.txt" to="*"/>
+			<!--mapper type="glob" from="*.txt" to="*"/-->
 			<filterset>
 				<filter token="VERSION" value="${svn.tag}" />
 				<filter token="BUILD_DATE" value="${build.time}" />
