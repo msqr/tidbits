@@ -90,7 +90,7 @@
 					</div>
 				</form>
 				
-				<div class="face back form-horizontal">
+				<div class="face bottom form-horizontal">
 					<div class="header">
 						<button type="button" class="btn btn-mini btn-primary pull-right" id="add-new-kind-btn">
 							<i class="icon-plus"><xsl:text> </xsl:text></i>
@@ -114,7 +114,7 @@
 					</div>
 				</div>
 				
-				<div class="face bottom form-horizontal">
+				<div class="face left form-horizontal">
 					<div class="header">
 						<button type="button" class="btn btn-mini btn-primary pull-right" id="add-tidbit-value-btn">
 							<i class="icon-plus"><xsl:text> </xsl:text></i>
