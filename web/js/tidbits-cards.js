@@ -175,9 +175,9 @@ Tidbits.Class.Matrix.prototype = {
 			"Webkit" + suffix,
 			"Moz" + suffix
 		];
-		var eventProperties = ["oTransitionEnd","MSTransitionEnd","webkitTransitionEnd","transitionend"];
-		var transitionProperties = ["OTransition","MSTransition","WebkitTransition","MozTransition"];
-		var transitionTransform = ["-o-transform", "-ms-transform", "-webkit-transform", "-moz-transform"];
+		var eventProperties = ["oTransitionEnd","transitionend","webkitTransitionEnd","transitionend"];
+		var transitionProperties = ["OTransition","transition","WebkitTransition","MozTransition"];
+		var transitionTransform = ["-o-transform", "transform", "-webkit-transform", "-moz-transform"];
 		var tProp = "Transform", 
 			trProp = "Transition",
 			trTransform = "transform",
