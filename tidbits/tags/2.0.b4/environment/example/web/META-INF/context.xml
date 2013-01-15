@@ -1,0 +1,35 @@
+<!--  Example Tomcat context file for development. Copy into web/META-INF. -->
+<Context>
+	<Resource name="jdbc/tidbits" 
+		type="javax.sql.DataSource" scope="Shareable"
+		driverClassName="org.apache.derby.jdbc.EmbeddedDriver" 
+		url="jdbc:derby:/var/tmp/tidbits/db/tidbits;create=true"
+		username="tidbits" password="tidbits" maxWait="5000"
+		maxActive="5" maxIdle="2" removeAbandoned="true"
+		removeAbandonedTimeout="60" logAbandoned="true"
+		validationQuery="VALUES CURRENT_DATE"
+	/>
+	<!--Resource name="jdbc/tidbits" 
+		type="javax.sql.DataSource" scope="Shareable"
+		driverClassName="com.mysql.jdbc.Driver" 
+		url="jdbc:mysql://localhost/tidbits"
+		username="tidbits" password="tidbits" maxWait="5000"
+		maxActive="5" maxIdle="2" removeAbandoned="true"
+		removeAbandonedTimeout="60" logAbandoned="true"
+		validationQuery="select CURRENT_TIMESTAMP"
+	/-->
+	<!--Resource name="jdbc/tidbits" type="javax.sql.DataSource" scope="Shareable"
+		driverClassName="org.postgresql.Driver" 
+		url="jdbc:postgresql://localhost/tidbits"
+		username="tidbits" password="tidbits" maxWait="5000"
+		maxActive="5" maxIdle="2" removeAbandoned="true"
+		removeAbandonedTimeout="60" logAbandoned="true"
+		validationQuery="select CURRENT_TIMESTAMP"
+	/-->
+	<Resource name="mail/tidbits" 
+		auth="Container" 
+		type="javax.mail.Session"
+		mail.smtp.host="localhost"
+		mail.smtp.port="2500"
+	/>
+</Context>

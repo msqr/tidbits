@@ -1,0 +1,12 @@
+Tidbits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+- This release solves all known outstanding issues surrounding the
+  Setup Wizard.
+  
+- Tested with MySQL.
+
+- Wrote README for binary release.
+
+- Added delete functionality for both tidbits and tidbit kinds.
