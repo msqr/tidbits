@@ -15,6 +15,14 @@ longer work with Tidbits 2, and must be converted. The configuration
 is greatly simplified with Spring Security, however, so this conversion
 should be easy to do in most situations.
 
+These are the browser versions tested with Tidbits:
+
+  - Safari 5+
+  - Chrome 24+
+  - Firefox 6+
+  - IE 10 (limited editing support)
+  - Opera 12 (editing not supported)
+
 Updates in this release:
 
 - Major UI overhaul, using HTML5.
