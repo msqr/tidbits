@@ -20,7 +20,7 @@ These are the browser versions tested with Tidbits:
   - Safari 5+
   - Chrome 24+
   - Firefox 6+
-  - IE 10 (limited editing support)
+  - IE 10.0.9200.16438 (limited editing support)
   - Opera 12 (editing not supported)
 
 Updates in this release:
