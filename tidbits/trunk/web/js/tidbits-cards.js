@@ -170,14 +170,14 @@ Tidbits.Class.Matrix.prototype = {
 		var divStyle = document.createElement("div").style;
 		var suffix = "Transform";
 		var testProperties = [
+		    "Webkit" + suffix,
 			"O" + suffix,
 			"ms" + suffix,
-			"Webkit" + suffix,
 			"Moz" + suffix
 		];
-		var eventProperties = ["oTransitionEnd","transitionend","webkitTransitionEnd","transitionend"];
-		var transitionProperties = ["OTransition","transition","WebkitTransition","MozTransition"];
-		var transitionTransform = ["-o-transform", "transform", "-webkit-transform", "-moz-transform"];
+		var eventProperties = ["webkitTransitionEnd","oTransitionEnd","transitionend","transitionend"];
+		var transitionProperties = ["WebkitTransition","OTransition","transition","MozTransition"];
+		var transitionTransform = ["-webkit-transform","-o-transform","transform", "-moz-transform"];
 		var tProp = "Transform", 
 			trProp = "Transition",
 			trTransform = "transform",
