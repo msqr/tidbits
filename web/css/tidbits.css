@@ -176,9 +176,7 @@ div.tidbit.card .content {
 
 div.tidbit.card.fac .content {
 	overflow-y: auto;
-	/* Grr, this doesn't work on absolutely positioned elements?
 	-webkit-overflow-scrolling: touch;
-	*/
 }
 
 div.tidbit.card dd {
@@ -259,7 +257,12 @@ div.tidbit.card dl dd + dd::before {
 	right: 0;
 	bottom: 58px;
 	padding: 9px 15px;
+	overflow: hidden;
+}
+
+.editor .bottom .body {
 	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 .editor .footer {
