@@ -194,4 +194,12 @@
 		<welcome-file>home.do</welcome-file>
 	</welcome-file-list>
 	
+	<resource-ref>
+		<description>Tidbits JDBC DataSource</description>
+		<res-ref-name>jdbc/tidbits</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+	
 </web-app>
