@@ -54,12 +54,11 @@ public class LuceneTidbitSearchInterceptor {
 	@Autowired
 	private LuceneBiz luceneBiz = null;
 
-	@SuppressWarnings("unused")
-	@Pointcut("execution(magoffin.matt.tidbits.domain.SearchResults magoffin.matt.tidbits.biz.TidbitsBiz.findTidbits(..)) && args(searchCriteria)")
-	public void findTidbits(TidbitSearchCriteria searchCriteria) {
+	@Pointcut("execution(magoffin.matt.tidbits.domain.SearchResults magoffin.matt.tidbits.biz.TidbitsBiz.findTidbits(..))")
+	public void findTidbits() {
 	}
 
-	@Around("findTidbits(searchCriteria)")
+	@Around("findTidbits() && args(searchCriteria)")
 	public SearchResults findTidbits(ProceedingJoinPoint pjp, TidbitSearchCriteria searchCriteria)
 			throws Throwable {
 		if ( searchCriteria.getSearchType() != TidbitSearchType.FOR_QUERY ) {
