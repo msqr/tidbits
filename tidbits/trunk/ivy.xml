@@ -63,19 +63,19 @@
 		</dependency>
 		
 		<!-- Spring -->
-		<dependency org="org.springframework" name="spring-aop" rev="3.1.1.RELEASE" conf="compile,runtime">
+		<dependency org="org.springframework" name="spring-aop" rev="3.1.4.RELEASE" conf="compile,runtime">
     		<artifact name="spring-aop" type="jar" />
 		</dependency>
-		<dependency org="org.springframework" name="spring-context" rev="3.1.1.RELEASE" conf="compile,runtime">
+		<dependency org="org.springframework" name="spring-context" rev="3.1.4.RELEASE" conf="compile,runtime">
     		<artifact name="spring-context" type="jar" />
 		</dependency>
-		<dependency org="org.springframework" name="spring-core" rev="3.1.1.RELEASE" conf="compile,runtime">
+		<dependency org="org.springframework" name="spring-core" rev="3.1.4.RELEASE" conf="compile,runtime">
     		<artifact name="spring-core" type="jar" />
 		</dependency>
-		<dependency org="org.springframework" name="spring-orm" rev="3.1.1.RELEASE" conf="compile,runtime">
+		<dependency org="org.springframework" name="spring-orm" rev="3.1.4.RELEASE" conf="compile,runtime">
     		<artifact name="spring-orm" type="jar" />
 		</dependency>
-		<dependency org="org.springframework" name="spring-webmvc" rev="3.1.1.RELEASE" conf="compile,runtime">
+		<dependency org="org.springframework" name="spring-webmvc" rev="3.1.4.RELEASE" conf="compile,runtime">
     		<artifact name="spring-webmvc" type="jar" />
 		</dependency>
 		
