@@ -1,3 +1,0 @@
-<!--#set var="currPage" value="home"-->
-<!--#set var="pageTitle" value="Tidbits: the web-based personal digital wallet"-->
-<!--#include virtual="layout.shtml"-->
