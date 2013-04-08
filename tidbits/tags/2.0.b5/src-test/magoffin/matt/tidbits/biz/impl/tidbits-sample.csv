@@ -1,0 +1,24 @@
+Test Bank,Password,supersecret
+Test Bank,URL,http://foo.bar/
+Test Bank,Username,superlogin
+Test Website,URL,http://cool.com/
+Test Other,Username,foo
+Test Other,Password,bar
+Test Server 1,Username,foo
+Test Server 1,Password,bar
+Test Server 2,Username,foo
+Test Server 2,Password,bar
+Test Server 3,Username,foo
+Test Server 3,Password,bar
+Test Server 4,Username,foo
+Test Server 4,Password,bar
+Test Server 5,Username,foo
+Test Server 5,Password,bar
+Test Server 6,Username,foo
+Test Server 6,Password,bar
+Test Server 7,Username,foo
+Test Server 7,Password,bar
+Test Server 8,Username,foo
+Test Server 8,Password,bar
+Test Server 9,Username,foo
+Test Server 9,Password,bar
