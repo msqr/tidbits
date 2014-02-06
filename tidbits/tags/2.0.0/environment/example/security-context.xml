@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/security
+			http://www.springframework.org/schema/security/spring-security-3.1.xsd
+			http://www.springframework.org/schema/tx
+			http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- Use Java @Transactional annotations to declare transactions. -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<!-- Configure Spring Security -->
+	<http security="none" pattern="/js/**"/>
+	<http security="none" pattern="/js-lib/**"/>
+	<http security="none" pattern="/img/**"/>
+	<http security="none" pattern="/css/**"/>
+	<http auto-config="true">
+		<intercept-url pattern="/index.jsp" access="ROLE_ANONYMOUS,ROLE_USER"/>
+		<intercept-url pattern="/login.do*" access="ROLE_ANONYMOUS,ROLE_USER"/>
+		<intercept-url pattern="/logoff.do" access="ROLE_ANONYMOUS,ROLE_USER"/>
+		<intercept-url pattern="/setup.do" access="ROLE_ANONYMOUS,ROLE_USER"/>
+		<intercept-url pattern="/**" access="ROLE_USER" />
+		<form-login login-page="/login.do" always-use-default-target="true" default-target-url="/home.do"
+			authentication-failure-url="/login.do?login_error=1"/>
+		<logout logout-success-url="/login.do" logout-url="/logoff.do"/>
+	</http>
+
+	<!-- EXAMPLE: for LDAP support	
+	<ldap-server url="ldap://some.host/dc=example,dc=com" 
+		manager-dn="cn=Manager"
+		manager-password="password"/>
+	-->
+	
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="testDetailsService">
+			<password-encoder hash="sha-256"/>
+		</authentication-provider>
+		<!-- EXAMPLE: for LDAP support
+		<ldap-authentication-provider       	
+			group-search-filter="(&amp;(uniqueMember={0})(cn=Tidbits*))"
+			group-search-base="ou=Groups"
+			user-search-base="ou=People"
+			user-search-filter="uid={0}"
+			group-role-attribute="businessCategory"
+		/>
+		-->
+	</authentication-manager>
+	
+	<user-service id="testDetailsService">
+		<!-- A test user, password == test -->
+		<user name="test" authorities="ROLE_USER" password="9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"/>
+	</user-service>
+
+</beans:beans>
