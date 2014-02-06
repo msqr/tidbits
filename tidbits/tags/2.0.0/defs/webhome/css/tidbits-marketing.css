@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+@media (min-width: 980px) {
+	body {
+		padding-top: 50px;
+	}
+}
+
+.thumbnail {
+	/*background-color: #ededed;*/
+	padding: 8px;
+}
+
+.thumbnail h4 {
+	margin-top: 12px;
+}
+
+.thumbnail p:last-child {
+	margin-bottom: 0;
+}
+
+.thumbnail p {
+	line-height: 18px;
+}
+
