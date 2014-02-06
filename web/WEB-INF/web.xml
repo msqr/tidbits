@@ -76,6 +76,31 @@
 		<url-pattern>/login.do</url-pattern>
 	</filter-mapping>
 
+	<!-- 
+		Special response header to assert no caching of content.
+	-->
+	<filter>
+		<filter-name>Cache-Control Header</filter-name>
+		<filter-class>magoffin.matt.xweb.util.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>max-age=0, no-cache, no-store</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>Cache-Control Header</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Cache-Control Header</filter-name>
+		<url-pattern>*.json</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Cache-Control Header</filter-name>
+		<url-pattern>*.xml</url-pattern>
+	</filter-mapping>
+
 	<!-- Compression filter -->
 	<filter>
 		<filter-name>Compression Filter</filter-name>
