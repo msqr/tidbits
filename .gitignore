@@ -1,0 +1,8 @@
+/build.properties
+/version.properties
+/build/
+/dist/
+/work/
+/web/META-INF/context.xml
+/web/WEB-INF/classes/
+/derby.log
