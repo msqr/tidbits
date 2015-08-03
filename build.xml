@@ -768,7 +768,7 @@
 	     for the dir.env property to copy your desired environment settings into the WAR,
 	     for example:
 	     
-	     ant -Denv.src=production -Ddir.env=$PWD/environment/production -Dgit.tag=1.8 git-build
+	     ant -Dgit.env.src=$PWD/environment/local -Dgit.tag=2.1.b1 git-build
 	-->
 	<target name="git-build" depends="clean,git-prepare" description="Build from git tag versions">
 		
