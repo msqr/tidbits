@@ -24,11 +24,11 @@
 
 	<property file="build.properties" />
 	
-	<property name="dir.base" value="."/>
+	<property name="dir.base" value="${basedir}"/>
 	<property name="dir.source" value="src"/>
 	<property name="dir.source.test" value="src-test"/>
 	<property name="dir.schema" value="defs/schema"/>
-	<property name="dir.build" value="build/ant" />
+	<property name="dir.build" value="${dir.base}/build/ant" />
 	<property name="dir.generated" value="${dir.build}/generated/src" />
 	<property name="dir.database" value="defs/sql"/>
 	<property name="dir.dist" value="dist"/>
@@ -765,10 +765,10 @@
 	</target>
 
 	<!-- For local builds with production/staging targets, you can specify the absolute path
-	     for the dir.env.src property to copy your desired environment settings into the WAR,
+	     for the dir.env property to copy your desired environment settings into the WAR,
 	     for example:
 	     
-	     ant -Denv.src=production -Ddir.env.src=$PWD/environment/production -Dgit.tag=1.8 git-build
+	     ant -Dgit.env.src=$PWD/environment/local -Dgit.tag=2.1.b1 git-build
 	-->
 	<target name="git-build" depends="clean,git-prepare" description="Build from git tag versions">
 		
@@ -783,7 +783,7 @@
 			<property name="app.name" value="${app.archive.name}"/>
 			<property name="dir.dist" value="${dir.dist}"/>
 			<property name="env.src" value="${env.src}"/>
-			<property name="dir.env.src" value="${git.env.src}"/>
+			<property name="dir.env" value="${git.env.src}"/>
 		</ant>
 	</target>
 	
@@ -915,15 +915,6 @@
 		<copy filtering="false" todir="${release-dir}/setup/sql">
 			<fileset dir="${git.dir.build}/defs/sql"
 				includes="**"/>
-		</copy>
-		<copy filtering="false" todir="${release-dir}/setup">
-			<fileset dir="${git.dir.build}/${dir.env}/example"
-				includes="environmentContext*.xml"/>
-		</copy>
-		<mkdir dir="${release-dir}/scripts"/>
-		<copy todir="${release-dir}/scripts">
-			<fileset dir="${git.dir.build}/defs/scripts"
-				includes="*.applescript"/>
 		</copy>
 		
 		<!-- copy JDBC drivers -->
