@@ -906,6 +906,12 @@ Tidbits.Class.Bits = function(container, margins) {
 			bits = {};
 			bitz = [];
 			populateTidbits(data);
+			if ( cardMode === true && bitz.length === 1 ) {
+				// make one and only card front and center
+				setTimeout(function() {
+					bitz[0].frontAndCenter();
+				}, 200);
+			}
 		};
 		
 		if ( cardMode === true ) {

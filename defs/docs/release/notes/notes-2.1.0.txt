@@ -1,0 +1,13 @@
+Tidbits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+This is a minor update that inclues a UI enhancement and an updated
+build system to works with git.
+
+Updates in this release:
+
+- If there is a single search result, make that front and center 
+  automatically to avoid having to double-tap it.
+
+- Build system updated to git.
