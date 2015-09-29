@@ -151,9 +151,7 @@
 					<fieldset class="body">
 						<input type="hidden" name="page" value="import"/>
 						<input type="hidden" name="_to" value="verify"/>
-						<p>
-							<xsl:value-of select="key('i18n','import.csv.intro')" disable-output-escaping="yes"/>
-						</p>
+						<xsl:value-of select="key('i18n','import.csv.intro')" disable-output-escaping="yes"/>
 						<div class="control-group">
 							<label for="import-file" class="control-label">
 								<xsl:value-of select="key('i18n','import.cvs.file.displayName')"/>
