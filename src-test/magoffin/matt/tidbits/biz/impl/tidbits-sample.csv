@@ -4,7 +4,7 @@ Test Bank,Username,superlogin
 Test Website,URL,http://cool.com/
 Test Other,Username,foo
 Test Other,Password,bar
-Test Server 1,Username,foo
+Test Server 1,Username,foo,2017-11-08T10:00:00.000Z
 Test Server 1,Password,bar
 Test Server 2,Username,foo
 Test Server 2,Password,bar

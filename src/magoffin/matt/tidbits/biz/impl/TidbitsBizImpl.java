@@ -37,17 +37,10 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import magoffin.matt.tidbits.biz.DomainObjectFactory;
-import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
-import magoffin.matt.tidbits.biz.TidbitsBiz;
-import magoffin.matt.tidbits.dao.ExportCallback;
-import magoffin.matt.tidbits.dao.TidbitDao;
-import magoffin.matt.tidbits.dao.TidbitKindDao;
-import magoffin.matt.tidbits.domain.SearchResults;
-import magoffin.matt.tidbits.domain.Tidbit;
-import magoffin.matt.tidbits.domain.TidbitKind;
 import org.glowacki.CalendarParser;
 import org.glowacki.CalendarParserException;
 import org.slf4j.Logger;
@@ -60,6 +53,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.CSVPrinter;
+import magoffin.matt.tidbits.biz.DomainObjectFactory;
+import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
+import magoffin.matt.tidbits.biz.TidbitsBiz;
+import magoffin.matt.tidbits.dao.ExportCallback;
+import magoffin.matt.tidbits.dao.TidbitDao;
+import magoffin.matt.tidbits.dao.TidbitKindDao;
+import magoffin.matt.tidbits.domain.SearchResults;
+import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.TidbitKind;
 
 /**
  * Implementation of TidbtsBiz API.
@@ -81,28 +83,28 @@ public class TidbitsBizImpl implements TidbitsBiz {
 
 	@Autowired
 	private DomainObjectFactory domainObjectFactory;
-	
+
 	private final Logger log = LoggerFactory.getLogger(TidbitsBizImpl.class);
-	
+
+	private static final Pattern ISO_DT_SEP_PAT = Pattern.compile("(\\d{2})T(\\d{2})");
+
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public SearchResults findTidbits(TidbitSearchCriteria searchCriteria) {
-		switch ( searchCriteria.getSearchType() ) {
+		switch (searchCriteria.getSearchType()) {
 			case FOR_TEMPLATE:
 				return findTidbitsForTemplate(searchCriteria);
-				
+
 			default:
 				throw new UnsupportedOperationException();
 		}
 	}
 
-	private SearchResults findTidbitsForTemplate(
-			TidbitSearchCriteria searchCriteria) {
+	private SearchResults findTidbitsForTemplate(TidbitSearchCriteria searchCriteria) {
 		Tidbit template = searchCriteria.getTidbitTemplate();
 		if ( template == null ) {
 			// find all
-			return tidbitDao.getAllTidbits(
-					searchCriteria.getPaginationCriteria());
+			return tidbitDao.getAllTidbits(searchCriteria.getPaginationCriteria());
 		}
 		throw new UnsupportedOperationException();
 	}
@@ -114,7 +116,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		DatatypeFactory df;
 		try {
 			df = DatatypeFactory.newInstance();
-		} catch (DatatypeConfigurationException e) {
+		} catch ( DatatypeConfigurationException e ) {
 			throw new RuntimeException(e);
 		}
 		CSVParser parser = new CSVParser(input);
@@ -127,11 +129,13 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		// 5: tidbit comment (optional)
 		// 6: tidbit kind comment (optional)
 		try {
-			for ( String[] line = parser.getLine(); line != null; 
-				line = parser.getLine() ) {
-				if ( line.length < 3 ) continue;
-				if ( !StringUtils.hasText(line[0]) ) continue;
-				if ( !StringUtils.hasText(line[1]) ) continue;
+			for ( String[] line = parser.getLine(); line != null; line = parser.getLine() ) {
+				if ( line.length < 3 )
+					continue;
+				if ( !StringUtils.hasText(line[0]) )
+					continue;
+				if ( !StringUtils.hasText(line[1]) )
+					continue;
 				TidbitKind kind = tidbitKindDao.getTidbitKindByName(line[0]);
 				if ( kind == null ) {
 					List<TidbitKind> kinds = tidbitKindDao.findTidbitKindsByName(line[1]);
@@ -146,7 +150,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 						}
 					}
 				}
-				
+
 				Tidbit tidbit = domainObjectFactory.newTidbitInstance();
 				tidbit.setKind(kind);
 				tidbit.setName(line[0]);
@@ -154,9 +158,19 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				if ( line.length > 3 && StringUtils.hasText(line[3]) ) {
 					try {
 						GregorianCalendar gc = new GregorianCalendar();
-						gc.setTimeInMillis(CalendarParser.parse(line[3]).getTimeInMillis());
+
+						// CalendarParser doesn't handle the 'T' date/time sep, so strip that
+						String dtStr = line[3];
+						Matcher matcher = ISO_DT_SEP_PAT.matcher(dtStr);
+						if ( matcher.find() ) {
+							dtStr = matcher.replaceFirst("$1 $2");
+						}
+						if ( dtStr.endsWith("Z") ) {
+							dtStr = dtStr.substring(0, dtStr.length() - 1);
+						}
+						gc.setTimeInMillis(CalendarParser.parse(dtStr).getTimeInMillis());
 						tidbit.setCreationDate(df.newXMLGregorianCalendar(gc));
-					} catch (CalendarParserException e) {
+					} catch ( CalendarParserException e ) {
 						throw new RuntimeException(e);
 					}
 				} else {
@@ -167,7 +181,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 						GregorianCalendar gc = new GregorianCalendar();
 						gc.setTimeInMillis(CalendarParser.parse(line[4]).getTimeInMillis());
 						tidbit.setModifyDate(df.newXMLGregorianCalendar(gc));
-					} catch (CalendarParserException e) {
+					} catch ( CalendarParserException e ) {
 						throw new RuntimeException(e);
 					}
 				}
@@ -262,7 +276,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		if ( k != null && r != null ) {
 			int updated = tidbitDao.reassignTidbitKinds(k, r);
 			if ( log.isDebugEnabled() ) {
-				log.debug("Reassigned " +updated +" tidbits to kind [" +r.getName() +"]");
+				log.debug("Reassigned " + updated + " tidbits to kind [" + r.getName() + "]");
 			}
 
 			// re-load k because reassign flushes
@@ -278,12 +292,12 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		Long id = tidbitDao.store(tidbit);
 		return tidbitDao.get(id);
 	}
-	
+
 	private void prepareTidbitForStorage(Tidbit tidbit) {
 		DatatypeFactory df;
 		try {
 			df = DatatypeFactory.newInstance();
-		} catch (DatatypeConfigurationException e) {
+		} catch ( DatatypeConfigurationException e ) {
 			throw new RuntimeException(e);
 		}
 		if ( tidbit.getCreationDate() == null ) {
@@ -318,7 +332,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 		DatatypeFactory df;
 		try {
 			df = DatatypeFactory.newInstance();
-		} catch (DatatypeConfigurationException e) {
+		} catch ( DatatypeConfigurationException e ) {
 			throw new RuntimeException(e);
 		}
 		if ( kind.getCreationDate() == null ) {
@@ -343,7 +357,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	}
 
 	/**
-	 * @param tidbitDao The tidbitDao to set.
+	 * @param tidbitDao
+	 *        The tidbitDao to set.
 	 */
 	public void setTidbitDao(TidbitDao tidbitDao) {
 		this.tidbitDao = tidbitDao;
@@ -357,7 +372,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	}
 
 	/**
-	 * @param tidbitKindDao The tidbitKindDao to set.
+	 * @param tidbitKindDao
+	 *        The tidbitKindDao to set.
 	 */
 	public void setTidbitKindDao(TidbitKindDao tidbitKindDao) {
 		this.tidbitKindDao = tidbitKindDao;
@@ -371,7 +387,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	}
 
 	/**
-	 * @param messages The messages to set.
+	 * @param messages
+	 *        The messages to set.
 	 */
 	public void setMessages(MessageSource messages) {
 		this.messages = messages;
@@ -385,7 +402,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	}
 
 	/**
-	 * @param domainObjectFactory The domainObjectFactory to set.
+	 * @param domainObjectFactory
+	 *        The domainObjectFactory to set.
 	 */
 	public void setDomainObjectFactory(DomainObjectFactory domainObjectFactory) {
 		this.domainObjectFactory = domainObjectFactory;
