@@ -41,6 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.glowacki.CalendarParser;
 import org.glowacki.CalendarParserException;
 import org.slf4j.Logger;
@@ -156,34 +157,12 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				tidbit.setName(line[0]);
 				tidbit.setData(line[2]);
 				if ( line.length > 3 && StringUtils.hasText(line[3]) ) {
-					try {
-						GregorianCalendar gc = new GregorianCalendar();
-
-						// CalendarParser doesn't handle the 'T' date/time sep, so strip that
-						String dtStr = line[3];
-						Matcher matcher = ISO_DT_SEP_PAT.matcher(dtStr);
-						if ( matcher.find() ) {
-							dtStr = matcher.replaceFirst("$1 $2");
-						}
-						if ( dtStr.endsWith("Z") ) {
-							dtStr = dtStr.substring(0, dtStr.length() - 1);
-						}
-						gc.setTimeInMillis(CalendarParser.parse(dtStr).getTimeInMillis());
-						tidbit.setCreationDate(df.newXMLGregorianCalendar(gc));
-					} catch ( CalendarParserException e ) {
-						throw new RuntimeException(e);
-					}
+					tidbit.setCreationDate(parseDateString(df, line[3]));
 				} else {
 					tidbit.setCreationDate(df.newXMLGregorianCalendar(new GregorianCalendar()));
 				}
 				if ( line.length > 4 && StringUtils.hasText(line[4]) ) {
-					try {
-						GregorianCalendar gc = new GregorianCalendar();
-						gc.setTimeInMillis(CalendarParser.parse(line[4]).getTimeInMillis());
-						tidbit.setModifyDate(df.newXMLGregorianCalendar(gc));
-					} catch ( CalendarParserException e ) {
-						throw new RuntimeException(e);
-					}
+					tidbit.setModifyDate(parseDateString(df, line[4]));
 				}
 				if ( line.length > 5 && StringUtils.hasText(line[5]) ) {
 					tidbit.setComment(line[5]);
@@ -194,6 +173,26 @@ public class TidbitsBizImpl implements TidbitsBiz {
 			throw new RuntimeException(e);
 		}
 		return results;
+	}
+
+	private XMLGregorianCalendar parseDateString(DatatypeFactory df, String dtStr) {
+		try {
+			GregorianCalendar gc = new GregorianCalendar();
+
+			// CalendarParser doesn't handle the 'T' date/time sep, so strip that
+			Matcher matcher = ISO_DT_SEP_PAT.matcher(dtStr);
+			if ( matcher.find() ) {
+				dtStr = matcher.replaceFirst("$1 $2");
+			}
+			if ( dtStr.endsWith("Z") ) {
+				dtStr = dtStr.substring(0, dtStr.length() - 1);
+			}
+			gc.setTimeInMillis(CalendarParser.parse(dtStr).getTimeInMillis());
+			return df.newXMLGregorianCalendar(gc);
+		} catch ( CalendarParserException e ) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override
