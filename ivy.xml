@@ -107,9 +107,6 @@
 		<dependency org="com.sun.mail" name="javax.mail" rev="1.4.4" conf="compile,runtime">
     		<artifact name="javax.mail" type="jar" />
 		</dependency>
-		<dependency org="org.mortbay.jetty" name="jetty-util" rev="6.1.26" conf="compile,runtime">
-			<artifact name="jetty-util" type="jar" />
-		</dependency>
 		<dependency org="taglibs" name="standard" rev="1.1.2" conf="runtime"/>
 		<dependency org="javax.servlet.jsp.jstl" name="javax.servlet.jsp.jstl-api" rev="1.2.1" conf="compile,runtime"/>
 		<dependency org="javax.servlet.jsp" name="javax.servlet.jsp-api" rev="2.2.1" conf="compile"/>
