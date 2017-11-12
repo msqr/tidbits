@@ -1265,23 +1265,21 @@ Tidbits.Class.Importer.prototype.import = function() {
 
 
 Tidbits.Class.Importer.prototype.toggleFormAndVerify = function() {
-	if ( this.flipper.hasClass('alt') ) {
-		this.flipper.removeClass('alt');
-		this.flipper.css('transform', '');
+	if ( this.visibleFace === 'back' ) {
+		this.displayFace('front');
 	} else {
-		this.flipper.addClass('alt');
-		this.flipper.css('transform', 'rotateY(180deg)');
+		this.displayFace('back');
 	}
 };
 
 Tidbits.Class.Importer.prototype.showForm = function() {
-	if (  this.flipper.hasClass('alt')  ) {
+	if (  this.visibleFace === 'back'  ) {
 		this.toggleFormAndVerify();
 	}
 };
 
 Tidbits.Class.Importer.prototype.showVerify = function() {
-	if ( !this.flipper.hasClass('alt') ) {
+	if ( this.visibleFace !== 'back' ) {
 		this.toggleFormAndVerify();
 	}
 };
