@@ -26,3 +26,6 @@ Updates in this release:
 
 - Fix display bug in the import data verification step, where
   the form was shown flipped like in a mirror, or not at all.
+
+- Add one-tap copy of tidbit values, so ready to paste without any
+  further actions needed.
