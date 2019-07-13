@@ -1,15 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ivy-module version="2.0">
+<ivy-module version="2.0" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 	<info organisation="Tidbits" module="Web"/>
-	<configurations>
+	<configurations defaultconf="compile,runtime">
 		<conf name="compile" visibility="public" description="Build dependencies"/>
 		<conf name="runtime" visibility="public" description="Tidbits"/>
 		<conf name="test" visibility="private" description="unit testing" extends="compile"/>
 		<conf name="demo-tomcat" visibility="private" description="utilities needed for demo"/>
 		<conf name="jdbc" visibility="private" description="JDBC drivers for bin release"/>
 	</configurations>
-	<dependencies defaultconfmapping="runtime->default(runtime);compile->default(compile);test->runtime(default);jdbc->default(runtime);demo-tomcat->default(runtime)">
-		<dependency org="net.sf.ehcache" name="ehcache" rev="1.7.2" conf="runtime"/>
+	<dependencies defaultconfmapping="runtime->default(runtime);compile->default(runtime);test->default(runtime);jdbc->default(runtime);demo-tomcat->default(runtime)">
+
+		<!-- Logging -->
+		<dependency org="log4j" name="log4j" rev="1.2.17" conf="compile,runtime">
+    		<artifact name="log4j" type="jar" />
+		</dependency>
+		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.24" conf="compile,runtime">
+    		<artifact name="slf4j-api" type="jar" />
+		</dependency>
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.24" conf="compile,runtime">
+		    <artifact name="slf4j-log4j12" type="jar" />
+		</dependency>
+		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.24" conf="compile,runtime">
+    		<artifact name="jcl-over-slf4j" type="jar" />
+		</dependency>
+		
+		<!-- Utilities -->
+		<!--dependency org="net.sf.ehcache" name="ehcache" rev="1.7.2"  conf="compile,runtime"/-->
+		<dependency org="net.sf.ehcache" name="ehcache-core" rev="1.7.2"/>
+
+		<!-- Lucene -->
 		<dependency org="org.apache.lucene" name="lucene-core" rev="2.9.4" conf="compile,runtime">
     		<artifact name="lucene-core" type="jar" />
 		</dependency>
@@ -38,20 +59,6 @@
 		<!-- JDBC connection pool -->
 		<dependency org="org.apache.tomcat" name="com.springsource.org.apache.tomcat.jdbc" rev="1.0.9.3" 
 			 conf="test,runtime"/>
-		
-		<!-- Logging -->
-		<dependency org="log4j" name="log4j" rev="1.2.17" conf="compile,runtime">
-    		<artifact name="log4j" type="jar" />
-		</dependency>
-		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.24" conf="compile,runtime">
-    		<artifact name="slf4j-api" type="jar" />
-		</dependency>
-		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.24" conf="compile,runtime">
-		    <artifact name="slf4j-log4j12" type="jar" />
-		</dependency>
-		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.24" conf="compile,runtime">
-    		<artifact name="jcl-over-slf4j" type="jar" />
-		</dependency>
 		
 		<!-- AspectJ -->
 		<dependency org="org.aspectj" name="aspectjweaver" rev="1.6.12"  conf="compile,runtime">
@@ -107,8 +114,8 @@
 		<dependency org="com.sun.mail" name="javax.mail" rev="1.4.4" conf="compile,runtime">
     		<artifact name="javax.mail" type="jar" />
 		</dependency>
-		<dependency org="taglibs" name="standard" rev="1.1.2" conf="runtime"/>
-		<dependency org="javax.servlet.jsp.jstl" name="javax.servlet.jsp.jstl-api" rev="1.2.1" conf="compile,runtime"/>
+		<dependency org="javax.servlet" name="jstl" rev="1.2" conf="compile,runtime"/>
+		<dependency org="org.apache.taglibs" name="taglibs-standard-impl" rev="1.2.1" conf="runtime" />
 		<dependency org="javax.servlet.jsp" name="javax.servlet.jsp-api" rev="2.2.1" conf="compile"/>
 		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" conf="compile"/>
 		
