@@ -211,6 +211,10 @@ div.tidbit.card dl dd + dd::before {
     content: ' • ';
 }
 
+span.crumbed {
+	background-color: yellow;
+}
+
 #nav-search-tidbit-form {
     border-bottom: none;
     border-top: none;
