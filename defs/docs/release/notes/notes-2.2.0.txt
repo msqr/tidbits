@@ -1,0 +1,31 @@
+Tidbits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+This is a minor update that inclues a UI enhancement and an updated
+build system to works with git.
+
+Updates in this release:
+
+- Fix invalid HTML (<li> within <p> not allowed).
+
+- Update commons-fileupload to 1.3.2 to pick up security fix.
+
+- Update Lucene to 2.9.4.
+
+- Add missing semicolons to Postgres initialization SQL.
+
+- Remove internal HTTP response gzip compression. If this is 
+  desired still, all modern servlet containers like Tomcat support
+  configuring response compression based on the response content
+  type.
+
+- Fix bug in parsing ISO 8601 formatted dates during CSV import.
+  This fixes errors when trying to import CSV exported from
+  Tidbits.
+
+- Fix display bug in the import data verification step, where
+  the form was shown flipped like in a mirror, or not at all.
+
+- Add one-tap copy of tidbit values, so ready to paste without any
+  further actions needed.

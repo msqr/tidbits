@@ -454,10 +454,24 @@ Tidbits.Class.Bit = function(data, bits, container) {
 		}
 		Tidbits.Runtime.editor.edit(self);
 	};
+	
+	var touchStartBit = function(e) {
+		if ( window.getSelection ) {
+			window.getSelection().removeAllRanges();
+		}	
+	};
+	
+	var touchEndBit = function(e) {
+		self.selectAndCopyCrumb(e);
+	};
 
 	// use 'start' event here because 'click' never captured with card handling events
 	this.refreshElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleRefresh, false);
 	this.addElement.get(0).addEventListener(Tidbits.touchEventNames.start, handleAdd, false);
+	if ( !this.element.hasClass('card') ) {
+		this.element.get(0).addEventListener(Tidbits.touchEventNames.start, touchStartBit, false);
+		this.element.get(0).addEventListener(Tidbits.touchEventNames.end, touchEndBit, false);
+	}
 };
 
 Tidbits.Class.Bit.prototype = {
@@ -579,12 +593,28 @@ Tidbits.Class.Bit.prototype = {
 		this.listElement.empty();
 		var kindId = undefined;
 		var i, len, details;
+		var regex, match, dd, prevIndex, val;
 		for ( kindId in this.info ) {
 			this.listElement.append($('<dt/>').text(
 					Tidbits.Runtime.kinds.getName(kindId)));
 			details = this.info[kindId];
 			for ( i = 0, len = details.length; i < len; i++ ) {
-				this.listElement.append($('<dd/>').text(details[i].value));
+				// split bits on " / " style delimiters, to support intra-bit encoded infos
+				regex = /\s+\/\s+/g;
+				dd = $('<dd/>');
+				// split into multiple <span class='crumb'> for selections
+				prevIndex = 0;
+				while ( (match = regex.exec(details[i].value)) !== null ) {
+					val = details[i].value.substring(prevIndex, regex.lastIndex - match[0].length);
+					dd.append($('<span class="crumb"/>').text(val));
+					dd.append(match[0]);
+					prevIndex = regex.lastIndex;
+				}
+				if ( prevIndex < details[i].value.length ) {
+					val = details[i].value.substring(prevIndex);
+					dd.append($('<span class="crumb"/>').text(val));
+				}
+				this.listElement.append(dd);
 			}
 		}
 	},
@@ -596,6 +626,31 @@ Tidbits.Class.Bit.prototype = {
 	 */
 	getInfo : function() {
 		return this.info;
+	},
+	
+	/**
+	 * If the event target is a crumb, select it and copy the contents.
+	 * 
+	 * @param {Event} e the current event
+	 */
+	selectAndCopyCrumb : function(e) {
+		var range, selection, crumb;
+		if ( window.getSelection && e && e.target.nodeName === 'SPAN' && e.target.classList.contains('crumb') ) {
+			selection = window.getSelection();
+			if ( !selection.toString() ) {
+				// no current selected text; select the current crumb and copy!
+				range = document.createRange();
+				range.selectNodeContents(e.target);
+				selection.removeAllRanges();
+				selection.addRange(range);
+				document.execCommand('copy');
+				console.log('copied crumb: ' +e.target.firstChild.wholeText);
+				
+				// for iOS, where selection not visible
+				$('.crumbed').removeClass('crumbed');
+				$(e.target).addClass('crumbed');
+			}
+		}
 	}
 };
 
@@ -692,6 +747,10 @@ Tidbits.Class.Card = function(data, bits) {
 		// long touch support
 		startLongTouch();
 		
+		if ( window.getSelection ) {
+			window.getSelection().removeAllRanges();
+		}
+		
 		if ( self.fac === true ) {
 			// this card is front and center, so don't deail with tracking touches
 			return;
@@ -720,6 +779,7 @@ Tidbits.Class.Card = function(data, bits) {
 	};
 	
 	var touchEnd = function(e) {
+		self.selectAndCopyCrumb(e);
 		touchCancel(e);
 		if ( e === undefined ) {
 			return;
@@ -1265,23 +1325,21 @@ Tidbits.Class.Importer.prototype.import = function() {
 
 
 Tidbits.Class.Importer.prototype.toggleFormAndVerify = function() {
-	if ( this.flipper.hasClass('alt') ) {
-		this.flipper.removeClass('alt');
-		this.flipper.css('transform', '');
+	if ( this.visibleFace === 'back' ) {
+		this.displayFace('front');
 	} else {
-		this.flipper.addClass('alt');
-		this.flipper.css('transform', 'rotateY(180deg)');
+		this.displayFace('back');
 	}
 };
 
 Tidbits.Class.Importer.prototype.showForm = function() {
-	if (  this.flipper.hasClass('alt')  ) {
+	if (  this.visibleFace === 'back'  ) {
 		this.toggleFormAndVerify();
 	}
 };
 
 Tidbits.Class.Importer.prototype.showVerify = function() {
-	if ( !this.flipper.hasClass('alt') ) {
+	if ( this.visibleFace !== 'back' ) {
 		this.toggleFormAndVerify();
 	}
 };
