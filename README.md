@@ -5,6 +5,9 @@ passwords, logins, URLs, or just about any small tidbit of data you might easily
 forget. You can then access all of this information by logging into Tidbits with
 your single Tidbits password.
 
+Visit [tidbits.sourceforge.net](http://tidbits.sourceforge.net/) for more
+information.
+
 # Building
 
 The build requires Apache Ant. First, clone the repository with:
