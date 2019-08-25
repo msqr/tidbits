@@ -640,7 +640,12 @@ Tidbits.Class.Bit.prototype = {
 			if ( !selection.toString() ) {
 				// no current selected text; select the current crumb and copy!
 				range = document.createRange();
-				range.selectNodeContents(e.target);
+				
+				// work around Firefox bug https://bugzilla.mozilla.org/show_bug.cgi?id=730257
+				// where `range.selectNodeContents(e.target);` adds 4 spaces to start of copied text
+				range.setStart(e.target.firstChild, 0);
+				range.setEnd(e.target.lastChild, e.target.lastChild.textContent.length);
+
 				selection.removeAllRanges();
 				selection.addRange(range);
 				document.execCommand('copy');
