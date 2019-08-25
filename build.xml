@@ -965,13 +965,24 @@
 		<property name="app.archive.name" value="${app.name}-${git.tag}"/>
 		<property name="demo.build.dir" value="${app.archive.name}-livedemo"/>
 		
-		<!-- call the demo target on the code checked out from SVN -->
+		<!-- call the demo target on the code checked out from git -->
 		<ant dir="${git.dir.build}" inheritall="true" target="demo">
 			<property name="dir.build" value="${dir.build}"/>
 			<property name="build.version" value="${git.tag}"/>
 			<property name="env.src" value="demo"/>
 		</ant>
 		
+		<!-- copy readme -->
+		<echo message="Copying README" />
+		<copy filtering="true" todir="${dir.build}/${app.name}-demo">
+			<fileset dir="${dir.base}/defs/docs/demo"
+				includes="README*.txt"/>
+			<filterset>
+				<filter token="VERSION" value="${git.tag}" />
+				<filter token="BUILD_DATE" value="${build.time}" />
+			</filterset>
+		</copy>
+
 		<!-- copy licenses -->
 		<echo message="Copying licenses" />
 		<mkdir dir="${dir.build}/${demo.build.dir}/licenses"/>
