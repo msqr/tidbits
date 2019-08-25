@@ -1,0 +1,10 @@
+Tidbits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+This is a minor update that inclues a UI enhancement.
+
+Updates in this release:
+
+- Add work-around for Firefox bug 730257 where 4 spaces are inserted at start
+  of auto-copied text values.
