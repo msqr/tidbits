@@ -145,7 +145,7 @@
 						<form id="nav-search-tidbit-form" action="search.json" class="navbar-search" method="GET">
 							<input name="query" type="text" 
 								placeholder="{key('i18n', 'search.displayName')}" class="search-query span4" 
-								autocapitalize="off"/>
+								autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"/>
 						</form>
 					</xsl:if>
 					
