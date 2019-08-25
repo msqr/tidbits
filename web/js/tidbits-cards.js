@@ -649,7 +649,7 @@ Tidbits.Class.Bit.prototype = {
 				selection.removeAllRanges();
 				selection.addRange(range);
 				document.execCommand('copy');
-				console.log('copied crumb: ' +e.target.firstChild.wholeText);
+				//console.log('copied crumb: ' +e.target.firstChild.wholeText);
 				
 				// for iOS, where selection not visible
 				$('.crumbed').removeClass('crumbed');

@@ -1,0 +1,9 @@
+Tidbits Release Notes
+
+@VERSION@ @BUILD_DATE@
+
+This is a minor update that inclues a UI enhancement.
+
+Updates in this release:
+
+- Don't log copied text to console, so secrets aren't logged.
