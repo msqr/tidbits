@@ -30,3 +30,21 @@ ant -Dgit.env.src=$PWD/environment/local -Dgit.tag=2.2.0 git-fetch git-checkout 
 ```sh
 ant -Dgit.tag=2.2.0 git-fetch git-checkout git-release
 ```
+
+## Generating class from XML Schema
+
+```sh
+ant generate-xml
+```
+
+## Generating DDL from JPA
+
+By default the `environment/local/ddl.properties` file is used. The database defined there 
+must be available for the DDL to be generated.
+
+```sh
+ant ddl-gen
+```
+
+The output will be generated to `defs/sql/${platform}/create.sql` and `defs/sql/${platform}/drop.sql`.
+

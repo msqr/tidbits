@@ -37,6 +37,26 @@
 		</xs:documentation>
 	</xs:annotation>
 	
+	<xs:complexType name="permission">
+		<xs:attribute name="write" type="xs:boolean" use="required"/>
+		
+		<xs:attributeGroup ref="t:base-attributes"/>
+		
+		<!-- Primay key -->
+		<xs:attribute name="permission-id" type="xs:long" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="permission-group">
+		<xs:sequence>
+			<xs:element name="permission" type="t:permission" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		
+		<xs:attributeGroup ref="t:base-attributes"/>
+		
+		<!-- Primay key -->
+		<xs:attribute name="permission-group-id" type="xs:long" use="required"/>
+	</xs:complexType>
+	
 	<xs:complexType name="tidbit">
 		<xs:sequence>
 			<xs:element name="kind" type="t:tidbit-kind"/>
@@ -45,6 +65,8 @@
 		</xs:sequence>
 		
 		<xs:attributeGroup ref="t:base-attributes"/>
+		
+		<xs:attribute name="write-access" type="xs:boolean" use="optional" default="false"/>
 
 		<!-- Primay key -->
 		<xs:attribute name="tidbit-id" type="xs:long" use="required"/>

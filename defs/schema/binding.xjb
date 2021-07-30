@@ -68,6 +68,60 @@
 	
 	<jaxb:bindings schemaLocation="domain.xsd" node="/xs:schema">
 		
+		<jaxb:bindings node="xs:complexType[@name='permission']">
+			<hj:entity>
+				<orm:table name="permission" />
+				<orm:inheritance strategy="TABLE_PER_CLASS"/>
+			</hj:entity>
+			<inheritance:extends>magoffin.matt.dao.jpa.BaseEntityLong</inheritance:extends>
+			
+			<!-- Primay Key -->
+			
+			<jaxb:bindings node="xs:attribute[@name='permission-id']">
+				<hj:id>
+					<orm:column name="permissionid"/>
+					<orm:generated-value strategy="SEQUENCE" generator="tidbit-sequence"/>
+				</hj:id>
+				<jaxb:property name="id"/>
+			</jaxb:bindings>
+			
+			<!-- Elements -->
+			
+			<jaxb:bindings node="xs:attribute[@name='write']">
+				<hj:basic>
+					<orm:column name="write_access" nullable="false"/>
+				</hj:basic>
+			</jaxb:bindings>
+			
+		</jaxb:bindings>
+		
+		<jaxb:bindings node="xs:complexType[@name='permission-group']">
+			<hj:entity>
+				<orm:table name="permission_group" />
+				<orm:inheritance strategy="TABLE_PER_CLASS"/>
+			</hj:entity>
+			<inheritance:extends>magoffin.matt.dao.jpa.BaseEntityLong</inheritance:extends>
+			
+			<!-- Primay Key -->
+			
+			<jaxb:bindings node="xs:attribute[@name='permission-group-id']">
+				<hj:id>
+					<orm:column name="groupid"/>
+					<orm:generated-value strategy="SEQUENCE" generator="tidbit-sequence"/>
+				</hj:id>
+				<jaxb:property name="id"/>
+			</jaxb:bindings>
+			
+			<!-- Elements -->
+			<jaxb:bindings node="xs:sequence/xs:element[@name='permission']">
+				<hj:one-to-many merge="false">
+					<orm:join-column name="groupid" nullable="false"/>
+					<orm:cascade>cascade-all</orm:cascade>
+				</hj:one-to-many>
+			</jaxb:bindings>
+						
+		</jaxb:bindings>
+		
 		<jaxb:bindings node="xs:complexType[@name='tidbit']">
 			<hj:entity>
 				<orm:table name="tidbit" />
@@ -87,6 +141,10 @@
 			</jaxb:bindings>
 			
 			<!-- Elements -->
+			
+			<jaxb:bindings node="xs:attribute[@name='write-access']">
+				<hj:ignored/>
+			</jaxb:bindings>			
 			
 			<jaxb:bindings node="xs:sequence/xs:element[@name='comment']">
 				<hj:basic>
