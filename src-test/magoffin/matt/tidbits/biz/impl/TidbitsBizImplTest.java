@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.biz.impl;
@@ -32,22 +30,22 @@ import static junit.framework.Assert.assertNull;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import com.Ostermiller.util.CSVParser;
 import magoffin.matt.tidbits.BaseTransactionalTest;
 import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.dao.TidbitKindDao;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitDao;
 import magoffin.matt.tidbits.dao.jpa.JpaTidbitKindDao;
 import magoffin.matt.tidbits.domain.Tidbit;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import com.Ostermiller.util.CSVParser;
 
 /**
  * Unit test for the {@link TidbitsBizImplTest} class.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class TidbitsBizImplTest extends BaseTransactionalTest {
 
@@ -69,8 +67,8 @@ public class TidbitsBizImplTest extends BaseTransactionalTest {
 
 	@Test
 	public void importCsv() throws Exception {
-		tidbits = biz.parseCsvData(new ClassPathResource("tidbits-sample.csv", getClass())
-				.getInputStream());
+		tidbits = biz
+				.parseCsvData(new ClassPathResource("tidbits-sample.csv", getClass()).getInputStream());
 		assertNotNull(tidbits);
 		assertEquals("Should have parsed", 24, tidbits.size());
 		for ( Tidbit t : tidbits ) {
@@ -78,7 +76,7 @@ public class TidbitsBizImplTest extends BaseTransactionalTest {
 			assertNotNull("Kind should be available", t.getKind());
 		}
 	}
-	
+
 	@Test
 	public void exportCsv() throws Exception {
 		importCsv();

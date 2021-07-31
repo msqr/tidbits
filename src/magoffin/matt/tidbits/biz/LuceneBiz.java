@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.biz;
@@ -32,7 +30,7 @@ import magoffin.matt.tidbits.domain.SearchResults;
  * API for searching with Lucene.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public interface LuceneBiz {
 

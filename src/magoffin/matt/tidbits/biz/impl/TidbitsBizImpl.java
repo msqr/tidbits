@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.biz.impl;
@@ -68,7 +66,7 @@ import magoffin.matt.tidbits.domain.TidbitKind;
  * Implementation of TidbtsBiz API.
  * 
  * @author matt.magoffin
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Service
 public class TidbitsBizImpl implements TidbitsBiz {

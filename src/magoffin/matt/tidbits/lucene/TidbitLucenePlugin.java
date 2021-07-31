@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.lucene;
@@ -37,6 +35,12 @@ import java.util.Map;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import magoffin.matt.lucene.IndexEvent;
 import magoffin.matt.lucene.IndexEvent.EventType;
 import magoffin.matt.lucene.IndexResults;
@@ -47,18 +51,12 @@ import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Lucene search plugin implementation for User objects.
  * 
  * @author matt.magoffin
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class TidbitLucenePlugin extends AbstractLucenePlugin {
 
@@ -86,15 +84,15 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 
 	@Override
 	public void index(Object objectId, IndexWriter writer) {
-		Tidbit tidbit = tidbitDao.get((Long)objectId);
+		Tidbit tidbit = tidbitDao.get((Long) objectId);
 		indexTidbit(tidbit, writer);
 	}
 
 	@Override
 	public void indexObject(Object object, IndexWriter writer) {
-		indexTidbit((Tidbit)object, writer);
+		indexTidbit((Tidbit) object, writer);
 	}
-	
+
 	private void doReindexAll(IndexWriter writer, TidbitIndexResults indexResults) {
 		SearchResults results = tidbitDao.getAllTidbits(null);
 		for ( Tidbit tidbit : results.getTidbit() ) {
@@ -104,13 +102,14 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 			}
 		}
 	}
-	
+
 	@Override
 	public IndexResults reindex() {
 		final TidbitIndexResults results = new TidbitIndexResults();
 		if ( this.singleThreaded ) {
 			try {
 				getLucene().doIndexWriterOp(getIndexType(), true, false, true, new IndexWriterOp() {
+
 					@Override
 					public void doWriterOp(String type, IndexWriter writer) {
 						doReindexAll(writer, results);
@@ -121,15 +120,18 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 			}
 		} else {
 			new Thread(new Runnable() {
+
 				@Override
 				public void run() {
 					try {
-						getLucene().doIndexWriterOp(getIndexType(), true, false, true, new IndexWriterOp() {
-							@Override
-							public void doWriterOp(String type, IndexWriter writer) {
-								doReindexAll(writer, results);
-							}
-						});
+						getLucene().doIndexWriterOp(getIndexType(), true, false, true,
+								new IndexWriterOp() {
+
+									@Override
+									public void doWriterOp(String type, IndexWriter writer) {
+										doReindexAll(writer, results);
+									}
+								});
 					} finally {
 						results.finished = true;
 					}
@@ -148,7 +150,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 	@Override
 	public void index(Iterable<?> data) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -168,7 +170,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public Object build(Document doc) {
 		Tidbit tidbit = getDomainObjectFactory().newTidbitInstance();
@@ -177,18 +179,18 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 		tidbit.setData(doc.get(IndexField.ITEM_DATA.getFieldName()));
 		tidbit.setName(doc.get(IndexField.ITEM_NAME.getFieldName()));
 		tidbit.setCreatedBy(doc.get(IndexField.CREATED_BY.getFieldName()));
-		
+
 		String f = doc.get(IndexField.KIND_NAME.getFieldName());
 		if ( f != null ) {
 			TidbitKind kind = getDomainObjectFactory().newTidbitKindInstance();
-			kind.setName(f);	
+			kind.setName(f);
 			f = doc.get(IndexField.KIND_ID.getFieldName());
 			if ( f != null ) {
 				kind.setId(Long.valueOf(f));
 			}
 			tidbit.setKind(kind);
 		}
-		
+
 		String dateStr = doc.get(IndexField.CREATED_DATE.getFieldName());
 		if ( dateStr != null ) {
 			Date d = getLucene().parseDate(dateStr);
@@ -198,13 +200,13 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 				XMLGregorianCalendar cal;
 				try {
 					cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-				} catch (DatatypeConfigurationException e) {
+				} catch ( DatatypeConfigurationException e ) {
 					throw new RuntimeException(e);
 				}
 				tidbit.setCreationDate(cal);
 			}
 		}
-		
+
 		dateStr = doc.get(IndexField.MODIFIED_DATE.getFieldName());
 		if ( dateStr != null ) {
 			Date d = getLucene().parseDate(dateStr);
@@ -214,19 +216,19 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 				XMLGregorianCalendar cal;
 				try {
 					cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-				} catch (DatatypeConfigurationException e) {
+				} catch ( DatatypeConfigurationException e ) {
 					throw new RuntimeException(e);
 				}
 				tidbit.setModifyDate(cal);
 			}
 		}
-		
+
 		return tidbit;
 	}
 
 	private List<Object> indexTidbit(Tidbit tidbit, IndexWriter writer) {
 		List<Object> errors = new LinkedList<Object>();
-		
+
 		if ( tidbit == null || tidbit.getId() == null ) {
 			// don't bother trying to index null or empty user
 			String msg = "Null Tidbit passed to indexUser()... perhaps not available in transaction?";
@@ -234,81 +236,81 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 			errors.add(msg);
 			return errors;
 		}
-		
+
 		if ( log.isDebugEnabled() ) {
-			log.debug("Indexing Tidbit " + tidbit.getId()
-					+" (" +tidbit.getName() +", " 
-					+(tidbit.getKind() != null ? tidbit.getKind().getName() : "?") 
-					+")");
+			log.debug("Indexing Tidbit " + tidbit.getId() + " (" + tidbit.getName() + ", "
+					+ (tidbit.getKind() != null ? tidbit.getKind().getName() : "?") + ")");
 		}
-		
+
 		// index general text for searches
 		StringBuilder generalText = new StringBuilder();
-		
+
 		Document doc = new Document();
-		doc.add(new Field(IndexField.ITEM_ID.getFieldName(), tidbit.getId().toString(),
-				Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field(IndexField.ITEM_ID.getFieldName(), tidbit.getId().toString(), Field.Store.YES,
+				Field.Index.NOT_ANALYZED));
 
 		if ( tidbit.getName() != null ) {
-			doc.add(new Field(IndexField.ITEM_NAME.getFieldName(), tidbit.getName(), 
-					Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field(IndexField.ITEM_NAME.getFieldName(), tidbit.getName(), Field.Store.YES,
+					Field.Index.ANALYZED));
 			generalText.append(tidbit.getName()).append(" ");
 		}
-		
+
 		if ( tidbit.getData() != null ) {
-			doc.add(new Field(IndexField.ITEM_DATA.getFieldName(), tidbit.getData(), 
-					Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field(IndexField.ITEM_DATA.getFieldName(), tidbit.getData(), Field.Store.YES,
+					Field.Index.ANALYZED));
 			generalText.append(tidbit.getData()).append(" ");
 		}
-		
+
 		if ( tidbit.getComment() != null ) {
-			doc.add(new Field(IndexField.ITEM_COMMENT.getFieldName(), tidbit.getComment(), 
+			doc.add(new Field(IndexField.ITEM_COMMENT.getFieldName(), tidbit.getComment(),
 					Field.Store.YES, Field.Index.ANALYZED));
 			generalText.append(tidbit.getComment()).append(" ");
 		}
-		
+
 		if ( tidbit.getCreatedBy() != null ) {
-			doc.add(new Field(IndexField.CREATED_BY.getFieldName(), tidbit.getCreatedBy(), 
+			doc.add(new Field(IndexField.CREATED_BY.getFieldName(), tidbit.getCreatedBy(),
 					Field.Store.YES, Field.Index.ANALYZED));
 			generalText.append(tidbit.getCreatedBy()).append(" ");
 		}
-		
+
 		if ( tidbit.getCreationDate() != null ) {
-			String dateStr = getLucene().formatDateToDay(tidbit.getCreationDate().toGregorianCalendar().getTime());
-			doc.add(new Field(IndexField.CREATED_DATE.getFieldName(), dateStr,
-					Field.Store.YES, Field.Index.ANALYZED));
+			String dateStr = getLucene()
+					.formatDateToDay(tidbit.getCreationDate().toGregorianCalendar().getTime());
+			doc.add(new Field(IndexField.CREATED_DATE.getFieldName(), dateStr, Field.Store.YES,
+					Field.Index.ANALYZED));
 		}
-		
+
 		if ( tidbit.getModifyDate() != null ) {
-			String dateStr = getLucene().formatDateToDay(tidbit.getModifyDate().toGregorianCalendar().getTime());
-			doc.add(new Field(IndexField.MODIFIED_DATE.getFieldName(), dateStr,
-					Field.Store.YES, Field.Index.NOT_ANALYZED));
+			String dateStr = getLucene()
+					.formatDateToDay(tidbit.getModifyDate().toGregorianCalendar().getTime());
+			doc.add(new Field(IndexField.MODIFIED_DATE.getFieldName(), dateStr, Field.Store.YES,
+					Field.Index.NOT_ANALYZED));
 		}
-		
+
 		if ( tidbit.getKind() != null ) {
-			doc.add(new Field(IndexField.KIND_NAME.getFieldName(), tidbit.getKind().getName(), 
+			doc.add(new Field(IndexField.KIND_NAME.getFieldName(), tidbit.getKind().getName(),
 					Field.Store.YES, Field.Index.ANALYZED));
 			doc.add(new Field(IndexField.KIND_ID.getFieldName(), tidbit.getKind().getId().toString(),
 					Field.Store.YES, Field.Index.NOT_ANALYZED));
 			generalText.append(tidbit.getKind().getName()).append(" ");
 		}
-		
+
 		if ( generalText.length() > 0 ) {
-			doc.add(new Field(IndexField.GENERAL_TEXT.getFieldName(), generalText.toString(), 
+			doc.add(new Field(IndexField.GENERAL_TEXT.getFieldName(), generalText.toString(),
 					Field.Store.NO, Field.Index.ANALYZED));
 		}
-		
+
 		try {
 			writer.addDocument(doc);
-			LuceneServiceUtils.publishIndexEvent(new IndexEvent(tidbit,EventType.UPDATE, getIndexType()), 
-					getIndexEventListeners());
+			LuceneServiceUtils.publishIndexEvent(
+					new IndexEvent(tidbit, EventType.UPDATE, getIndexType()), getIndexEventListeners());
 		} catch ( IOException e ) {
-			throw new RuntimeException("IOException adding user to index",e);
+			throw new RuntimeException("IOException adding user to index", e);
 		}
-		
+
 		return errors;
 	}
-	
+
 	private final class TidbitIndexResults implements IndexResults {
 
 		private final int count = 0;
@@ -343,23 +345,25 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 	public boolean isSingleThreaded() {
 		return singleThreaded;
 	}
-	
+
 	/**
-	 * @param singleThreaded the singleThreaded to set
+	 * @param singleThreaded
+	 *        the singleThreaded to set
 	 */
 	public void setSingleThreaded(boolean singleThreaded) {
 		this.singleThreaded = singleThreaded;
 	}
-	
+
 	/**
 	 * @return the tidbitDao
 	 */
 	public TidbitDao getTidbitDao() {
 		return tidbitDao;
 	}
-	
+
 	/**
-	 * @param tidbitDao the tidbitDao to set
+	 * @param tidbitDao
+	 *        the tidbitDao to set
 	 */
 	public void setTidbitDao(TidbitDao tidbitDao) {
 		this.tidbitDao = tidbitDao;

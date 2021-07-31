@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.biz;
@@ -43,7 +41,7 @@ import magoffin.matt.xweb.XwebParameters;
  * Object factory interface for domain objects.
  * 
  * @author matt.magoffin
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public interface DomainObjectFactory {
 
@@ -64,74 +62,84 @@ public interface DomainObjectFactory {
 	 * @return new Model instance
 	 */
 	UiModel newModelInstance();
-	
+
 	/**
 	 * Get a new PaginationCriteria instance.
 	 * 
 	 * @return new PaginationCriteria
 	 */
 	PaginationCriteria newPaginationCriteriaInstance();
-	
+
 	/**
 	 * Get a new PaginationIndex instance.
 	 * 
 	 * @return new PaginationIndex
 	 */
 	PaginationIndex newPaginationIndexInstance();
-	
+
 	/**
 	 * Get a new PaginationIndexSection instance.
+	 * 
 	 * @return new PaginationIndexSection instance
 	 */
 	PaginationIndexSection newPaginationIndexSectionInstance();
-	
+
 	/**
 	 * Get a new SearchResults instance.
+	 * 
 	 * @return search results
 	 */
 	SearchResults newSearchResultsInstance();
-	
+
 	/**
 	 * Get a new Session instance.
+	 * 
 	 * @return new Session instance
 	 */
 	UiSession newSessionInstance();
-	
+
 	/**
 	 * Get a new Tidbit instance.
+	 * 
 	 * @return new Tidbit instance
 	 */
 	Tidbit newTidbitInstance();
-	
+
 	/**
 	 * Get a new TidbitKind instance.
+	 * 
 	 * @return new TidbitKind instance
 	 */
 	TidbitKind newTidbitKindInstance();
-	
+
 	/**
 	 * Get a new User instance.
+	 * 
 	 * @return new User instance
 	 */
 	User newUserInstance();
-	
+
 	/**
 	 * Get a new XAppContext instance.
+	 * 
 	 * @return new XAppContext instance
 	 */
 	XwebParameters newXAppContextInstance();
-	
+
 	/**
 	 * Get a new XwebParameter instance.
+	 * 
 	 * @return the XwebParameter instance
 	 */
 	XwebParameter newXwebParameterInstance();
-	
+
 	/**
 	 * Clone a domain object.
-	 * @param o the object to clone
+	 * 
+	 * @param o
+	 *        the object to clone
 	 * @return the cloned object
 	 */
 	Object clone(Object o);
-	
+
 }

@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.dao.jpa;
@@ -32,6 +30,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import magoffin.matt.dao.BasicSortDescriptor;
 import magoffin.matt.dao.SortDescriptor;
 import magoffin.matt.dao.jpa.GenericJpaDao;
@@ -41,15 +42,12 @@ import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * JPA implementation of {@link TidbitDao}.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Repository
 public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitDao {
@@ -115,9 +113,9 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 		final Long count = countQuery.getSingleResult();
 
 		TypedQuery<Tidbit> allQuery = getEm().createNamedQuery("TidbitsAll", Tidbit.class);
-		allQuery.setFirstResult((pagination.getPageOffset() == null ? 0 : pagination.getPageOffset()
-				.intValue())
-				* (pagination.getPageSize() == null ? 0 : pagination.getPageSize().intValue()));
+		allQuery.setFirstResult(
+				(pagination.getPageOffset() == null ? 0 : pagination.getPageOffset().intValue())
+						* (pagination.getPageSize() == null ? 0 : pagination.getPageSize().intValue()));
 		if ( pagination.getPageSize() != null ) {
 			allQuery.setMaxResults(pagination.getPageSize().intValue());
 		}
@@ -138,8 +136,8 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 		getEm().flush();
 		getEm().clear();
 
-		TypedQuery<TidbitKind> q = getEm()
-				.createNamedQuery("TidbitUpdateKindReassign", TidbitKind.class);
+		TypedQuery<TidbitKind> q = getEm().createNamedQuery("TidbitUpdateKindReassign",
+				TidbitKind.class);
 		q.setParameter(1, reassign.getId());
 		q.setParameter(2, original.getId());
 		int result = q.executeUpdate();

@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.support;
@@ -34,29 +32,34 @@ import magoffin.matt.tidbits.domain.Tidbit;
  * Basic implementation of TidbitSearchCriteria.
  * 
  * @author matt.magoffin
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class BasicTidbitSearchCriteria implements TidbitSearchCriteria {
-	
+
 	private TidbitSearchType searchType;
 	private PaginationCriteria paginationCriteria;
 	private Tidbit tidbitTemplate;
 	private String query;
-	
+
 	/**
 	 * Default constructor.
 	 */
 	public BasicTidbitSearchCriteria() {
-		this(TidbitSearchType.FOR_TEMPLATE,null,null);
+		this(TidbitSearchType.FOR_TEMPLATE, null, null);
 	}
-	
+
 	/**
 	 * Construct with parameters.
-	 * @param searchType the search type
-	 * @param paginationCriteria the pagination criteria
-	 * @param tidbitTemplate the template
+	 * 
+	 * @param searchType
+	 *        the search type
+	 * @param paginationCriteria
+	 *        the pagination criteria
+	 * @param tidbitTemplate
+	 *        the template
 	 */
-	public BasicTidbitSearchCriteria(TidbitSearchType searchType, PaginationCriteria paginationCriteria, Tidbit tidbitTemplate) {
+	public BasicTidbitSearchCriteria(TidbitSearchType searchType, PaginationCriteria paginationCriteria,
+			Tidbit tidbitTemplate) {
 		this.searchType = searchType;
 		this.paginationCriteria = paginationCriteria;
 		this.tidbitTemplate = tidbitTemplate;
@@ -81,30 +84,34 @@ public class BasicTidbitSearchCriteria implements TidbitSearchCriteria {
 	public String getQuery() {
 		return query;
 	}
-	
+
 	/**
-	 * @param paginationCriteria The paginationCriteria to set.
+	 * @param paginationCriteria
+	 *        The paginationCriteria to set.
 	 */
 	public void setPaginationCriteria(PaginationCriteria paginationCriteria) {
 		this.paginationCriteria = paginationCriteria;
 	}
 
 	/**
-	 * @param searchType The searchType to set.
+	 * @param searchType
+	 *        The searchType to set.
 	 */
 	public void setSearchType(TidbitSearchType searchType) {
 		this.searchType = searchType;
 	}
 
 	/**
-	 * @param tidbitTemplate The tidbitTemplate to set.
+	 * @param tidbitTemplate
+	 *        The tidbitTemplate to set.
 	 */
 	public void setTidbitTemplate(Tidbit tidbitTemplate) {
 		this.tidbitTemplate = tidbitTemplate;
 	}
-	
+
 	/**
-	 * @param query the query to set
+	 * @param query
+	 *        the query to set
 	 */
 	public void setQuery(String query) {
 		this.query = query;

@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.web;
@@ -34,7 +32,7 @@ import magoffin.matt.util.TemporaryFile;
  * Form for importing file data into Tidbits.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class ImportFileForm {
 

@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.web;
@@ -29,10 +27,6 @@ package magoffin.matt.tidbits.web;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Resource;
-import magoffin.matt.tidbits.biz.DomainObjectFactory;
-import magoffin.matt.tidbits.dao.jpa.support.JPASupport;
-import magoffin.matt.xweb.XwebParameter;
-import magoffin.matt.xweb.util.XwebParamDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -44,12 +38,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import magoffin.matt.tidbits.biz.DomainObjectFactory;
+import magoffin.matt.tidbits.dao.jpa.support.JPASupport;
+import magoffin.matt.xweb.XwebParameter;
+import magoffin.matt.xweb.util.XwebParamDao;
 
 /**
  * Controller for setup tasks.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Controller
 @SessionAttributes("setupForm")
@@ -103,7 +101,8 @@ public class SetupController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "_to=db")
-	public String setupDatabase(@SuppressWarnings("unused") @ModelAttribute("setupForm") SetupForm form) {
+	public String setupDatabase(
+			@SuppressWarnings("unused") @ModelAttribute("setupForm") SetupForm form) {
 		return "setup-db";
 	}
 

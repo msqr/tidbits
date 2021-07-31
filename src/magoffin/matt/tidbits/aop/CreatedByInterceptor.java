@@ -20,21 +20,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.aop;
 
 import java.util.Collection;
 import java.util.List;
-import magoffin.matt.tidbits.domain.Tidbit;
-import magoffin.matt.tidbits.domain.TidbitKind;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.TidbitKind;
 
 /**
  * Aspect to inject the "createdBy" property into objects as they are created.
@@ -47,13 +45,12 @@ import org.springframework.stereotype.Component;
  * </p>
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date: 2012-05-07 16:06:13 +1200 (Mon, 07 May 2012)
- *          $
+ * @version 1.0
  */
 @Aspect
 @Component
 public class CreatedByInterceptor {
-	
+
 	@Before("magoffin.matt.tidbits.aop.Business.saveTidbit(tidbit)")
 	public void beforeTidbit(Tidbit tidbit) {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();

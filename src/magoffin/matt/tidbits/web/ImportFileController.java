@@ -20,21 +20,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.web;
 
 import java.io.IOException;
 import java.util.List;
-import magoffin.matt.tidbits.biz.DomainObjectFactory;
-import magoffin.matt.tidbits.biz.TidbitsBiz;
-import magoffin.matt.tidbits.domain.Tidbit;
-import magoffin.matt.tidbits.domain.UiModel;
-import magoffin.matt.util.TemporaryFile;
-import magoffin.matt.util.TemporaryFileMultipartFileEditor;
-import magoffin.matt.xweb.util.XwebConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -44,12 +35,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import magoffin.matt.tidbits.biz.DomainObjectFactory;
+import magoffin.matt.tidbits.biz.TidbitsBiz;
+import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.UiModel;
+import magoffin.matt.util.TemporaryFile;
+import magoffin.matt.util.TemporaryFileMultipartFileEditor;
+import magoffin.matt.xweb.util.XwebConstants;
 
 /**
  * Controller for importing file data.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Controller
 @SessionAttributes("importForm")

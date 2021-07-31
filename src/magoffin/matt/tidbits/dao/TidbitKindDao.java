@@ -20,14 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.dao;
 
 import java.util.List;
-
 import magoffin.matt.dao.GenericDao;
 import magoffin.matt.tidbits.domain.TidbitKind;
 
@@ -35,29 +32,33 @@ import magoffin.matt.tidbits.domain.TidbitKind;
  * DAO for TidbitKind domain objects.
  * 
  * @author matt.magoffin
- * @version $Revision$ $Date$
+ * @version 1.0
  */
-public interface TidbitKindDao extends GenericDao<TidbitKind,Long> {
-	
+public interface TidbitKindDao extends GenericDao<TidbitKind, Long> {
+
 	/**
 	 * Return a List of all TidbitKind objects.
+	 * 
 	 * @return list of TidbitKind, or empty List if none available
 	 */
 	List<TidbitKind> getAllTidbitKinds();
-	
+
 	/**
 	 * Get a TidbitKind by its name.
 	 * 
-	 * @param name the name to find
+	 * @param name
+	 *        the name to find
 	 * @return List of TidbitKinds
 	 */
 	TidbitKind getTidbitKindByName(String name);
-	
+
 	/**
 	 * Return a List of TidbitKind objects with a matching name.
-	 * @param name the name to find
+	 * 
+	 * @param name
+	 *        the name to find
 	 * @return List of TidbitKinds
 	 */
 	List<TidbitKind> findTidbitKindsByName(String name);
-	
+
 }

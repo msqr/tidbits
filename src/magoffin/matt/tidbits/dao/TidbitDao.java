@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.dao;
@@ -36,24 +34,27 @@ import magoffin.matt.tidbits.domain.TidbitKind;
  * DAO for Tidbit domain objects.
  * 
  * @author matt.magoffin
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public interface TidbitDao extends GenericDao<Tidbit, Long> {
 
 	/**
 	 * Return a SearchResults of all Tidbit objects.
 	 * 
-	 * @param pagination pagination criteria
+	 * @param pagination
+	 *        pagination criteria
 	 * @return SearchResults of Tidbit
 	 */
 	SearchResults getAllTidbits(PaginationCriteria pagination);
-	
+
 	/**
-	 * Reassign all Tidbits presently using a specific TidbitKind
-	 * so they are set to the reassign TidbitKind.
+	 * Reassign all Tidbits presently using a specific TidbitKind so they are
+	 * set to the reassign TidbitKind.
 	 * 
-	 * @param original the original
-	 * @param reassign the reassign
+	 * @param original
+	 *        the original
+	 * @param reassign
+	 *        the reassign
 	 * @return the number of tidbits affected
 	 */
 	int reassignTidbitKinds(TidbitKind original, TidbitKind reassign);

@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.dao.jpa;
@@ -32,20 +30,20 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import magoffin.matt.dao.BasicSortDescriptor;
 import magoffin.matt.dao.SortDescriptor;
 import magoffin.matt.dao.jpa.GenericJpaDao;
 import magoffin.matt.tidbits.dao.TidbitKindDao;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * JPA implementation of {@link TidbitKindDao}.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Repository
 public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements TidbitKindDao {
@@ -95,7 +93,8 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public List<TidbitKind> getAllTidbitKinds() {
-		List<SortDescriptor> sort = Collections.singletonList((SortDescriptor)new BasicSortDescriptor("name", true));
+		List<SortDescriptor> sort = Collections
+				.singletonList((SortDescriptor) new BasicSortDescriptor("name", true));
 		return getAll(sort);
 	}
 

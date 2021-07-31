@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.web;
@@ -33,6 +31,14 @@ import java.util.Collections;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
 import magoffin.matt.tidbits.biz.TidbitsBiz;
@@ -42,20 +48,12 @@ import magoffin.matt.tidbits.domain.TidbitKind;
 import magoffin.matt.tidbits.domain.UiModel;
 import magoffin.matt.tidbits.support.BasicTidbitSearchCriteria;
 import magoffin.matt.xweb.util.XwebConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for main home screen.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Controller
 public class HomeController {
@@ -79,7 +77,7 @@ public class HomeController {
 		return new ModelAndView("home", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/search.json")
 	public ModelAndView search(BasicTidbitSearchCriteria criteria) {
 		if ( StringUtils.hasText(criteria.getQuery()) ) {
@@ -119,7 +117,7 @@ public class HomeController {
 		return new ModelAndView("json-search-results", XwebConstants.DEFALUT_MODEL_OBJECT,
 				domainObjectFactory.newRootElement(model));
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/deleteTidbit.do")
 	public ModelAndView deleteTidbit(Long id) {
 		tidbitsBiz.deleteTidbit(id);

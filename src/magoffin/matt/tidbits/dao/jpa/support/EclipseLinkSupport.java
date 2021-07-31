@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.dao.jpa.support;
@@ -44,7 +42,7 @@ import org.springframework.stereotype.Component;
  * EclipseLink implementation of {@link JPASupport}.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Component
 public class EclipseLinkSupport implements JPASupport {
