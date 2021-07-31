@@ -36,6 +36,7 @@ import magoffin.matt.dao.BasicSortDescriptor;
 import magoffin.matt.dao.SortDescriptor;
 import magoffin.matt.dao.jpa.GenericJpaDao;
 import magoffin.matt.tidbits.dao.PermissionGroupDao;
+import magoffin.matt.tidbits.domain.Permission;
 import magoffin.matt.tidbits.domain.PermissionGroup;
 
 /**
@@ -70,6 +71,14 @@ public class JpaPermissionGroupDao extends GenericJpaDao<PermissionGroup, Long>
 	protected final void prePersist(PermissionGroup domainObject) {
 		if ( domainObject.getCreationDate() == null ) {
 			domainObject.setCreationDateItem(new Date());
+		}
+		List<Permission> perms = domainObject.getPermission();
+		if ( perms != null ) {
+			for ( Permission p : perms ) {
+				if ( p.getCreationDate() == null ) {
+					p.setCreationDate(domainObject.getCreationDate());
+				}
+			}
 		}
 	}
 
