@@ -1,12 +1,17 @@
 @charset "UTF-8";
 
+html {
+	min-height: 100%;
+}
+
 body {
 	margin: 20px;
 	position: relative;
 	font-family: "American Typewriter", Courier, monospace;
 	font-size: 13px;
 	line-height: 18px;
-	background: url("../img/whitey.png") repeat scroll 0% 0% #E1E6EF;
+	background: rgb(240,240,240);
+	background: linear-gradient(180deg, rgba(240,240,240,1) 0%, rgba(208,208,208,1) 100%);
 }
 
 body.app {
