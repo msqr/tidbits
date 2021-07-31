@@ -115,7 +115,10 @@
 			<!-- Elements -->
 			<jaxb:bindings node="xs:sequence/xs:element[@name='permission']">
 				<hj:one-to-many>
-					<orm:join-column name="groupid" nullable="false"/>
+					<orm:join-table name="permission_group_perms">
+						<orm:join-column name="permission_group_id" referenced-column-name="groupid" nullable="false"/>
+						<orm:inverse-join-column name="permission_id"  referenced-column-name="permissionid" nullable="false"/>
+					</orm:join-table>
 				</hj:one-to-many>
 			</jaxb:bindings>
 						
