@@ -35,22 +35,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.junit.Before;
+import org.junit.Test;
 import magoffin.matt.tidbits.BaseTransactionalTest;
 import magoffin.matt.tidbits.dao.ExportCallback;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
- * FIXME
- * 
- * <p>TODO</p>
+ * Test case for the {@link JpaTidbitDaoTest} class.
  *
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.1
  */
 public class JpaTidbitDaoTest extends BaseTransactionalTest {
 
