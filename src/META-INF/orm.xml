@@ -13,6 +13,9 @@
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
 	<entity class="magoffin.matt.tidbits.domain.TidbitKind">
+		<named-query name="PermissionGroupForName">
+			<query>SELECT g FROM PermissionGroup g WHERE LOWER(g.name) = LOWER(:name)</query>
+		</named-query>
 		<named-query name="TidbitKindForName">
 			<query>SELECT k FROM TidbitKind k WHERE LOWER(k.name) = LOWER(:name)</query>
 		</named-query>
