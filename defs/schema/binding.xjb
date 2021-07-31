@@ -114,9 +114,8 @@
 			
 			<!-- Elements -->
 			<jaxb:bindings node="xs:sequence/xs:element[@name='permission']">
-				<hj:one-to-many merge="false">
+				<hj:one-to-many>
 					<orm:join-column name="groupid" nullable="false"/>
-					<orm:cascade>cascade-all</orm:cascade>
 				</hj:one-to-many>
 			</jaxb:bindings>
 						
