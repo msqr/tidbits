@@ -65,8 +65,8 @@ import magoffin.matt.tidbits.domain.TidbitKind;
 /**
  * Implementation of TidbtsBiz API.
  * 
- * @author matt.magoffin
- * @version 1.0
+ * @author matt
+ * @version 2.0
  */
 @Service
 public class TidbitsBizImpl implements TidbitsBiz {
@@ -245,12 +245,6 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public Tidbit getTidbit(Long id) {
 		return tidbitDao.get(id);
-	}
-
-	@Override
-	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public TidbitKind getTidbitKind(Long id) {
-		return tidbitKindDao.get(id);
 	}
 
 	@Override

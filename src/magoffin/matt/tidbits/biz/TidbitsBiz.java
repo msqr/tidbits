@@ -36,9 +36,23 @@ import magoffin.matt.tidbits.domain.TidbitKind;
  * API for Tidbits application.
  * 
  * @author matt.magoffin
- * @version 1.1
+ * @version 2.0
  */
 public interface TidbitsBiz {
+
+	/**
+	 * The role name for a normal user.
+	 * 
+	 * @since 2.0
+	 */
+	String ROLE_USER = "User";
+
+	/**
+	 * The role name for an administrative user.
+	 * 
+	 * @since 2.0
+	 */
+	String ROLE_ADMIN = "Administrator";
 
 	/**
 	 * Search for Tidbits.
@@ -83,15 +97,6 @@ public interface TidbitsBiz {
 	 * @return the saved tidbit IDs
 	 */
 	List<Long> saveTidbits(List<Tidbit> tidbits);
-
-	/**
-	 * Get a TidbitKind by it's ID.
-	 * 
-	 * @param id
-	 *        the ID of the TidbitKind to get
-	 * @return the Tidbit, or <em>null</em> if not available
-	 */
-	TidbitKind getTidbitKind(Long id);
 
 	/**
 	 * Delete a TidbitKind.

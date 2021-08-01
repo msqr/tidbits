@@ -30,6 +30,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import magoffin.matt.dao.BasicSortDescriptor;
@@ -45,6 +46,7 @@ import magoffin.matt.tidbits.domain.PermissionGroup;
  * @author matt
  * @version 1.0
  */
+@Repository
 public class JpaPermissionGroupDao extends GenericJpaDao<PermissionGroup, Long>
 		implements PermissionGroupDao {
 

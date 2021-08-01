@@ -24,9 +24,9 @@
 
 package magoffin.matt.tidbits.biz.impl;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.List;
