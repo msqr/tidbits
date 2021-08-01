@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.dao.jpa;
@@ -30,17 +28,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import java.util.List;
-import magoffin.matt.tidbits.BaseTransactionalTest;
-import magoffin.matt.tidbits.dao.jpa.JpaTidbitKindDao;
-import magoffin.matt.tidbits.domain.TidbitKind;
 import org.junit.Before;
 import org.junit.Test;
+import magoffin.matt.tidbits.BaseTransactionalTest;
+import magoffin.matt.tidbits.domain.TidbitKind;
 
 /**
  * Test case for the {@link JpaTidbitKindDao} class.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class JpaTidbitKindDaoTest extends BaseTransactionalTest {
 

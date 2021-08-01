@@ -187,7 +187,7 @@
 
 	<target name="ddl-gen" depends="compile" description="Generate database schema DDL from JPA">
 		<!-- Copy Ivy JAR files, so we don't include .txt files in classpath -->
-		<ivy:retrieve pattern="${dir.build}/lib/[artifact]-[revision].[ext]" conf="test" />
+		<ivy:retrieve pattern="${dir.build}/lib/[artifact]-[type]-[revision].[ext]" conf="test" />
 		<path id="ddl.path">
 			<pathelement location="${dir.compile.dest}"/>
 			<pathelement location="${dir.env}"/>
@@ -280,8 +280,8 @@
 				deprecation="${compile.deprecation}" 
 				optimize="${compile.optimize}" 
 				nowarn="${compile.nowarn}"
-				target="1.6"
-				source="1.6"
+				target="1.8"
+				source="1.8"
 				includeantruntime="no">
 			<classpath refid="compile.path" />
 		</javac>

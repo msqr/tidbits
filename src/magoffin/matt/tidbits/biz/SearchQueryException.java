@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.biz;
@@ -30,7 +28,7 @@ package magoffin.matt.tidbits.biz;
  * An exception thrown when an invalid search query is entered.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class SearchQueryException extends RuntimeException {
 
@@ -45,8 +43,11 @@ public class SearchQueryException extends RuntimeException {
 
 	/**
 	 * Construct with a message and nested exception.
-	 * @param msg message
-	 * @param t nested exception
+	 * 
+	 * @param msg
+	 *        message
+	 * @param t
+	 *        nested exception
 	 */
 	public SearchQueryException(String msg, Throwable t) {
 		super(msg, t);
@@ -54,7 +55,9 @@ public class SearchQueryException extends RuntimeException {
 
 	/**
 	 * Construct with a message.
-	 * @param msg the mssage
+	 * 
+	 * @param msg
+	 *        the mssage
 	 */
 	public SearchQueryException(String msg) {
 		super(msg);
@@ -62,7 +65,9 @@ public class SearchQueryException extends RuntimeException {
 
 	/**
 	 * Construct with a nested exception.
-	 * @param t the nested exception
+	 * 
+	 * @param t
+	 *        the nested exception
 	 */
 	public SearchQueryException(Throwable t) {
 		super(t);

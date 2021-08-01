@@ -71,6 +71,14 @@
 								</span>
 							</div>
 						</div>
+						<div class="control-group edit-only hidden">
+							<label for="add-tidbit-created-by" class="control-label">
+								<xsl:value-of select="key('i18n','tidbit.createdBy.displayName')"/>
+							</label>
+							<div class="controls">
+								<span class="static help-inline" id="add-tidbit-created-by"><xsl:text> </xsl:text></span>
+							</div>
+						</div>
 					</fieldset>
 					<div class="footer modal-footer">
 						<button type="button" class="btn pull-left" id="manage-categories-btn">

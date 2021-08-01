@@ -1,9 +1,9 @@
 /* ===================================================================
- * ImportFileForm.java
+ * AuthorizationException.java
  * 
- * Created Jun 28, 2012 1:52:18 PM
+ * Created 1/08/2021 2:05:45 PM
  * 
- * Copyright (c) 2012 Matt Magoffin.
+ * Copyright (c) 2021 Matt Magoffin.
  * 
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as 
@@ -22,46 +22,38 @@
  * ===================================================================
  */
 
-package magoffin.matt.tidbits.web;
-
-import java.util.List;
-import magoffin.matt.tidbits.domain.Tidbit;
-import magoffin.matt.util.TemporaryFile;
+package magoffin.matt.tidbits.biz;
 
 /**
- * Form for importing file data into Tidbits.
- * 
+ * Security exception on authorization error.
+ *
  * @author matt
  * @version 1.0
  */
-public class ImportFileForm {
+public class AuthorizationException extends RuntimeException {
 
-	private String page;
-	private TemporaryFile file;
-	private List<Tidbit> tidbits;
+	private static final long serialVersionUID = 2641892543495387720L;
 
-	public String getPage() {
-		return page;
+	/**
+	 * Constructor.
+	 * 
+	 * @param message
+	 *        the message
+	 * @param cause
+	 *        the root cause
+	 */
+	public AuthorizationException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public void setPage(String page) {
-		this.page = page;
-	}
-
-	public TemporaryFile getFile() {
-		return file;
-	}
-
-	public void setFile(TemporaryFile file) {
-		this.file = file;
-	}
-
-	public List<Tidbit> getTidbits() {
-		return tidbits;
-	}
-
-	public void setTidbits(List<Tidbit> tidbits) {
-		this.tidbits = tidbits;
+	/**
+	 * Constructor.
+	 * 
+	 * @param message
+	 *        the message
+	 */
+	public AuthorizationException(String message) {
+		super(message);
 	}
 
 }

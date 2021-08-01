@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.support;
@@ -32,7 +30,7 @@ import java.io.Serializable;
  * Command object for searching.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class SearchCommand implements Serializable {
 
@@ -41,44 +39,47 @@ public class SearchCommand implements Serializable {
 	private String query;
 	private int page = 0;
 	private int pageSize = 25;
-	
+
 	/**
 	 * @return the page
 	 */
 	public int getPage() {
 		return page;
 	}
-	
+
 	/**
-	 * @param page the page to set
+	 * @param page
+	 *        the page to set
 	 */
 	public void setPage(int page) {
 		this.page = page;
 	}
-	
+
 	/**
 	 * @return the pageSize
 	 */
 	public int getPageSize() {
 		return pageSize;
 	}
-	
+
 	/**
-	 * @param pageSize the pageSize to set
+	 * @param pageSize
+	 *        the pageSize to set
 	 */
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
-	
+
 	/**
 	 * @return the query
 	 */
 	public String getQuery() {
 		return query;
 	}
-	
+
 	/**
-	 * @param query the query to set
+	 * @param query
+	 *        the query to set
 	 */
 	public void setQuery(String query) {
 		this.query = query;

@@ -1,9 +1,9 @@
 /* ===================================================================
- * JpaTidbitKindDao.java
+ * JpaPermissionGroupDao.java
  * 
- * Created May 4, 2012 4:54:03 PM
+ * Created 31/07/2021 12:03:58 PM
  * 
- * Copyright (c) 2012 Matt Magoffin.
+ * Copyright (c) 2021 Matt Magoffin.
  * 
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as 
@@ -26,7 +26,9 @@ package magoffin.matt.tidbits.dao.jpa;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -36,23 +38,25 @@ import org.springframework.transaction.annotation.Transactional;
 import magoffin.matt.dao.BasicSortDescriptor;
 import magoffin.matt.dao.SortDescriptor;
 import magoffin.matt.dao.jpa.GenericJpaDao;
-import magoffin.matt.tidbits.dao.TidbitKindDao;
-import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.dao.PermissionGroupDao;
+import magoffin.matt.tidbits.domain.Permission;
+import magoffin.matt.tidbits.domain.PermissionGroup;
 
 /**
- * JPA implementation of {@link TidbitKindDao}.
- * 
+ * JPA implementation of {@link PermissionGroupDao}.
+ *
  * @author matt
  * @version 1.0
  */
 @Repository
-public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements TidbitKindDao {
+public class JpaPermissionGroupDao extends GenericJpaDao<PermissionGroup, Long>
+		implements PermissionGroupDao {
 
 	/**
 	 * Default constructor.
 	 */
-	public JpaTidbitKindDao() {
-		super(TidbitKind.class);
+	public JpaPermissionGroupDao() {
+		super(PermissionGroup.class);
 		setRefreshOnPersist(true);
 	}
 
@@ -62,25 +66,33 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 	 * @param em
 	 *        the EntityManager
 	 */
-	public JpaTidbitKindDao(EntityManager em) {
+	public JpaPermissionGroupDao(EntityManager em) {
 		this();
 		setEm(em);
 	}
 
 	@Override
-	protected final void prePersist(TidbitKind domainObject) {
+	protected final void prePersist(PermissionGroup domainObject) {
 		if ( domainObject.getCreationDate() == null ) {
 			domainObject.setCreationDateItem(new Date());
+		}
+		List<Permission> perms = domainObject.getPermission();
+		if ( perms != null ) {
+			for ( Permission p : perms ) {
+				if ( p.getCreationDate() == null ) {
+					p.setCreationDate(domainObject.getCreationDate());
+				}
+			}
 		}
 	}
 
 	@Override
-	protected final void preUpdate(TidbitKind domainObject) {
+	protected final void preUpdate(PermissionGroup domainObject) {
 		domainObject.setModifyDateItem(new Date());
 	}
 
 	@Override
-	protected Long getPrimaryKey(TidbitKind domainObject) {
+	protected Long getPrimaryKey(PermissionGroup domainObject) {
 		return domainObject.getId();
 	}
 
@@ -92,7 +104,7 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public List<TidbitKind> getAllTidbitKinds() {
+	public List<PermissionGroup> getAllPermissionGroups() {
 		List<SortDescriptor> sort = Collections
 				.singletonList((SortDescriptor) new BasicSortDescriptor("name", true));
 		return getAll(sort);
@@ -100,11 +112,12 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public TidbitKind getTidbitKindByName(String name) {
-		TypedQuery<TidbitKind> q = getEm().createNamedQuery("TidbitKindForName", TidbitKind.class);
+	public PermissionGroup getPermissionGroupByName(String name) {
+		TypedQuery<PermissionGroup> q = getEm().createNamedQuery("PermissionGroupForName",
+				PermissionGroup.class);
 		q.setParameter("name", name);
 		q.setMaxResults(1);
-		List<TidbitKind> results = q.getResultList();
+		List<PermissionGroup> results = q.getResultList();
 		if ( results.size() > 0 ) {
 			return results.get(0);
 		}
@@ -113,11 +126,13 @@ public class JpaTidbitKindDao extends GenericJpaDao<TidbitKind, Long> implements
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public List<TidbitKind> findTidbitKindsByName(String name) {
-		assert name != null;
-		TypedQuery<TidbitKind> q = getEm().createNamedQuery("TidbitKindsForName", TidbitKind.class);
-		q.setParameter("name", '%' + name.toLowerCase() + '%');
-		return q.getResultList();
+	public Set<PermissionGroup> findAllPermissionGroupMemberships(String name) {
+		TypedQuery<PermissionGroup> q = getEm().createNamedQuery("PermissionGroupsForMembership",
+				PermissionGroup.class);
+		q.setParameter("name", name);
+		List<PermissionGroup> groups = q.getResultList();
+		return (groups == null || groups.isEmpty() ? Collections.emptySet()
+				: new LinkedHashSet<>(groups));
 	}
 
 }

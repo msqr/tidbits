@@ -20,24 +20,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.aop;
 
-import magoffin.matt.tidbits.biz.LuceneBiz;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import magoffin.matt.tidbits.biz.LuceneBiz;
 
 /**
  * Aspect to trigger a complete re-index of Lucene.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Aspect
 @Component
@@ -53,11 +51,11 @@ public class ReindexInterceptor {
 			luceneBiz.reindexTidbits();
 		}
 	}
-	
+
 	public LuceneBiz getLuceneBiz() {
 		return luceneBiz;
 	}
-	
+
 	public void setLuceneBiz(LuceneBiz luceneBiz) {
 		this.luceneBiz = luceneBiz;
 	}

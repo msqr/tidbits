@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits;
@@ -39,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Base class for other transactional unit tests.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @ContextConfiguration
 @TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)

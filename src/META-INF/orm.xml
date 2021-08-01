@@ -13,6 +13,12 @@
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
 	<entity class="magoffin.matt.tidbits.domain.TidbitKind">
+		<named-query name="PermissionGroupForName">
+			<query>SELECT g FROM PermissionGroup g WHERE LOWER(g.name) = LOWER(:name)</query>
+		</named-query>
+		<named-query name="PermissionGroupsForMembership">
+			<query>SELECT DISTINCT g FROM PermissionGroup g, IN(g.permission) p WHERE LOWER(p.name) = LOWER(:name)</query>
+		</named-query>
 		<named-query name="TidbitKindForName">
 			<query>SELECT k FROM TidbitKind k WHERE LOWER(k.name) = LOWER(:name)</query>
 		</named-query>
@@ -22,8 +28,19 @@
 		<named-query name="TidbitCount">
 			<query>SELECT COUNT(t) FROM Tidbit t</query>
 		</named-query>
+		<named-query name="TidbitCountForMembership">
+			<query>SELECT COUNT(t) FROM Tidbit t WHERE t.createdBy = :name OR t.createdBy IN (
+				SELECT DISTINCT g.name FROM PermissionGroup g, IN(g.permission) p WHERE LOWER(p.name) = LOWER(:name)
+				)</query>
+		</named-query>
 		<named-query name="TidbitsAll">
 			<query>SELECT t FROM Tidbit t ORDER BY t.creationDateItem DESC, t.id DESC</query>
+			<hint name="eclipselink.join-fetch" value="t.kind"/>
+		</named-query>
+		<named-query name="TidbitsAllForMembership">
+			<query>SELECT DISTINCT t FROM Tidbit t WHERE t.createdBy = :name OR t.createdBy IN (
+				SELECT DISTINCT g.name FROM PermissionGroup g, IN(g.permission) p WHERE LOWER(p.name) = LOWER(:name)
+				) ORDER BY t.creationDateItem DESC, t.id DESC</query>
 			<hint name="eclipselink.join-fetch" value="t.kind"/>
 		</named-query>
 
@@ -34,6 +51,21 @@
 			<query>SELECT t.name, k.name, t.data, t.creation_date, t.modify_date, t.comment, k.comment,
 						t.tidbitid, t.created_by, k.kindid
 					FROM tidbit t INNER JOIN tidbit_kind k ON k.kindid = t.kindid
+					ORDER BY t.creation_date</query>
+			<hint name="eclipselink.jdbc.fetch-size" value="100"/>
+		</named-native-query>
+		<named-native-query name="TidbitsExportForMembership">
+			<query>SELECT t.name, k.name, t.data, t.creation_date, t.modify_date, t.comment, k.comment,
+						t.tidbitid, t.created_by, k.kindid
+					FROM tidbit t
+					INNER JOIN tidbit_kind k ON k.kindid = t.kindid
+					WHERE t.created_by = ?1 OR t.created_by IN (
+						SELECT DISTINCT g.name
+						FROM permission_group g
+						INNER JOIN permission_group_perms gp ON gp.permission_group_id = g.groupid
+						INNER JOIN permission p ON gp.permission_id = p.permissionid
+						WHERE LOWER(p.name) = LOWER(?1)
+					)
 					ORDER BY t.creation_date</query>
 			<hint name="eclipselink.jdbc.fetch-size" value="100"/>
 		</named-native-query>

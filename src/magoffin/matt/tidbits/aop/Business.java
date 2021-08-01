@@ -20,23 +20,21 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.aop;
 
 import java.util.List;
-import magoffin.matt.tidbits.domain.Tidbit;
-import magoffin.matt.tidbits.domain.TidbitKind;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import magoffin.matt.tidbits.domain.Tidbit;
+import magoffin.matt.tidbits.domain.TidbitKind;
 
 /**
  * Commong pointcuts for the application.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Aspect
 public class Business {
@@ -79,6 +77,16 @@ public class Business {
 	 */
 	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.deleteTidbit(..)) && args(id)")
 	public void deleteTidbit(Long id) {
+	}
+
+	/**
+	 * Match TidbitsBiz methods saving TidbitKind.
+	 * 
+	 * @param id
+	 *        the tidbit kind being deleted
+	 */
+	@Pointcut("execution(* magoffin.matt.tidbits.biz.TidbitsBiz.deleteTidbitKind(..)) && args(id)")
+	public void deleteTidbitKind(Long id) {
 	}
 
 }

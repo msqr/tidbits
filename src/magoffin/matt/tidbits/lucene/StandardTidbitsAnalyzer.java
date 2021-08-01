@@ -20,17 +20,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.lucene;
 
 import java.io.Reader;
 import java.util.Set;
-
-import magoffin.matt.lucene.KeyTokenizer;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordTokenizer;
 import org.apache.lucene.analysis.LowerCaseFilter;
@@ -40,44 +35,46 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
+import magoffin.matt.lucene.KeyTokenizer;
 
 /**
  * Standard implementation of Analyzer for Tidbits.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.1
  */
 public class StandardTidbitsAnalyzer extends Analyzer {
-	
+
 	private String snowballStemmerName = "English";
 	private Set<String> stopWords = null;
 	private int indexKeyLength = 1;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public TokenStream tokenStream(String field, Reader reader) {
 		TokenStream result = null;
-		
+
 		IndexField idxField = null;
 		try {
 			idxField = IndexField.fromFieldName(field);
 		} catch ( Exception e ) {
 			// ignore and fallback to default
 		}
-		
+
 		if ( idxField == null ) {
 			return standardFilters(reader);
 		}
-		
-		switch ( idxField ) {
+
+		switch (idxField) {
 			case ITEM_ID:
 				result = new KeywordTokenizer(reader);
 				break;
-				
+
 			case ITEM_INDEX_KEY:
 				result = new KeyTokenizer(reader, this.indexKeyLength);
 				result = new LowerCaseFilter(result);
 				break;
-				
+
 			case ITEM_NAME:
 				result = standardFilters(reader);
 				if ( this.stopWords == null ) {
@@ -85,51 +82,54 @@ public class StandardTidbitsAnalyzer extends Analyzer {
 				} else {
 					result = new StopFilter(result, this.stopWords);
 				}
-				result = new SnowballFilter(result, snowballStemmerName);				
+				result = new SnowballFilter(result, snowballStemmerName);
 				break;
-				
+
 			default:
 				result = standardFilters(reader);
 		}
-		
+
 		return result;
 	}
 
 	private TokenStream standardFilters(Reader reader) {
+		@SuppressWarnings("deprecation")
 		TokenStream result = new StandardTokenizer(reader);
 		result = new StandardFilter(result);
 		result = new LowerCaseFilter(result);
 		return result;
 	}
-	
+
 	/**
 	 * @return the snowballStemmerName
 	 */
 	public String getSnowballStemmerName() {
 		return snowballStemmerName;
 	}
-	
+
 	/**
-	 * @param snowballStemmerName the snowballStemmerName to set
+	 * @param snowballStemmerName
+	 *        the snowballStemmerName to set
 	 */
 	public void setSnowballStemmerName(String snowballStemmerName) {
 		this.snowballStemmerName = snowballStemmerName;
 	}
-	
+
 	/**
 	 * @return the stopWords
 	 */
 	public Set<String> getStopWords() {
 		return stopWords;
 	}
-	
+
 	/**
-	 * @param stopWords the stopWords to set
+	 * @param stopWords
+	 *        the stopWords to set
 	 */
 	public void setStopWords(Set<String> stopWords) {
 		this.stopWords = stopWords;
 	}
-	
+
 	/**
 	 * @return the indexKeyLength
 	 */
@@ -138,7 +138,8 @@ public class StandardTidbitsAnalyzer extends Analyzer {
 	}
 
 	/**
-	 * @param indexKeyLength the indexKeyLength to set
+	 * @param indexKeyLength
+	 *        the indexKeyLength to set
 	 */
 	public void setIndexKeyLength(int indexKeyLength) {
 		this.indexKeyLength = indexKeyLength;

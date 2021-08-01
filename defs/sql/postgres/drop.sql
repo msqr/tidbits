@@ -1,4 +1,9 @@
 ALTER TABLE tidbit DROP CONSTRAINT FK_tidbit_kindid
+ALTER TABLE permission_group_perms DROP CONSTRAINT FK_permission_group_perms_permission_group_id
+ALTER TABLE permission_group_perms DROP CONSTRAINT FK_permission_group_perms_permission_id
 DROP TABLE tidbit_kind
+DROP TABLE permission
+DROP TABLE permission_group
 DROP TABLE tidbit
+DROP TABLE permission_group_perms
 DROP SEQUENCE TIDBIT_SEQUENCE

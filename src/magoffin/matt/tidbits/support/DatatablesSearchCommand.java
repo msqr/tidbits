@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.support;
@@ -30,7 +28,7 @@ package magoffin.matt.tidbits.support;
  * Support for jQuery DataTables plugin.
  * 
  * @author matt
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public class DatatablesSearchCommand extends SearchCommand {
 
@@ -38,28 +36,34 @@ public class DatatablesSearchCommand extends SearchCommand {
 
 	/**
 	 * Set the query text.
-	 * @param query the query
+	 * 
+	 * @param query
+	 *        the query
 	 */
 	public void setsSearch(String query) {
 		setQuery(query);
 	}
-	
+
 	/**
 	 * Set the starting offset.
-	 * @param offset the offset
+	 * 
+	 * @param offset
+	 *        the offset
 	 */
 	public void setiDisplayStart(int offset) {
 		// hmm, this depends on iDisplayLength having already been set. yuck
-		int page = (int)Math.floor((double)offset/(double)getPageSize());
+		int page = (int) Math.floor((double) offset / (double) getPageSize());
 		setPage(page);
 	}
-	
+
 	/**
 	 * Set the page size.
-	 * @param pageSize the page size
+	 * 
+	 * @param pageSize
+	 *        the page size
 	 */
 	public void setiDisplayLength(int pageSize) {
 		setPageSize(pageSize);
 	}
-	
+
 }

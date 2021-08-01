@@ -20,40 +20,49 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.lucene;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import magoffin.matt.lucene.LuceneService;
 import magoffin.matt.lucene.LuceneService.IndexSearcherOp;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.SearchQueryException;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
+import magoffin.matt.tidbits.biz.impl.AuthorizationSupport;
+import magoffin.matt.tidbits.dao.PermissionGroupDao;
+import magoffin.matt.tidbits.domain.PermissionGroup;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TopDocCollector;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
 
 /**
  * Lucene search implementation for Tidbits.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.1
  */
 @Service
 public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
-	
+
 	/** Default max number of search results returned. */
 	public static final int DEFAULT_MAX_SEARCH_RESULTS = 100000;
-	
+
 	@Autowired
 	private LuceneService lucene;
 
@@ -63,36 +72,77 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 	@Autowired
 	private DomainObjectFactory domainObjectFactory;
 
+	@Autowired
+	private PermissionGroupDao permissionGroupDao;
+
 	private String tidbitIndexType = IndexType.TIDBIT.toString();
 	private int maxSearchResults = DEFAULT_MAX_SEARCH_RESULTS;
+
+	private Set<String> allowedUsernames() {
+		Authentication actor = SecurityContextHolder.getContext().getAuthentication();
+		String username = AuthorizationSupport.username(actor);
+		if ( AuthorizationSupport.isAdmin(actor) ) {
+			// no limit
+			return null;
+		}
+		Set<PermissionGroup> memberships = permissionGroupDao
+				.findAllPermissionGroupMemberships(username);
+		if ( memberships == null || memberships.isEmpty() ) {
+			// not a member of any groups, can only see own
+			return Collections.singleton(username);
+		}
+		Set<String> result = memberships.stream().map(PermissionGroup::getName)
+				.collect(Collectors.toSet());
+		result.add(username);
+		return result;
+	}
 
 	/**
 	 * Search for Tidbits.
 	 * 
-	 * @param tidbitCriteria the search criteria
+	 * @param tidbitCriteria
+	 *        the search criteria
 	 * @return the results
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public SearchResults findTidbits(final TidbitSearchCriteria tidbitCriteria) {
+		final Set<String> usernames = allowedUsernames();
 		final SearchResults results = domainObjectFactory.newSearchResultsInstance();
 		results.setQuery(tidbitCriteria.getQuery());
 		lucene.doIndexSearcherOp(tidbitIndexType, new IndexSearcherOp() {
 
 			@Override
-			public void doSearcherOp(String type, IndexSearcher searcher) throws IOException {	
+			public void doSearcherOp(String type, IndexSearcher searcher) throws IOException {
 				Query query = null;
 				try {
 					query = lucene.parseQuery(type, tidbitCriteria.getQuery());
 				} catch ( RuntimeException e ) {
-					if ( e.getCause() != null && (e.getCause() instanceof 
-							org.apache.lucene.queryParser.ParseException) ) {
+					if ( e.getCause() != null
+							&& (e.getCause() instanceof org.apache.lucene.queryParser.ParseException) ) {
 						throw new SearchQueryException(e.getCause());
 					}
 					throw e;
 				}
-				TopDocCollector col = new TopDocCollector(maxSearchResults);
+
+				if ( usernames != null && !usernames.isEmpty() ) {
+					BooleanQuery usernameQuery = new BooleanQuery();
+					for ( String username : usernames ) {
+						usernameQuery.add(
+								new TermQuery(new Term(IndexField.CREATED_BY.getFieldName(), username)),
+								Occur.SHOULD);
+					}
+
+					BooleanQuery searchQuery = new BooleanQuery();
+					searchQuery.add(usernameQuery, Occur.MUST);
+					searchQuery.add(query, Occur.MUST);
+					query = searchQuery;
+				}
+
+				org.apache.lucene.search.TopDocCollector col = new org.apache.lucene.search.TopDocCollector(
+						maxSearchResults);
 				searcher.search(query, col);
-				
+
 				int startIdx = 0;
 				int endIdx = col.getTotalHits();
 				if ( tidbitCriteria.getPaginationCriteria() != null ) {
@@ -110,7 +160,7 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 				} else {
 					results.setIsPartialResult(false);
 				}
-				
+
 				results.setTotalResults(Long.valueOf(col.getTotalHits()));
 				List<?> matches = lucene.build(tidbitIndexType, col, startIdx, endIdx);
 				results.setReturnedResults(Long.valueOf(matches.size()));
@@ -121,7 +171,7 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 				}
 			}
 		});
-		
+
 		return results;
 	}
 
@@ -146,51 +196,55 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 	public LuceneService getLucene() {
 		return lucene;
 	}
-	
+
 	/**
-	 * @param lucene the lucene to set
+	 * @param lucene
+	 *        the lucene to set
 	 */
 	public void setLucene(LuceneService lucene) {
 		this.lucene = lucene;
 	}
-	
+
 	/**
 	 * @return the messages
 	 */
 	public MessageSource getMessages() {
 		return messages;
 	}
-	
+
 	/**
-	 * @param messages the messages to set
+	 * @param messages
+	 *        the messages to set
 	 */
 	public void setMessages(MessageSource messages) {
 		this.messages = messages;
 	}
-	
+
 	/**
 	 * @return the tidbitIndexType
 	 */
 	public String getTidbitIndexType() {
 		return tidbitIndexType;
 	}
-	
+
 	/**
-	 * @param tidbitIndexType the tidbitIndexType to set
+	 * @param tidbitIndexType
+	 *        the tidbitIndexType to set
 	 */
 	public void setTidbitIndexType(String tidbitIndexType) {
 		this.tidbitIndexType = tidbitIndexType;
 	}
-	
+
 	/**
 	 * @return the domainObjectFactory
 	 */
 	public DomainObjectFactory getDomainObjectFactory() {
 		return domainObjectFactory;
 	}
-	
+
 	/**
-	 * @param domainObjectFactory the domainObjectFactory to set
+	 * @param domainObjectFactory
+	 *        the domainObjectFactory to set
 	 */
 	public void setDomainObjectFactory(DomainObjectFactory domainObjectFactory) {
 		this.domainObjectFactory = domainObjectFactory;
@@ -204,7 +258,8 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 	}
 
 	/**
-	 * @param maxSearchResults the maxSearchResults to set
+	 * @param maxSearchResults
+	 *        the maxSearchResults to set
 	 */
 	public void setMaxSearchResults(int maxSearchResults) {
 		this.maxSearchResults = maxSearchResults;

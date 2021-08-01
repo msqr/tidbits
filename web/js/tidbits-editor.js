@@ -312,6 +312,8 @@ Tidbits.Class.Editor.prototype.displayForm = function(crumb, kindId) {
 		$('#edit-tidbit-id').val(crumb.id);
 		$('#add-tidbit-data').val(crumb.value);
 		$('#add-tidbit-comments').val(crumb.comment);
+		this.element.find('.edit-only').toggleClass('hidden', (crumb.id === undefined || crumb.id.length < 1));
+		$('#add-tidbit-created-by').text(crumb.createdBy);
 	}
 	var header = this.element.find('.front .header h3');
 	var deleteBtn = $('#delete-tidbit-btn');

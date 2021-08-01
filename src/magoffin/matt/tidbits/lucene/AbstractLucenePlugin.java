@@ -20,32 +20,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.lucene;
 
 import java.util.List;
 import java.util.Set;
+import org.apache.lucene.analysis.Analyzer;
+import org.springframework.context.MessageSource;
 import magoffin.matt.lucene.IndexListener;
 import magoffin.matt.lucene.LucenePlugin;
 import magoffin.matt.lucene.LuceneService;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
-import org.apache.lucene.analysis.Analyzer;
-import org.springframework.context.MessageSource;
 
 /**
  * Base implementation for LucenePlugin implementations.
  * 
  * @author matt.magoffin
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 public abstract class AbstractLucenePlugin implements LucenePlugin {
 
 	/** The default value for the <code>infoReindexCount</code> property. */
 	public static final int DEFAULT_REINDEX_COUNT = 50;
-	
+
 	/** Default number of error percent fraction digits. */
 	public static final int DEFAULT_ERROR_PERCENT_MAX_FRACTION_DIGITS = 3;
 
@@ -59,7 +57,8 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	private String indexType = null;
 
 	@Override
-	public final LuceneIndexConfig init(LuceneService luceneService, Set<IndexListener> indexEventListenersSet) {
+	public final LuceneIndexConfig init(LuceneService luceneService,
+			Set<IndexListener> indexEventListenersSet) {
 		this.lucene = luceneService;
 		this.indexEventListeners = indexEventListenersSet;
 		doAfterInit();
@@ -67,10 +66,12 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	}
 
 	/**
-	 * Method for extending classes to override if needed, called
-	 * during the {@link #init(LuceneService, Set)} method.
+	 * Method for extending classes to override if needed, called during the
+	 * {@link #init(LuceneService, Set)} method.
 	 * 
-	 * <p>This method implementation does not do anything.</p>
+	 * <p>
+	 * This method implementation does not do anything.
+	 * </p>
 	 * 
 	 * @see #init(LuceneService, Set)
 	 */
@@ -81,7 +82,8 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	/**
 	 * Get a single index error message from a list of index errors.
 	 * 
-	 * @param indexErrors list of errors
+	 * @param indexErrors
+	 *        list of errors
 	 * @return single index error message
 	 */
 	protected String getIndexErrorMessage(List<Object> indexErrors) {
@@ -91,7 +93,7 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 		if ( indexErrors.size() == 1 ) {
 			return getSingleIndexErrorMessage(indexErrors.get(0));
 		}
-		String msg = indexErrors.size() +" errors: ";
+		String msg = indexErrors.size() + " errors: ";
 		int i = 0;
 		for ( Object object : indexErrors ) {
 			if ( i > 0 ) {
@@ -105,15 +107,16 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	/**
 	 * Get an individual index error message.
 	 * 
-	 * @param object the error message or exception
+	 * @param object
+	 *        the error message or exception
 	 * @return error message string
 	 */
 	protected String getSingleIndexErrorMessage(Object object) {
 		String msg = object.toString();
 		if ( object instanceof Throwable ) {
-			StackTraceElement[] stack = ((Throwable)object).getStackTrace();
+			StackTraceElement[] stack = ((Throwable) object).getStackTrace();
 			if ( stack != null && stack.length > 0 ) {
-				msg += " at " +stack[0].getClassName() +":" +stack[0].getLineNumber();
+				msg += " at " + stack[0].getClassName() + ":" + stack[0].getLineNumber();
 			}
 		}
 		return msg;
@@ -121,6 +124,7 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 
 	/**
 	 * Get the LuceneService configured for this plugin.
+	 * 
 	 * @return the LuceneService instance
 	 */
 	protected LuceneService getLucene() {
@@ -129,6 +133,7 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 
 	/**
 	 * Get the list of IndexLister objects.
+	 * 
 	 * @return Returns the indexEventListeners.
 	 */
 	protected Set<IndexListener> getIndexEventListeners() {
@@ -143,7 +148,8 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	}
 
 	/**
-	 * @param infoReindexCount the infoReindexCount to set
+	 * @param infoReindexCount
+	 *        the infoReindexCount to set
 	 */
 	public void setInfoReindexCount(int infoReindexCount) {
 		this.infoReindexCount = infoReindexCount;
@@ -162,14 +168,16 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	}
 
 	/**
-	 * @param config the config to set
+	 * @param config
+	 *        the config to set
 	 */
 	public void setConfig(LuceneIndexConfig config) {
 		this.config = config;
 	}
 
 	/**
-	 * @param analyzer the analyzer to set
+	 * @param analyzer
+	 *        the analyzer to set
 	 */
 	public void setAnalyzer(Analyzer analyzer) {
 		this.analyzer = analyzer;
@@ -183,7 +191,8 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	}
 
 	/**
-	 * @param messages the messages to set
+	 * @param messages
+	 *        the messages to set
 	 */
 	public void setMessages(MessageSource messages) {
 		this.messages = messages;
@@ -197,7 +206,8 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	}
 
 	/**
-	 * @param domainObjectFactory The domainObjectFactory to set.
+	 * @param domainObjectFactory
+	 *        The domainObjectFactory to set.
 	 */
 	public void setDomainObjectFactory(DomainObjectFactory domainObjectFactory) {
 		this.domainObjectFactory = domainObjectFactory;
@@ -209,7 +219,8 @@ public abstract class AbstractLucenePlugin implements LucenePlugin {
 	}
 
 	/**
-	 * @param indexType the indexType to set
+	 * @param indexType
+	 *        the indexType to set
 	 */
 	public void setIndexType(String indexType) {
 		this.indexType = indexType;

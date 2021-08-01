@@ -1,9 +1,9 @@
 /* ===================================================================
- * TidbitDao.java
+ * PermissionGroupDao.java
  * 
- * Created Jul 2, 2006 6:36:45 PM
+ * Created 31/07/2021 12:00:46 PM
  * 
- * Copyright (c) 2006 Matt Magoffin.
+ * Copyright (c) 2021 Matt Magoffin.
  * 
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as 
@@ -25,40 +25,41 @@
 package magoffin.matt.tidbits.dao;
 
 import java.util.List;
+import java.util.Set;
 import magoffin.matt.dao.GenericDao;
-import magoffin.matt.tidbits.domain.TidbitKind;
+import magoffin.matt.tidbits.domain.PermissionGroup;
 
 /**
- * DAO for TidbitKind domain objects.
- * 
- * @author matt.magoffin
+ * DAO for {@link PermissionGroup} entities.
+ *
+ * @author matt
  * @version 1.0
  */
-public interface TidbitKindDao extends GenericDao<TidbitKind, Long> {
+public interface PermissionGroupDao extends GenericDao<PermissionGroup, Long> {
 
 	/**
-	 * Return a List of all TidbitKind objects.
+	 * Return all available {@link PermissionGroup} objects.
 	 * 
-	 * @return list of TidbitKind, or empty List if none available
+	 * @return list of PermissionGroup, or empty List if none available
 	 */
-	List<TidbitKind> getAllTidbitKinds();
+	List<PermissionGroup> getAllPermissionGroups();
 
 	/**
-	 * Get a TidbitKind by its name.
-	 * 
-	 * @param name
-	 *        the name to find
-	 * @return List of TidbitKinds
-	 */
-	TidbitKind getTidbitKindByName(String name);
-
-	/**
-	 * Return a List of TidbitKind objects with a matching name.
+	 * Get a {@link PermissionGroup} by its name.
 	 * 
 	 * @param name
 	 *        the name to find
-	 * @return List of TidbitKinds
+	 * @return the group, or {@literal null}
 	 */
-	List<TidbitKind> findTidbitKindsByName(String name);
+	PermissionGroup getPermissionGroupByName(String name);
+
+	/**
+	 * Get all permission groups a person is a member of.
+	 * 
+	 * @param name
+	 *        the name to look for
+	 * @return the groups {@code name} is a member of
+	 */
+	Set<PermissionGroup> findAllPermissionGroupMemberships(String name);
 
 }

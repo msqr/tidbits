@@ -20,30 +20,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.aop;
 
 import java.util.List;
-import magoffin.matt.tidbits.biz.LuceneBiz;
-import magoffin.matt.tidbits.domain.Tidbit;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import magoffin.matt.tidbits.biz.LuceneBiz;
+import magoffin.matt.tidbits.domain.Tidbit;
 
 /**
  * Aspect to index a Tidbit after it has changed.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Aspect
 @Component
 public class TidbitIndexInterceptor {
-	
+
 	@Autowired
 	private LuceneBiz luceneBiz;
 
@@ -66,7 +64,7 @@ public class TidbitIndexInterceptor {
 	public LuceneBiz getLuceneBiz() {
 		return luceneBiz;
 	}
-	
+
 	public void setLuceneBiz(LuceneBiz luceneBiz) {
 		this.luceneBiz = luceneBiz;
 	}

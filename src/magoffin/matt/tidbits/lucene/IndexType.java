@@ -18,22 +18,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.lucene;
 
-/** 
+/**
  * The types of indicies supported by Tidbits.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.0
  */
-public enum IndexType { 
-	
-	/** The Tidbit index type. */
-	TIDBIT, 
-	
-}
+public enum IndexType {
 
+	/** The Tidbit index type. */
+	TIDBIT,
+
+}

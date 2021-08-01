@@ -20,16 +20,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
  * 02111-1307 USA
  * ===================================================================
- * $Id$
- * ===================================================================
  */
 
 package magoffin.matt.tidbits.aop;
 
-import magoffin.matt.tidbits.biz.LuceneBiz;
-import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
-import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
-import magoffin.matt.tidbits.domain.SearchResults;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -39,18 +33,22 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import magoffin.matt.tidbits.biz.LuceneBiz;
+import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
+import magoffin.matt.tidbits.biz.TidbitSearchCriteria.TidbitSearchType;
+import magoffin.matt.tidbits.domain.SearchResults;
 
 /**
- * Aspect to delegate search to Lucene implementation, keeping 
- * main business API free of Lucene code.
+ * Aspect to delegate search to Lucene implementation, keeping main business API
+ * free of Lucene code.
  * 
  * @author Matt Magoffin (spamsqr@msqr.us)
- * @version $Revision$ $Date$
+ * @version 1.0
  */
 @Aspect
 @Component
 public class LuceneTidbitSearchInterceptor {
-	
+
 	@Autowired
 	private LuceneBiz luceneBiz = null;
 
@@ -70,14 +68,14 @@ public class LuceneTidbitSearchInterceptor {
 			wrapper.setPropertyValue("searchType", TidbitSearchType.FOR_TEMPLATE);
 			return (SearchResults) pjp.proceed();
 		}
-		
+
 		return luceneBiz.findTidbits(searchCriteria);
 	}
-	
+
 	public LuceneBiz getLuceneBiz() {
 		return luceneBiz;
 	}
-	
+
 	public void setLuceneBiz(LuceneBiz luceneBiz) {
 		this.luceneBiz = luceneBiz;
 	}
