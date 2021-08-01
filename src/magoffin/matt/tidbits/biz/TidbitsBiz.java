@@ -45,14 +45,14 @@ public interface TidbitsBiz {
 	 * 
 	 * @since 2.0
 	 */
-	String ROLE_USER = "User";
+	String ROLE_USER = "ROLE_USER";
 
 	/**
 	 * The role name for an administrative user.
 	 * 
 	 * @since 2.0
 	 */
-	String ROLE_ADMIN = "Administrator";
+	String ROLE_ADMIN = "ROLE_ADMINISTRATOR";
 
 	/**
 	 * Search for Tidbits.
