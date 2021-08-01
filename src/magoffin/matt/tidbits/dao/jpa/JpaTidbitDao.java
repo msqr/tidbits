@@ -100,8 +100,16 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 		SearchResults results = new SearchResults();
 		if ( pagination == null ) {
 			// return all available
-			SortDescriptor order = new BasicSortDescriptor("creationDateItem", false);
-			List<Tidbit> allTidbits = super.getAll(Collections.singletonList(order));
+			List<Tidbit> allTidbits;
+			if ( username == null ) {
+				SortDescriptor order = new BasicSortDescriptor("creationDateItem", false);
+				allTidbits = super.getAll(Collections.singletonList(order));
+			} else {
+				TypedQuery<Tidbit> allQuery = getEm().createNamedQuery("TidbitsAllForMembership",
+						Tidbit.class);
+				allQuery.setParameter("name", username);
+				allTidbits = allQuery.getResultList();
+			}
 			results.setTidbit(allTidbits);
 			results.setIsPartialResult(false);
 			results.setReturnedResults(Long.valueOf(allTidbits.size()));
@@ -109,10 +117,18 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 			return results;
 		}
 
-		TypedQuery<Long> countQuery = getEm().createNamedQuery("TidbitCount", Long.class);
+		TypedQuery<Long> countQuery = getEm().createNamedQuery(
+				username != null ? "TidbitCountForMembership" : "TidbitCount", Long.class);
+		if ( username != null ) {
+			countQuery.setParameter("name", username);
+		}
 		final Long count = countQuery.getSingleResult();
 
-		TypedQuery<Tidbit> allQuery = getEm().createNamedQuery("TidbitsAll", Tidbit.class);
+		TypedQuery<Tidbit> allQuery = getEm().createNamedQuery(
+				username != null ? "TidbitsAllForMembership" : "TidbitsAll", Tidbit.class);
+		if ( username != null ) {
+			allQuery.setParameter("name", username);
+		}
 		allQuery.setFirstResult(
 				(pagination.getPageOffset() == null ? 0 : pagination.getPageOffset().intValue())
 						* (pagination.getPageSize() == null ? 0 : pagination.getPageSize().intValue()));

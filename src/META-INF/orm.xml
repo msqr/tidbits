@@ -28,8 +28,19 @@
 		<named-query name="TidbitCount">
 			<query>SELECT COUNT(t) FROM Tidbit t</query>
 		</named-query>
+		<named-query name="TidbitCountForMembership">
+			<query>SELECT COUNT(t) FROM Tidbit t WHERE t.createdBy = :name OR t.createdBy IN (
+				SELECT DISTINCT g.name FROM PermissionGroup g, IN(g.permission) p WHERE LOWER(p.name) = LOWER(:name)
+				)</query>
+		</named-query>
 		<named-query name="TidbitsAll">
 			<query>SELECT t FROM Tidbit t ORDER BY t.creationDateItem DESC, t.id DESC</query>
+			<hint name="eclipselink.join-fetch" value="t.kind"/>
+		</named-query>
+		<named-query name="TidbitsAllForMembership">
+			<query>SELECT DISTINCT t FROM Tidbit t WHERE t.createdBy = :name OR t.createdBy IN (
+				SELECT DISTINCT g.name FROM PermissionGroup g, IN(g.permission) p WHERE LOWER(p.name) = LOWER(:name)
+				) ORDER BY t.creationDateItem DESC, t.id DESC</query>
 			<hint name="eclipselink.join-fetch" value="t.kind"/>
 		</named-query>
 

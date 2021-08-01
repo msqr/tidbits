@@ -24,10 +24,15 @@
 
 package magoffin.matt.tidbits.dao.jpa;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,6 +43,8 @@ import org.junit.Test;
 import magoffin.matt.tidbits.BaseTransactionalTest;
 import magoffin.matt.tidbits.dao.ExportCallback;
 import magoffin.matt.tidbits.domain.PaginationCriteria;
+import magoffin.matt.tidbits.domain.Permission;
+import magoffin.matt.tidbits.domain.PermissionGroup;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 import magoffin.matt.tidbits.domain.TidbitKind;
@@ -52,6 +59,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 
 	private JpaTidbitDao dao;
 	private JpaTidbitKindDao kindDao;
+	private JpaPermissionGroupDao permissionGroupDao;
 
 	private Long id;
 	private TidbitKind kind;
@@ -63,6 +71,9 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 
 		kindDao = new JpaTidbitKindDao();
 		kindDao.setEm(getEm());
+
+		permissionGroupDao = new JpaPermissionGroupDao();
+		permissionGroupDao.setEm(getEm());
 
 		TidbitKind k = new TidbitKind();
 		k.setName("name");
@@ -157,6 +168,55 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 		assertFalse(results.isIsPartialResult());
 
 		assertEquals(this.id, results.getTidbit().get(0).getId());
+	}
+
+	private PermissionGroup savePermissionGroup() {
+		PermissionGroup obj = new PermissionGroup();
+		obj.setName("foo");
+		obj.setCreatedBy("foo");
+
+		List<Permission> perms = new ArrayList<>(3);
+		Permission p = new Permission();
+		p.setCreatedBy("foo");
+		p.setName("bar");
+		perms.add(p);
+		obj.setPermission(perms);
+		return permissionGroupDao.get(permissionGroupDao.store(obj));
+	}
+
+	@Test
+	public void findAllOneResult_membership() {
+		// GIVEN
+		storeEntity(); // owned by "foo"
+		Tidbit obj1 = dao.get(this.id);
+
+		// create 2nd owned by "bar"
+		Tidbit obj2 = new Tidbit();
+		obj2.setName("name2");
+		obj2.setCreatedBy("bar");
+		obj2.setKind(this.kind);
+		obj2 = dao.get(dao.store(obj2));
+
+		// create 3rd owned by "bam"
+		Tidbit obj3 = new Tidbit();
+		obj3.setName("name3");
+		obj3.setCreatedBy("bam");
+		obj3.setKind(this.kind);
+		obj3 = dao.get(dao.store(obj3));
+
+		savePermissionGroup();
+
+		// WHEN
+		SearchResults results = dao.getAllTidbits(null, "bar"); // search by "bar"
+
+		// THEN
+		assertThat("Results not null", results, is(notNullValue()));
+		assertThat("Total result count", results.getTotalResults(), is(equalTo(2L)));
+		assertThat("Total result count", results.getReturnedResults(), is(equalTo(2L)));
+		assertThat("Full result", results.isIsPartialResult(), is(equalTo(false)));
+
+		List<Tidbit> list = results.getTidbit();
+		assertThat("Owned and member tidbit returned", list, contains(obj2, obj1));
 	}
 
 	@Test

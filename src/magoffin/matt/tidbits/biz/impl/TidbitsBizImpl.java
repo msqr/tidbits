@@ -104,7 +104,10 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	private SearchResults findTidbitsForTemplate(TidbitSearchCriteria searchCriteria) {
 		Tidbit template = searchCriteria.getTidbitTemplate();
 		Authentication actor = SecurityContextHolder.getContext().getAuthentication();
-		String username = AuthorizationSupport.username(actor);
+		String username = null;
+		if ( !AuthorizationSupport.isAdmin(actor) ) {
+			username = AuthorizationSupport.username(actor);
+		}
 		if ( template == null ) {
 			// find all
 			return tidbitDao.getAllTidbits(searchCriteria.getPaginationCriteria(), username);
