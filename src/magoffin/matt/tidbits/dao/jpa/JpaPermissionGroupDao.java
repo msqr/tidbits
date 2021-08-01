@@ -26,7 +26,9 @@ package magoffin.matt.tidbits.dao.jpa;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -120,6 +122,17 @@ public class JpaPermissionGroupDao extends GenericJpaDao<PermissionGroup, Long>
 			return results.get(0);
 		}
 		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	public Set<PermissionGroup> findAllPermissionGroupMemberships(String name) {
+		TypedQuery<PermissionGroup> q = getEm().createNamedQuery("PermissionGroupsForMembership",
+				PermissionGroup.class);
+		q.setParameter("name", name);
+		List<PermissionGroup> groups = q.getResultList();
+		return (groups == null || groups.isEmpty() ? Collections.emptySet()
+				: new LinkedHashSet<>(groups));
 	}
 
 }

@@ -24,11 +24,18 @@
 
 package magoffin.matt.tidbits.dao.jpa;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import magoffin.matt.tidbits.BaseTransactionalTest;
@@ -106,6 +113,61 @@ public class JpaPermissionGroupDaoTest extends BaseTransactionalTest {
 		storeEntity();
 		PermissionGroup entity = dao.get(-123L);
 		assertNull(entity);
+	}
+
+	@Test
+	public void findByName() {
+		storeEntity();
+		PermissionGroup entity = dao.get(this.id);
+
+		PermissionGroup group = dao.getPermissionGroupByName(entity.getName());
+		assertThat("Group found by name", group, is(equalTo(entity)));
+
+		group = dao.getPermissionGroupByName("not.a.name");
+		assertThat("Group not found by name", group, is(nullValue()));
+	}
+
+	@Test
+	public void findByMembership() {
+		storeEntity();
+		PermissionGroup entity = dao.get(this.id);
+
+		Set<PermissionGroup> groups = dao.findAllPermissionGroupMemberships("user1");
+		assertThat("Group found by membership", groups, containsInAnyOrder(entity));
+
+		groups = dao.findAllPermissionGroupMemberships("userX");
+		assertThat("Group not found by membership", groups, hasSize(0));
+	}
+
+	@Test
+	public void findByMembership_multi() {
+		storeEntity();
+		PermissionGroup entity1 = dao.get(this.id);
+
+		PermissionGroup obj = new PermissionGroup();
+		obj.setName("name2");
+		obj.setCreatedBy("foo");
+
+		List<Permission> perms = new ArrayList<>(3);
+		Permission p = new Permission();
+		p.setCreatedBy("foo");
+		p.setName("user1");
+		perms.add(p);
+		obj.setPermission(perms);
+
+		Long pk = dao.store(obj);
+		flushEntityManager();
+
+		PermissionGroup entity2 = dao.get(pk);
+
+		Set<PermissionGroup> groups = dao.findAllPermissionGroupMemberships("user1");
+		assertThat("Groups found by membership", groups, containsInAnyOrder(entity1, entity2));
+
+		groups = dao.findAllPermissionGroupMemberships("user0");
+		assertThat("Group found by membership", groups, containsInAnyOrder(entity1));
+
+		groups = dao.findAllPermissionGroupMemberships("userX");
+		assertThat("Group not found by membership", groups, hasSize(0));
 	}
 
 }

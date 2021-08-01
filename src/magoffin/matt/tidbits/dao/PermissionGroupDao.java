@@ -25,6 +25,7 @@
 package magoffin.matt.tidbits.dao;
 
 import java.util.List;
+import java.util.Set;
 import magoffin.matt.dao.GenericDao;
 import magoffin.matt.tidbits.domain.PermissionGroup;
 
@@ -51,5 +52,14 @@ public interface PermissionGroupDao extends GenericDao<PermissionGroup, Long> {
 	 * @return the group, or {@literal null}
 	 */
 	PermissionGroup getPermissionGroupByName(String name);
+
+	/**
+	 * Get all permission groups a person is a member of.
+	 * 
+	 * @param name
+	 *        the name to look for
+	 * @return the groups {@code name} is a member of
+	 */
+	Set<PermissionGroup> findAllPermissionGroupMemberships(String name);
 
 }
