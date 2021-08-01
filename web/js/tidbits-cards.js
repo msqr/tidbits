@@ -550,7 +550,7 @@ Tidbits.Class.Bit.prototype = {
 		
 		if ( detail === undefined ) {
 			// wasn't found under different key, so add as new
-			detail = {id:data.id, value:data.value, comment:data.comment};
+			detail = {id:data.id, value:data.value, comment:data.comment, createdBy:data.createdBy};
 		}
 
 		details = this.info[data.kindId];
