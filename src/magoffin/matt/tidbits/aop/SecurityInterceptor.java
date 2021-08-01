@@ -24,17 +24,15 @@
 
 package magoffin.matt.tidbits.aop;
 
-import java.util.Collection;
 import java.util.List;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import magoffin.matt.tidbits.biz.AuthorizationException;
-import magoffin.matt.tidbits.biz.TidbitsBiz;
+import magoffin.matt.tidbits.biz.impl.AuthorizationSupport;
 import magoffin.matt.tidbits.dao.PermissionGroupDao;
 import magoffin.matt.tidbits.dao.TidbitDao;
 import magoffin.matt.tidbits.dao.TidbitKindDao;
@@ -66,17 +64,13 @@ public class SecurityInterceptor {
 		if ( actor == null || owner == null ) {
 			return;
 		}
-		if ( actor.getName().equalsIgnoreCase(owner) ) {
+		String actorUsername = AuthorizationSupport.username(actor);
+		if ( actorUsername.equalsIgnoreCase(owner) ) {
 			// can always edit own entity
 			return;
 		}
 
-		Collection<? extends GrantedAuthority> auths = actor.getAuthorities();
-		if ( auths == null ) {
-			throw new AuthorizationException("Not authorized.");
-		}
-		boolean admin = auths.stream()
-				.anyMatch(a -> TidbitsBiz.ROLE_ADMIN.equalsIgnoreCase(a.getAuthority()));
+		boolean admin = AuthorizationSupport.isAdmin(actor);
 		if ( admin ) {
 			// admin can edit anything
 			return;
@@ -88,7 +82,7 @@ public class SecurityInterceptor {
 		}
 		for ( Permission p : group.getPermission() ) {
 			if ( p != null && p.getName() != null && p.isWrite()
-					&& p.getName().equalsIgnoreCase(actor.getName()) ) {
+					&& p.getName().equalsIgnoreCase(actorUsername) ) {
 				//  permission granted
 				return;
 			}
