@@ -85,7 +85,7 @@
 		so replacing with this work-around: -->
 		<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.7.1.js"><xsl:text> </xsl:text></script>
+		<script type="text/javascript" src="{$web-context}/js-lib/jquery-1.8.3.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery.form.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js-lib/jquery.transform2d.js"><xsl:text> </xsl:text></script>
 		<script type="text/javascript" src="{$web-context}/js-lib/bootstrap.js"><xsl:text> </xsl:text></script>
@@ -133,7 +133,7 @@
 	<xsl:template name="main-nav">
 		<xsl:param name="page"/>
 
-	    <div id="navbar" class="navbar">
+	    <div id="navbar" class="navbar navbar-inverse">
 	        <div class="navbar-inner">
 	            <div class="container">
 	
