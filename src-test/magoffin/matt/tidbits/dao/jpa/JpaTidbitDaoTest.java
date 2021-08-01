@@ -36,6 +36,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
@@ -185,7 +186,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 	}
 
 	@Test
-	public void findAllOneResult_membership() {
+	public void findAllMultipleResult_membership() {
 		// GIVEN
 		storeEntity(); // owned by "foo"
 		Tidbit obj1 = dao.get(this.id);
@@ -212,7 +213,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 		// THEN
 		assertThat("Results not null", results, is(notNullValue()));
 		assertThat("Total result count", results.getTotalResults(), is(equalTo(2L)));
-		assertThat("Total result count", results.getReturnedResults(), is(equalTo(2L)));
+		assertThat("Returned result count", results.getReturnedResults(), is(equalTo(2L)));
 		assertThat("Full result", results.isIsPartialResult(), is(equalTo(false)));
 
 		List<Tidbit> list = results.getTidbit();
@@ -282,6 +283,56 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 	}
 
 	@Test
+	public void findAllPaginatedResults_membership() {
+		storeEntity();
+		final Tidbit t1 = dao.get(this.id);
+
+		storeEntity();
+		final Tidbit t2 = dao.get(this.id);
+		t2.setCreatedBy("bar");
+		dao.store(t2);
+
+		storeEntity();
+		final Tidbit t3 = dao.get(this.id);
+		t3.setCreatedBy("bam");
+		dao.store(t3);
+
+		storeEntity();
+		final Tidbit t4 = dao.get(this.id);
+
+		savePermissionGroup();
+
+		PaginationCriteria pagination = new PaginationCriteria();
+		pagination.setPageOffset(0L);
+		pagination.setPageSize(2L);
+
+		SearchResults results = dao.getAllTidbits(pagination, "bar");
+
+		assertThat("Results not null", results, is(notNullValue()));
+		assertThat("Total result count", results.getTotalResults(), is(equalTo(3L)));
+		assertThat("Returned result count", results.getReturnedResults(), is(equalTo(2L)));
+		assertThat("Full result", results.isIsPartialResult(), is(equalTo(true)));
+		assertThat("Pagination provided", results.getPagination(), is(notNullValue()));
+		assertThat("Page offset", results.getPagination().getPageOffset(), is(equalTo(0L)));
+		assertThat("Page size", results.getPagination().getPageSize(), is(equalTo(2L)));
+
+		assertThat("Owned and member tidbit returned", results.getTidbit(), contains(t4, t2));
+
+		pagination.setPageOffset(1L);
+		results = dao.getAllTidbits(pagination, "bar");
+
+		assertThat("Results not null", results, is(notNullValue()));
+		assertThat("Total result count", results.getTotalResults(), is(equalTo(3L)));
+		assertThat("Returned result count", results.getReturnedResults(), is(equalTo(1L)));
+		assertThat("Full result", results.isIsPartialResult(), is(equalTo(true)));
+		assertThat("Pagination provided", results.getPagination(), is(notNullValue()));
+		assertThat("Page offset", results.getPagination().getPageOffset(), is(equalTo(1L)));
+		assertThat("Page size", results.getPagination().getPageSize(), is(equalTo(2L)));
+
+		assertThat("Final member tidbit returned", results.getTidbit(), contains(t1));
+	}
+
+	@Test
 	public void exportAllTidbits() {
 		storeEntity();
 		final Long id1 = this.id;
@@ -318,6 +369,46 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 		assertTrue(id1.toString(), exportedIds.contains(id1));
 		assertTrue(id2.toString(), exportedIds.contains(id2));
 		assertTrue(id3.toString(), exportedIds.contains(id3));
+	}
+
+	@Test
+	public void exportAllTidbits_membership() {
+		storeEntity();
+		final Tidbit t1 = dao.get(this.id);
+
+		storeEntity();
+		final Tidbit t2 = dao.get(this.id);
+		t2.setCreatedBy("bam");
+		dao.store(t2);
+
+		storeEntity();
+		final Tidbit t3 = dao.get(this.id);
+		t3.setCreatedBy("bar");
+		dao.store(t3);
+
+		savePermissionGroup();
+
+		final Set<Long> exportedIds = new LinkedHashSet<>();
+		dao.exportAllTidbits(new ExportCallback() {
+
+			@Override
+			public boolean handleRow(Object[] data, int row) {
+				Tidbit t = dao.get((Long) data[7]);
+				assertThat("Tidbit found", t, is(notNullValue()));
+				assertThat("Name", data[0], is(equalTo(t.getName())));
+				assertThat("Kind name", data[1], is(equalTo(t.getKind().getName())));
+				assertThat("Data", data[2], is(equalTo(t.getData())));
+				assertThat("Creation date", data[3], is(equalTo(t.getCreationDateItem())));
+				assertThat("Modify date", data[4], is(equalTo(t.getModifyDateItem())));
+				assertThat("Comment", data[5], is(equalTo(t.getComment())));
+				assertThat("Kind comment", data[6], is(equalTo(t.getKind().getComment())));
+				assertThat("Created by", data[8], is(equalTo(t.getCreatedBy())));
+				assertThat("Kind ID", data[9], is(equalTo(t.getKind().getId())));
+				exportedIds.add(t.getId());
+				return true;
+			}
+		}, "bar");
+		assertThat("Exported owned and membership items", exportedIds, contains(t1.getId(), t3.getId()));
 	}
 
 }

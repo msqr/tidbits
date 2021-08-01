@@ -66,6 +66,21 @@ public final class AuthorizationSupport {
 	}
 
 	/**
+	 * Extract the username from an actor, or {@literal null} if an
+	 * administrator.
+	 * 
+	 * @param actor
+	 *        the actor
+	 * @return the username, or {@literal null} if is an administrator
+	 * @throws AuthorizationException
+	 *         if no username can be found
+	 */
+	public static String usernameOrNullForAdmin(Authentication actor) {
+		final String username = username(actor);
+		return isAdmin(actor) ? null : username;
+	}
+
+	/**
 	 * Test if an actor has an administrative role.
 	 * 
 	 * @param actor

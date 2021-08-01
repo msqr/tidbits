@@ -166,7 +166,11 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 		// make sure changes from native query are immediately picked up
 		getEm().flush();
 		getEm().clear();
-		TypedQuery<Object[]> q = getEm().createNamedQuery("TidbitsExport", Object[].class);
+		TypedQuery<Object[]> q = getEm().createNamedQuery(
+				username != null ? "TidbitsExportForMembership" : "TidbitsExport", Object[].class);
+		if ( username != null ) {
+			q.setParameter(1, username);
+		}
 		int offset = 0;
 		boolean keepGoing = true;
 		while ( keepGoing ) {

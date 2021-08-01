@@ -49,6 +49,13 @@ public class TestSupport {
 	}
 
 	/**
+	 * Clear the current actor.
+	 */
+	public static void clearActor() {
+		SecurityContextHolder.getContext().setAuthentication(null);
+	}
+
+	/**
 	 * Become an authenticated user with the given roles.
 	 * 
 	 * @param userName

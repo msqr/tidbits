@@ -204,7 +204,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 	public void exportCsvData(OutputStream out) throws IOException {
 		final Authentication actor = SecurityContextHolder.getContext().getAuthentication();
-		final String username = AuthorizationSupport.username(actor);
+		final String username = AuthorizationSupport.usernameOrNullForAdmin(actor);
 		final CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(out, "UTF-8"));
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));

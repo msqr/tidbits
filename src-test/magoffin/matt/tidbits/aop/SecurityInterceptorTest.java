@@ -28,10 +28,12 @@ import static magoffin.matt.tidbits.TestSupport.becomeUser;
 import static magoffin.matt.tidbits.biz.TidbitsBiz.ROLE_ADMIN;
 import static magoffin.matt.tidbits.biz.TidbitsBiz.ROLE_USER;
 import static org.mockito.BDDMockito.given;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import magoffin.matt.tidbits.TestSupport;
 import magoffin.matt.tidbits.biz.AuthorizationException;
 import magoffin.matt.tidbits.dao.PermissionGroupDao;
 import magoffin.matt.tidbits.dao.TidbitDao;
@@ -68,6 +70,11 @@ public class SecurityInterceptorTest {
 		interceptor.setPermissionGroupDao(permissionGroupDao);
 		interceptor.setTidbitDao(tidbitDao);
 		interceptor.setTidbitKindDao(tidbitKindDao);
+	}
+
+	@After
+	public void teardown() {
+		TestSupport.clearActor();
 	}
 
 	@Test

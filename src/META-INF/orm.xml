@@ -54,5 +54,20 @@
 					ORDER BY t.creation_date</query>
 			<hint name="eclipselink.jdbc.fetch-size" value="100"/>
 		</named-native-query>
+		<named-native-query name="TidbitsExportForMembership">
+			<query>SELECT t.name, k.name, t.data, t.creation_date, t.modify_date, t.comment, k.comment,
+						t.tidbitid, t.created_by, k.kindid
+					FROM tidbit t
+					INNER JOIN tidbit_kind k ON k.kindid = t.kindid
+					WHERE t.created_by = ?1 OR t.created_by IN (
+						SELECT DISTINCT g.name
+						FROM permission_group g
+						INNER JOIN permission_group_perms gp ON gp.permission_group_id = g.groupid
+						INNER JOIN permission p ON gp.permission_id = p.permissionid
+						WHERE LOWER(p.name) = LOWER(?1)
+					)
+					ORDER BY t.creation_date</query>
+			<hint name="eclipselink.jdbc.fetch-size" value="100"/>
+		</named-native-query>
 	</entity>
 </entity-mappings>
