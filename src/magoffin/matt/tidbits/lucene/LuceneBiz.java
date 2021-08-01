@@ -25,17 +25,29 @@
 package magoffin.matt.tidbits.lucene;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import magoffin.matt.lucene.LuceneService;
 import magoffin.matt.lucene.LuceneService.IndexSearcherOp;
 import magoffin.matt.tidbits.biz.DomainObjectFactory;
 import magoffin.matt.tidbits.biz.SearchQueryException;
 import magoffin.matt.tidbits.biz.TidbitSearchCriteria;
+import magoffin.matt.tidbits.biz.impl.AuthorizationSupport;
+import magoffin.matt.tidbits.dao.PermissionGroupDao;
+import magoffin.matt.tidbits.domain.PermissionGroup;
 import magoffin.matt.tidbits.domain.SearchResults;
 import magoffin.matt.tidbits.domain.Tidbit;
 
@@ -60,8 +72,30 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 	@Autowired
 	private DomainObjectFactory domainObjectFactory;
 
+	@Autowired
+	private PermissionGroupDao permissionGroupDao;
+
 	private String tidbitIndexType = IndexType.TIDBIT.toString();
 	private int maxSearchResults = DEFAULT_MAX_SEARCH_RESULTS;
+
+	private Set<String> allowedUsernames() {
+		Authentication actor = SecurityContextHolder.getContext().getAuthentication();
+		String username = AuthorizationSupport.username(actor);
+		if ( AuthorizationSupport.isAdmin(actor) ) {
+			// no limit
+			return null;
+		}
+		Set<PermissionGroup> memberships = permissionGroupDao
+				.findAllPermissionGroupMemberships(username);
+		if ( memberships == null || memberships.isEmpty() ) {
+			// not a member of any groups, can only see own
+			return Collections.singleton(username);
+		}
+		Set<String> result = memberships.stream().map(PermissionGroup::getName)
+				.collect(Collectors.toSet());
+		result.add(username);
+		return result;
+	}
 
 	/**
 	 * Search for Tidbits.
@@ -73,6 +107,7 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 	@SuppressWarnings("deprecation")
 	@Override
 	public SearchResults findTidbits(final TidbitSearchCriteria tidbitCriteria) {
+		final Set<String> usernames = allowedUsernames();
 		final SearchResults results = domainObjectFactory.newSearchResultsInstance();
 		results.setQuery(tidbitCriteria.getQuery());
 		lucene.doIndexSearcherOp(tidbitIndexType, new IndexSearcherOp() {
@@ -89,6 +124,21 @@ public class LuceneBiz implements magoffin.matt.tidbits.biz.LuceneBiz {
 					}
 					throw e;
 				}
+
+				if ( usernames != null && !usernames.isEmpty() ) {
+					BooleanQuery usernameQuery = new BooleanQuery();
+					for ( String username : usernames ) {
+						usernameQuery.add(
+								new TermQuery(new Term(IndexField.CREATED_BY.getFieldName(), username)),
+								Occur.SHOULD);
+					}
+
+					BooleanQuery searchQuery = new BooleanQuery();
+					searchQuery.add(usernameQuery, Occur.MUST);
+					searchQuery.add(query, Occur.MUST);
+					query = searchQuery;
+				}
+
 				org.apache.lucene.search.TopDocCollector col = new org.apache.lucene.search.TopDocCollector(
 						maxSearchResults);
 				searcher.search(query, col);

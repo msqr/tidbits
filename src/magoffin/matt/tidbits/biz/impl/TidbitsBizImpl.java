@@ -46,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,9 +103,11 @@ public class TidbitsBizImpl implements TidbitsBiz {
 
 	private SearchResults findTidbitsForTemplate(TidbitSearchCriteria searchCriteria) {
 		Tidbit template = searchCriteria.getTidbitTemplate();
+		Authentication actor = SecurityContextHolder.getContext().getAuthentication();
+		String username = AuthorizationSupport.username(actor);
 		if ( template == null ) {
 			// find all
-			return tidbitDao.getAllTidbits(searchCriteria.getPaginationCriteria());
+			return tidbitDao.getAllTidbits(searchCriteria.getPaginationCriteria(), username);
 		}
 		throw new UnsupportedOperationException();
 	}
@@ -196,6 +200,8 @@ public class TidbitsBizImpl implements TidbitsBiz {
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 	public void exportCsvData(OutputStream out) throws IOException {
+		final Authentication actor = SecurityContextHolder.getContext().getAuthentication();
+		final String username = AuthorizationSupport.username(actor);
 		final CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(out, "UTF-8"));
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -216,7 +222,7 @@ public class TidbitsBizImpl implements TidbitsBiz {
 				printer.println();
 				return true;
 			}
-		});
+		}, username);
 		printer.flush();
 		printer.close();
 	}

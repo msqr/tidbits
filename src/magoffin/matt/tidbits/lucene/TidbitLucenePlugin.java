@@ -55,8 +55,8 @@ import magoffin.matt.tidbits.domain.TidbitKind;
 /**
  * Lucene search plugin implementation for User objects.
  * 
- * @author matt.magoffin
- * @version 1.0
+ * @author matt
+ * @version 1.1
  */
 public class TidbitLucenePlugin extends AbstractLucenePlugin {
 
@@ -94,7 +94,7 @@ public class TidbitLucenePlugin extends AbstractLucenePlugin {
 	}
 
 	private void doReindexAll(IndexWriter writer, TidbitIndexResults indexResults) {
-		SearchResults results = tidbitDao.getAllTidbits(null);
+		SearchResults results = tidbitDao.getAllTidbits(null, null);
 		for ( Tidbit tidbit : results.getTidbit() ) {
 			List<Object> errors = indexTidbit(tidbit, writer);
 			if ( errors != null && errors.size() > 0 ) {

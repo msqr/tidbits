@@ -136,7 +136,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 
 	@Test
 	public void findAllNoResults() {
-		SearchResults results = dao.getAllTidbits(null);
+		SearchResults results = dao.getAllTidbits(null, null);
 		assertNotNull(results);
 		assertEquals(Long.valueOf(0L), results.getTotalResults());
 		assertEquals(Long.valueOf(0L), results.getReturnedResults());
@@ -148,7 +148,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 	@Test
 	public void findAllOneResult() {
 		storeEntity();
-		SearchResults results = dao.getAllTidbits(null);
+		SearchResults results = dao.getAllTidbits(null, null);
 		assertNotNull(results);
 		assertEquals(Long.valueOf(1L), results.getTotalResults());
 		assertEquals(Long.valueOf(1L), results.getReturnedResults());
@@ -164,7 +164,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 		storeEntity();
 		storeEntity();
 		storeEntity();
-		SearchResults results = dao.getAllTidbits(null);
+		SearchResults results = dao.getAllTidbits(null, null);
 		assertNotNull(results);
 		assertEquals(Long.valueOf(3L), results.getTotalResults());
 		assertEquals(Long.valueOf(3L), results.getReturnedResults());
@@ -188,7 +188,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 		pagination.setPageOffset(0L);
 		pagination.setPageSize(2L);
 
-		SearchResults results = dao.getAllTidbits(pagination);
+		SearchResults results = dao.getAllTidbits(pagination, null);
 		assertNotNull(results);
 		assertEquals(Long.valueOf(3L), results.getTotalResults());
 		assertEquals(Long.valueOf(2L), results.getReturnedResults());
@@ -205,7 +205,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 		assertEquals(id2, results.getTidbit().get(1).getId());
 
 		pagination.setPageOffset(1L);
-		results = dao.getAllTidbits(pagination);
+		results = dao.getAllTidbits(pagination, null);
 		assertNotNull(results);
 		assertEquals(Long.valueOf(3L), results.getTotalResults());
 		assertEquals(Long.valueOf(1L), results.getReturnedResults());
@@ -253,7 +253,7 @@ public class JpaTidbitDaoTest extends BaseTransactionalTest {
 				exportedIds.add(t.getId());
 				return true;
 			}
-		});
+		}, null);
 		assertEquals(3, exportedIds.size());
 		assertTrue(id1.toString(), exportedIds.contains(id1));
 		assertTrue(id2.toString(), exportedIds.contains(id2));

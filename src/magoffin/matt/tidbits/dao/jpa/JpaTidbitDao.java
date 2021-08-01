@@ -96,7 +96,7 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public SearchResults getAllTidbits(PaginationCriteria pagination) {
+	public SearchResults getAllTidbits(PaginationCriteria pagination, String username) {
 		SearchResults results = new SearchResults();
 		if ( pagination == null ) {
 			// return all available
@@ -146,7 +146,7 @@ public class JpaTidbitDao extends GenericJpaDao<Tidbit, Long> implements TidbitD
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public void exportAllTidbits(ExportCallback callback) {
+	public void exportAllTidbits(ExportCallback callback, String username) {
 		// make sure changes from native query are immediately picked up
 		getEm().flush();
 		getEm().clear();
