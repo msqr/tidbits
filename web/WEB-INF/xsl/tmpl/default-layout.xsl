@@ -75,8 +75,9 @@
 	</xsl:template>
 	
 	<xsl:template match="x:x-data" mode="page-head-basecontent">
+		<link rel="icon" type="image/png" href="{$web-context}/img/tidbits-icon.png" />
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap.css" />
-		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap-responsive.css"/>
+		<link rel="stylesheet" type="text/css" href="{$web-context}/css/bootstrap-responsive.css" />
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/font-awesome.css" />
 		<link rel="stylesheet" type="text/css" href="{$web-context}/css/tidbits.css" />
 		<!-- The following exposes a bug in iOS9:
