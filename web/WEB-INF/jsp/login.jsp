@@ -4,7 +4,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="icon" type="image/png" href="<c:url value="/img/tidbits-icon.png"/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value="/css/bootstrap.css"/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value="/css/bootstrap-responsive.css"/>" />
 		<link rel="stylesheet" type="text/css" href="<c:url value="/css/tidbits.css"/>" />
