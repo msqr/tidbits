@@ -166,39 +166,12 @@ Tidbits.Class.Matrix.prototype = {
 	constructor : Tidbits.Class.Matrix,
 	
 	supportDefaults : (function() {
-		// adapted from jquery.transform2d.js
-		var divStyle = document.createElement("div").style;
-		var suffix = "Transform";
-		var testProperties = [
-		    "Webkit" + suffix,
-			"O" + suffix,
-			"ms" + suffix,
-			"Moz" + suffix
-		];
-		var eventProperties = ["webkitTransitionEnd","oTransitionEnd","transitionend","transitionend"];
-		var transitionProperties = ["WebkitTransition","OTransition","transition","MozTransition"];
-		var transitionTransform = ["-webkit-transform","-o-transform","transform", "-moz-transform"];
-		var tProp = "Transform", 
-			trProp = "Transition",
-			trTransform = "transform",
-			trEndEvent = "transitionEnd";
-		var i = testProperties.length;
-		while ( i-- ) {
-			if ( testProperties[i] in divStyle ) {
-				tProp = testProperties[i];
-				trProp = transitionProperties[i];
-				trTransform = transitionTransform[i];
-				trEndEvent = eventProperties[i];
-				break;
-			}
-		}
-		
 		return {
-			use3d : Tidbits.hiRes,
-			tProp : tProp,
-			trProp : trProp,
-			trTransform : trTransform,
-			trEndEvent : trEndEvent
+			use3d : false,
+			tProp : "transform",
+			trProp : "transition",
+			trTransform : "transform",
+			trEndEvent : "transitionend"
 		};
 	})(),
 	
