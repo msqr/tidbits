@@ -35,7 +35,6 @@
 	<property name="dir.lib" value="lib"/>
 	<property name="dir.lib.runtime" value="libs"/>
 	<property name="dir.web" value="src/main/webapp"/>
-	<property name="dir.web.lib" value="${dir.web}/WEB-INF/lib"/>
 	
 	<property name="app.name" value="tidbits" />
 	<property name="build.name" value="Tidbits"/>
@@ -98,7 +97,7 @@
 	<property name="version.txt.name" value="version.txt" />
 	
 	<path id="jaxb.generate.path">
-		<fileset dir="${dir.web.lib}" includes="*.jar"/>
+		<fileset dir="${dir.lib.runtime}" includes="*.jar"/>
 		<fileset dir="${dir.lib}" includes="**/*.jar"/>
 	</path>
 	
@@ -150,7 +149,7 @@
 			<fileset dir="${dir.hyperjaxb3.schemas}" includes="**"/>
 		</copy>
 		<mkdir dir="${dir.build}/tmp"/>
-		<unjar src="${dir.web.lib}/mutil2.jar" dest="${dir.hyperjaxb3.java}">
+		<unjar src="${dir.lib.runtime}/mutil2.jar" dest="${dir.hyperjaxb3.java}">
 			<patternset>
 				<include name="magoffin/matt/dao/Identity.java"/>
 				<include name="magoffin/matt/dao/Entity.java"/>
@@ -168,7 +167,7 @@
 	</target>
 	
 	<target name="hyperjaxb" depends="hyperjaxb.clean,hyperjaxb.generate">
-		<jar destfile="${dir.web}/WEB-INF/lib/${app.name}-xml.jar">
+		<jar destfile="${dir.lib.runtime}/${app.name}-xml.jar">
 			<fileset dir="${dir.hyperjaxb3.home}/target/classes">
 				<include name="**"/>
 				<exclude name="*.*"/>
@@ -193,7 +192,7 @@
 			<pathelement location="${dir.compile.dest}"/>
 			<pathelement location="${dir.env}"/>
 			<fileset dir="${dir.build}/lib" includes="*.jar"/>
-			<fileset dir="${dir.web.lib}" includes="*.jar"/>
+			<fileset dir="${dir.lib.runtime}" includes="*.jar"/>
 		</path>
 		<java classname="magoffin.matt.dao.jpa.JPASchemaGenerator" classpathref="ddl.path"/>
 	</target>
@@ -308,7 +307,7 @@
 		<copy todir="${dir.build}/javadoc-source">
 			<fileset dir="${dir.source}" includes="**"/>
 		</copy>
-		<unzip src="${dir.web.lib}/${app.name}-xml.jar"
+		<unzip src="${dir.lib.runtime}/${app.name}-xml.jar"
 			dest="${dir.build}/javadoc-source" />
 		<delete dir="${dir.build}/javadoc-source/magoffin/matt/ma2/domain/impl"/>
 		
