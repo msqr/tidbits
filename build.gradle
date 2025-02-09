@@ -92,13 +92,6 @@ dependencies {
 	// JAXB, XML
 	implementation 'javax.xml:xmldsig:1.0'
 	implementation 'javax.xml.parsers:jaxp-api:1.4.5'
-	implementation('xml-apis:xml-apis') {
-        version {
-            strictly '1.4.01'
-        }
-    }
-	implementation 'xerces:xercesImpl:2.12.2'
-	implementation 'org.codehaus.woodstox:wstx-asl:3.2.9'
 	implementation 'com.sun.xml.bind:jaxb-impl:2.2.5.1'
 	implementation 'org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.6.3'
 	implementation 'org.jvnet.hyperjaxb3:hyperjaxb3-ejb-runtime:0.5.6'
