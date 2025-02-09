@@ -1,0 +1,226 @@
+plugins {
+    id 'war'
+}
+
+version = "${version}"
+description = 'Tidbits'
+
+base {
+	archivesName = 'tidbits'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+java {
+	toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+
+repositories {
+    mavenLocal()
+	mavenCentral()
+	maven {
+		url "https://repository.jboss.org/nexus/content/groups/public"
+	}
+	maven {
+		url "https://maven.java.net/content/repositories/releases"
+	}
+}
+
+ext {
+	env = project.hasProperty('env') ? project.env : 'local'
+	slf4jVersion = '1.7.24'
+	springVersion = '3.2.18.RELEASE'
+	springSecurityVersion = '3.2.10.RELEASE'
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDir "environment/${env}"
+		}
+	}
+}
+
+configurations {
+	all*.exclude group: 'commons-logging'
+	all*.exclude group: 'org.apache.geronimo.specs'
+	all*.exclude module: 'avalon-framework'
+	all*.exclude module: 'ehcache-terracotta'
+	all*.exclude module: 'hibernate'
+	all*.exclude module: 'jaxen'
+	all*.exclude module: 'jaxp-api'
+	all*.exclude module: 'jaxrpc-api'
+	all*.exclude module: 'jaxws-api'
+	all*.exclude module: 'jsr173_api'
+	all*.exclude module: 'saxon'
+	all*.exclude module: 'saxon-dom'
+	all*.exclude module: 'spring'
+	all*.exclude module: 'woodstox-core-asl'
+	all*.exclude module: 'xalan'
+	all*.exclude module: 'xmldsig'
+	all*.exclude module: 'xmlParserAPIs'
+}
+
+dependencies {
+	// Logging
+	implementation 'log4j:log4j:1.2.17'
+	implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+	implementation "org.slf4j:slf4j-log4j12:${slf4jVersion}"
+	implementation "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+	
+	// Utilities
+	implementation 'asm:asm:3.3.1'
+	implementation 'cglib:cglib:2.2.2'
+	implementation 'org.ostermiller:utils:1.07.00'
+	implementation 'javax.activation:activation:1.1.1'
+	implementation 'net.sf.ehcache:ehcache:1.7.2'
+	implementation 'org.aspectj:aspectjweaver:1.6.12'
+		
+	// Apache Commons
+	implementation 'commons-beanutils:commons-beanutils:1.8.3'
+	implementation 'commons-codec:commons-codec:1.9'
+	implementation 'commons-collections:commons-collections:3.2.1'
+	implementation 'commons-digester:commons-digester:2.1'
+	implementation 'commons-fileupload:commons-fileupload:1.5'
+	implementation 'commons-io:commons-io:2.3'
+		
+	// JAXB, XML
+	implementation 'javax.xml:xmldsig:1.0'
+	implementation 'javax.xml.parsers:jaxp-api:1.4.5'
+	implementation('xml-apis:xml-apis') {
+        version {
+            strictly '1.4.01'
+        }
+    }
+	implementation 'xerces:xercesImpl:2.11.0'
+	implementation 'net.sf.saxon:Saxon-HE:9.6.0-3'
+	implementation 'org.codehaus.woodstox:wstx-asl:3.2.9'
+	implementation 'com.sun.xml.bind:jaxb-impl:2.2.5.1'
+	implementation 'org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.6.3'
+	implementation 'org.jvnet.hyperjaxb3:hyperjaxb3-ejb-runtime:0.5.6'
+	
+	// JSON
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.7'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.8.7'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
+	
+	// Lucene
+	implementation 'org.apache.lucene:lucene-core:2.9.4'
+	implementation 'org.apache.lucene:lucene-snowball:2.9.4'
+	
+	// JDBC
+	implementation 'org.eclipse.persistence:jakarta.persistence:2.2.3'
+	implementation 'org.eclipse.persistence:eclipselink:2.4.2'
+	testImplementation 'org.apache.derby:derby:10.13.1.1'
+	testImplementation 'mysql:mysql-connector-java:5.1.18'
+	testImplementation 'org.postgresql:postgresql:42.2.23'
+	
+	// Spring	
+	implementation "org.springframework:spring-aop:${springVersion}"
+	implementation "org.springframework:spring-context:${springVersion}"
+	implementation "org.springframework:spring-context-support:${springVersion}"
+	implementation "org.springframework:spring-core:${springVersion}"
+	implementation "org.springframework:spring-jdbc:${springVersion}"
+	implementation "org.springframework:spring-orm:${springVersion}"
+	implementation "org.springframework:spring-webmvc:${springVersion}"
+	
+	implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
+	implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
+	implementation "org.springframework.security:spring-security-ldap:${springSecurityVersion}"
+	implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+	implementation "org.springframework.security:spring-security-taglibs:${springSecurityVersion}"
+	
+	// Web
+	providedCompile 'javax.mail:mail:1.4.7'
+	implementation 'javax.servlet.jsp.jstl:javax.servlet.jsp.jstl-api:1.2.2'
+	runtimeOnly 'org.apache.taglibs:taglibs-standard-impl:1.2.5'
+	providedCompile 'javax.servlet.jsp:javax.servlet.jsp-api:2.2.1'
+	providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+
+	// Local libs
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	
+    // Testing
+	testImplementation 'junit:junit:4.13.2'
+	testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.11.4'
+	
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+
+	testImplementation 'org.hamcrest:hamcrest-library:1.3'
+	testImplementation "org.springframework:spring-test:${springVersion}"
+	testImplementation 'org.subethamail:subethasmtp:3.1.6'
+	testImplementation 'org.mortbay.jetty:jetty:6.1.26'
+	testImplementation 'org.mockito:mockito-core:2.25.1'
+	testImplementation 'org.apache.tomcat:tomcat-jdbc:9.0.98'
+}
+
+[
+    compileJava,
+    compileTestJava
+].each() {
+    it.options.compilerArgs += [
+        "-Xlint:all",
+        "-Xlint:-options",
+        "-Xlint:-path",
+        "-Xlint:-try"
+    ]
+    it.options.encoding = "UTF-8"
+    if (rootProject.hasProperty('failOnWarnings') && rootProject.failOnWarnings.toBoolean()) {
+        it.options.compilerArgs += ["-Werror"]
+    }
+}
+
+compileTestJava {
+    options.compilerArgs += [
+        "-Xlint:-serial"
+    ]
+}
+
+jar.manifest {
+    attributes('Implementation-Title': name,
+    'Implementation-Version': version,
+    'Built-By': System.getProperty('user.name'),
+    'Built-JDK': System.getProperty('java.version'),
+    'Source-Compatibility': sourceCompatibility,
+    'Target-Compatibility': targetCompatibility)
+}
+
+javadoc.options {
+    encoding = 'UTF-8'
+    use = true
+    links 'https://docs.oracle.com/javase/8/docs/api/'
+    source = "8"
+}
+
+// Disable JavaDoc doclint on Java 8. It's annoying.
+allprojects {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+// At a test failure, log the stack trace to the console so that we don't
+// have to open the HTML in a browser.
+test {
+	useJUnitPlatform()
+    testLogging {
+        exceptionFormat = 'full'
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+    maxHeapSize = '1500m'
+}
+
+eclipse {
+    wtp {
+        facet {
+            facet name: 'jst.web', version: '2.5'
+        }
+    }
+}
