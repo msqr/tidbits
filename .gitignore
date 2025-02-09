@@ -8,6 +8,6 @@
 /db/
 /dist/
 /src/main/webapp/WEB-INF/classes/
-/src/main/webapp/META-INF/context.xml
+/src/main/webapp/META-INF/
 /tmp/
 /work/
