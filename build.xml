@@ -25,15 +25,16 @@
 	<property file="build.properties" />
 	
 	<property name="dir.base" value="${basedir}"/>
-	<property name="dir.source" value="src"/>
-	<property name="dir.source.test" value="src-test"/>
+	<property name="dir.source" value="src/main/java"/>
+	<property name="dir.source.resource" value="src/main/resources"/>
 	<property name="dir.schema" value="defs/schema"/>
 	<property name="dir.build" value="${dir.base}/build/ant" />
 	<property name="dir.generated" value="${dir.build}/generated/src" />
 	<property name="dir.database" value="defs/sql"/>
 	<property name="dir.dist" value="dist"/>
 	<property name="dir.lib" value="lib"/>
-	<property name="dir.web" value="web"/>
+	<property name="dir.lib.runtime" value="libs"/>
+	<property name="dir.web" value="src/main/webapp"/>
 	<property name="dir.web.lib" value="${dir.web}/WEB-INF/lib"/>
 	
 	<property name="app.name" value="tidbits" />
@@ -102,7 +103,7 @@
 	</path>
 	
 	<path id="lib.path">
-		<fileset dir="${dir.web.lib}" includes="*.jar"/>
+		<fileset dir="${dir.lib.runtime}" includes="*.jar"/>
 		<fileset dir="${dir.lib}" includes="**/*.jar"/>
 	</path>
 
@@ -217,18 +218,24 @@
 		<!-- copy non-environment and non-brand source properties -->
 		<mkdir dir="${dir.compile.dest}"/>
 		<copy todir="${dir.compile.dest}" includeemptydirs="no">
-			<fileset dir="${dir.source}">
-				<exclude name="**/*.java"/>
-			</fileset>
+			<fileset dir="${dir.source.resource}" includes="**"/>
 		</copy>
 		
-		<!-- copy web resourses -->
+		<!-- copy web resources -->
 		<copy todir="${dir.app.dest}">
 			<fileset dir="${dir.web}">
 				<include name="**"/>
 				<exclude name="version.jsp"/>
 				<exclude name="WEB-INF/classes/**"/>
 				<exclude name="WEB-INF/jsp/version.jsp"/>
+			</fileset>
+		</copy>
+		
+		<!-- copy web libs -->
+		<mkdir dir="${dir.app.dest}/WEB-INF/lib"/>
+		<copy todir="${dir.app.dest}/WEB-INF/lib">
+			<fileset dir="${dir.lib.runtime}">
+				<include name="*.jar"/>
 			</fileset>
 		</copy>
 		
