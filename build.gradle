@@ -96,8 +96,7 @@ dependencies {
             strictly '1.4.01'
         }
     }
-	implementation 'xerces:xercesImpl:2.11.0'
-	implementation 'net.sf.saxon:Saxon-HE:9.6.0-3'
+	implementation 'xerces:xercesImpl:2.12.2'
 	implementation 'org.codehaus.woodstox:wstx-asl:3.2.9'
 	implementation 'com.sun.xml.bind:jaxb-impl:2.2.5.1'
 	implementation 'org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.6.3'
